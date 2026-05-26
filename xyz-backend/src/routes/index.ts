@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { adminRouter } from './admin';
 import { bookingsRouter } from './bookings';
 import { categoriesRouter } from './categories';
 import { healthRouter } from './health';
@@ -23,3 +24,4 @@ apiV1Router.use('/categories', categoriesRouter);
 apiV1Router.use('/bookings', bookingsRouter);
 apiV1Router.use('/notifications', notificationsRouter);
 apiV1Router.use('/reviews', reviewsRouter);
+apiV1Router.use('/admin', adminRouter);

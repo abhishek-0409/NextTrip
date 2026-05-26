@@ -153,13 +153,23 @@ export default function WishlistScreen(): React.ReactElement {
         {totalCount === 0 && !wishlistPackagesQuery.isLoading ? (
           <View style={styles.emptyState}>
             <View style={styles.emptyIcon}>
-              <Ionicons name="heart-outline" size={34} color={Colors.primary} />
+              <Ionicons name="heart-outline" size={26} color={Colors.primary} />
             </View>
             <Text style={styles.emptyTitle}>No saved items yet</Text>
             <Text style={styles.emptySubtitle}>
               Tap the heart on a package or destination to keep it here.
             </Text>
-            <Button label="Browse Packages" onPress={handleBrowse} style={styles.emptyButton} />
+            <View style={styles.emptyButtonWrap}>
+              <Button
+                label="Browse packages"
+                onPress={handleBrowse}
+                size="small"
+                variant="navy"
+                fullWidth
+                leftIcon={<Ionicons name="search-outline" size={16} color={Colors.textWhite} />}
+                style={styles.emptyButton}
+              />
+            </View>
           </View>
         ) : null}
 
@@ -235,28 +245,27 @@ const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
     paddingBottom: 128,
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
   },
   header: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingBottom: 22,
-    paddingTop: 24,
+    paddingBottom: 18,
+    paddingTop: 22,
   },
   title: {
     color: Colors.textPrimary,
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: '800',
-    letterSpacing: -0.5,
-    lineHeight: 34,
+    lineHeight: 32,
   },
   subtitle: {
     color: Colors.textSecondary,
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '500',
-    lineHeight: 18,
-    marginTop: 4,
+    lineHeight: 20,
+    marginTop: 6,
   },
   badge: {
     alignItems: 'center',
@@ -286,37 +295,48 @@ const styles = StyleSheet.create({
   },
   emptyState: {
     alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-    minHeight: 420,
-    paddingHorizontal: 28,
+    alignSelf: 'center',
+    justifyContent: 'flex-start',
+    maxWidth: 340,
+    paddingHorizontal: 20,
+    paddingTop: 118,
+    width: '100%',
   },
   emptyIcon: {
     alignItems: 'center',
-    backgroundColor: Colors.primaryGlow,
-    borderRadius: 22,
-    height: 68,
+    backgroundColor: Colors.surface,
+    borderColor: Colors.border,
+    borderRadius: 18,
+    borderWidth: 1,
+    height: 52,
     justifyContent: 'center',
-    marginBottom: 16,
-    width: 68,
+    marginBottom: 18,
+    width: 52,
   },
   emptyTitle: {
     color: Colors.textPrimary,
-    fontSize: 20,
+    fontSize: 19,
     fontWeight: '700',
-    lineHeight: 26,
-    marginBottom: 8,
+    lineHeight: 25,
+    marginBottom: 7,
     textAlign: 'center',
   },
   emptySubtitle: {
     color: Colors.textSecondary,
     fontSize: 14,
-    lineHeight: 21,
-    marginBottom: 20,
+    lineHeight: 22,
+    marginBottom: 22,
+    maxWidth: 280,
     textAlign: 'center',
   },
   emptyButton: {
-    minWidth: 180,
+    borderRadius: 10,
+    minHeight: 42,
+    paddingHorizontal: 18,
+  },
+  emptyButtonWrap: {
+    alignSelf: 'center',
+    width: 226,
   },
   sections: {
     paddingBottom: 16,
