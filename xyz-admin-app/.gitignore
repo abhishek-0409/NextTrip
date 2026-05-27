@@ -4,3 +4,24 @@
 
 expo-env.d.ts
 # @end expo-cli
+
+# Dependencies
+node_modules/
+
+# Build artifacts
+dist/
+.expo/
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+*.err.log
+*.out.log
+
+# OS
+.DS_Store

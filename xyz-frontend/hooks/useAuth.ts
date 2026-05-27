@@ -208,6 +208,21 @@ function hydrateWishlist(setWishlist: (packageIds: string[]) => void): void {
   });
 }
 
+/**
+ * Returns the deep-link URI that Supabase should redirect back to after OAuth.
+ *
+ * Result:  nexttrp://auth/callback
+ *
+ * ⚠️  REQUIRED — Supabase Dashboard setup (one-time):
+ *   1. Go to Authentication → URL Configuration in your Supabase project.
+ *   2. Add  nexttrp://auth/callback  to the "Redirect URLs" allow-list.
+ *      (A wildcard  nexttrp://**  also works and covers future paths.)
+ *   3. Ensure "Site URL" is NOT localhost:3000 for production builds.
+ *      For development you can leave it; what matters is the allow-list entry.
+ *
+ * Without step 2 Supabase ignores the redirectTo parameter and falls back to
+ * the Site URL (localhost:3000), which causes ERR_CONNECTION_REFUSED on mobile.
+ */
 function createRedirectUri(): string {
   return AuthSession.makeRedirectUri({
     scheme: 'nexttrp',
@@ -230,72 +245,97 @@ function createRedirectUri(): string {
 async function runGoogleOAuth(): Promise<User> {
   const redirectUri = createRedirectUri();
 
-  // 1. Ask Supabase for the Google OAuth URL.
-  //    We pass an empty string for state — Supabase handles CSRF internally.
-  const { data: authUrl, error: urlError } = await getGoogleOAuthUrl(
-    redirectUri,
-    ''
-  );
+  // Warm up the Chrome Custom Tab (Android) / SFSafariViewController (iOS)
+  // so the first Google sign-in opens instantly instead of cold-starting.
+  // Non-fatal if the platform doesn't support it.
+  void WebBrowser.warmUpAsync().catch(() => undefined);
 
-  if (urlError) throw new Error(urlError);
-  if (!authUrl) throw new Error('Google sign in failed to start.');
+  try {
+    // 1. Ask Supabase for the Google OAuth URL.
+    //    We omit state — Supabase handles CSRF internally via PKCE.
+    const { data: authUrl, error: urlError } = await getGoogleOAuthUrl(
+      redirectUri,
+      ''
+    );
 
-  // 2. Open the Supabase-generated URL in the system browser.
-  //    The browser will redirect back to nexttrp://auth/callback?code=...
-  const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri, {
-    preferEphemeralSession: true,
-  });
+    if (urlError) throw new Error(urlError);
+    if (!authUrl) throw new Error('Google sign in failed to start.');
 
-  // User closed the browser without completing sign-in — not an error,
-  // just a silent no-op so we don't show a scary error message.
-  if (
-    result.type === WebBrowser.WebBrowserResultType.CANCEL ||
-    result.type === WebBrowser.WebBrowserResultType.DISMISS
-  ) {
-    throw new Error('__CANCELLED__');
+    // 2. Open the Supabase-generated URL in the system browser.
+    //    The browser will redirect back to nexttrp://auth/callback?code=...
+    //    openAuthSessionAsync intercepts that redirect before it hits Chrome
+    //    and returns the full URL to us — no ERR_CONNECTION_REFUSED on mobile.
+    const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri, {
+      preferEphemeralSession: true,
+    });
+
+    // User closed the browser without completing sign-in — not an error,
+    // just a silent no-op so we don't show a scary error message.
+    if (
+      result.type === WebBrowser.WebBrowserResultType.CANCEL ||
+      result.type === WebBrowser.WebBrowserResultType.DISMISS
+    ) {
+      throw new Error('__CANCELLED__');
+    }
+
+    if (result.type !== 'success') {
+      throw new Error('Google sign in did not complete.');
+    }
+
+    // 3. Guard against Supabase falling back to the Site URL.
+    //    If the callback URL doesn't start with our scheme it means
+    //    nexttrp://auth/callback is NOT in the Supabase redirect allow-list.
+    //    See the comment on createRedirectUri() for the dashboard steps.
+    if (!result.url.startsWith('nexttrp://')) {
+      throw new Error(
+        'Google sign in misconfigured: callback landed on an unexpected URL ' +
+          `(${result.url}). ` +
+          'Add nexttrp://auth/callback to the Redirect URLs allow-list in ' +
+          'your Supabase Dashboard → Authentication → URL Configuration.'
+      );
+    }
+
+    // 4. Parse the callback URL to extract the code or tokens.
+    const callbackUrl = result.url;
+    const parsed = new URL(callbackUrl);
+
+    // Supabase PKCE flow returns ?code=...
+    // Implicit flow returns #access_token=...&refresh_token=...
+    const code = parsed.searchParams.get('code');
+    const accessToken =
+      parsed.searchParams.get('access_token') ??
+      new URLSearchParams(parsed.hash.slice(1)).get('access_token');
+    const refreshToken =
+      parsed.searchParams.get('refresh_token') ??
+      new URLSearchParams(parsed.hash.slice(1)).get('refresh_token');
+    const oauthError = parsed.searchParams.get('error');
+
+    if (oauthError) {
+      const description =
+        parsed.searchParams.get('error_description') ?? oauthError;
+      throw new Error(description);
+    }
+
+    if (!code && !accessToken) {
+      throw new Error('Google sign in failed: no credentials in callback URL.');
+    }
+
+    // 5. Exchange the code / tokens with Supabase to get a session.
+    const params: Record<string, string> = {};
+    if (code) params.code = code;
+    if (accessToken) params.access_token = accessToken;
+    if (refreshToken) params.refresh_token = refreshToken;
+
+    const { data: user, error } = await completeOAuthSignIn(params);
+
+    if (error) throw new Error(error);
+    if (!user) throw new Error('Google sign in failed: no user returned.');
+
+    return user;
+  } finally {
+    // Release any browser resources after the flow completes (or fails).
+    void WebBrowser.coolDownAsync().catch(() => undefined);
   }
-
-  if (result.type !== 'success') {
-    throw new Error('Google sign in did not complete.');
-  }
-
-  // 3. Parse the callback URL to extract the code or tokens.
-  const callbackUrl = result.url;
-  const parsed = new URL(callbackUrl);
-
-  // Supabase PKCE flow returns ?code=...
-  // Implicit flow returns #access_token=...&refresh_token=...
-  const code = parsed.searchParams.get('code');
-  const accessToken =
-    parsed.searchParams.get('access_token') ??
-    new URLSearchParams(parsed.hash.slice(1)).get('access_token');
-  const refreshToken =
-    parsed.searchParams.get('refresh_token') ??
-    new URLSearchParams(parsed.hash.slice(1)).get('refresh_token');
-  const oauthError = parsed.searchParams.get('error');
-
-  if (oauthError) {
-    const description =
-      parsed.searchParams.get('error_description') ?? oauthError;
-    throw new Error(description);
-  }
-
-  if (!code && !accessToken) {
-    throw new Error('Google sign in failed: no credentials in callback URL.');
-  }
-
-  // 4. Exchange the code / tokens with Supabase to get a session.
-  const params: Record<string, string> = {};
-  if (code) params.code = code;
-  if (accessToken) params.access_token = accessToken;
-  if (refreshToken) params.refresh_token = refreshToken;
-
-  const { data: user, error } = await completeOAuthSignIn(params);
-
-  if (error) throw new Error(error);
-  if (!user) throw new Error('Google sign in failed: no user returned.');
-
-  return user;
 }
 
 export function useAuth(): UseAuthReturn {
@@ -338,17 +378,15 @@ export function useSignIn(): UseSignInReturn {
       return data;
     },
     onSuccess: (user) => {
-      // Must use setSession (not setUser) so authStore.session is populated.
-      // getAuthHeader() reads session.access_token — if session is null,
-      // every authenticated API call (wishlist, profile update) silently fails.
+      // Set user immediately so the auth guard in _layout.tsx fires right away
+      // and routes to the home screen without waiting for the async getSession call.
+      setUser(user);
+      // Upgrade to full session in the background so all authenticated API calls
+      // (wishlist, profile updates, etc.) have a valid Bearer token.
       void supabase.auth.getSession().then(({ data: { session } }) => {
         if (session) {
           setSession(user, session);
-        } else {
-          setUser(user);
         }
-        // FIXED: 1 - Successful email login redirects by public.users.role.
-        router.replace(getHomeRouteForRole(user.role));
       });
       hydrateWishlist(setWishlist);
     },
@@ -357,14 +395,12 @@ export function useSignIn(): UseSignInReturn {
   const googleMutation = useMutation<User, Error, void>({
     mutationFn: runGoogleOAuth,
     onSuccess: (user) => {
+      // Set user immediately so the auth guard navigates without delay.
+      setUser(user);
       void supabase.auth.getSession().then(({ data: { session } }) => {
         if (session) {
           setSession(user, session);
-        } else {
-          setUser(user);
         }
-        // FIXED: 1 - Successful OAuth login redirects by public.users.role.
-        router.replace(getHomeRouteForRole(user.role));
       });
       hydrateWishlist(setWishlist);
     },

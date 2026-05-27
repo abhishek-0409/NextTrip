@@ -3,6 +3,7 @@
  * @description Admin package moderation list.
  */
 
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -54,7 +55,7 @@ function PackageRow({
         <Image source={{ uri: pkg.cover_image }} style={styles.thumb} />
       ) : (
         <View style={[styles.thumb, styles.thumbPlaceholder]}>
-          <Text style={styles.thumbEmoji}>🖼️</Text>
+          <MaterialCommunityIcons name="image-off-outline" size={22} color={Colors.textLight} />
         </View>
       )}
       <View style={styles.rowMain}>
@@ -65,7 +66,7 @@ function PackageRow({
           {pkg.company.name} · {pkg.location.city}, {pkg.location.state}
         </Text>
         <Text style={styles.rowMeta} numberOfLines={1}>
-          {pkg.duration_days}D / {pkg.duration_nights}N · ⭐ {pkg.avg_rating.toFixed(1)} · {pkg.total_bookings} bookings
+          {pkg.duration_days}D / {pkg.duration_nights}N · ★ {pkg.avg_rating.toFixed(1)} · {pkg.total_bookings} bookings
         </Text>
       </View>
       <View style={styles.rowRight}>
@@ -148,10 +149,13 @@ export default function AdminPackagesScreen(): React.ReactElement {
           data={items}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <PackageRow pkg={item} />}
+          windowSize={5}
+          maxToRenderPerBatch={10}
+          removeClippedSubviews
           ItemSeparatorComponent={ItemSeparator}
           ListEmptyComponent={
             <EmptyState
-              icon="📦"
+              icon="—"
               title="No packages found"
               subtitle={
                 search ? 'Try a different search term.' : 'No packages match the current filter.'
@@ -206,7 +210,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  thumbEmoji: { fontSize: 22 },
   rowMain: { flex: 1, minWidth: 0, gap: 2 },
   rowTitle: {
     fontSize: 14,

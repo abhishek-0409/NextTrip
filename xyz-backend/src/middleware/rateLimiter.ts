@@ -41,3 +41,14 @@ export const strictLimiter = rateLimit({
   windowMs,
   limit: 20,
 });
+
+/**
+ * Read limiter for GET endpoints — generous but still bounded.
+ * Fixed at 120 requests per minute regardless of the default window env var,
+ * so scraping the entire database via pagination is prevented.
+ */
+export const readLimiter = rateLimit({
+  ...baseOptions,
+  windowMs: 60 * 1000, // 1 minute
+  limit: 120,
+});

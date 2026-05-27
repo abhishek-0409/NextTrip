@@ -3,6 +3,7 @@
  * @description Admin package detail — approve, reject, feature, bestseller.
  */
 
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -89,7 +90,7 @@ export default function AdminPackageDetailScreen(): React.ReactElement {
         {pkg.cover_image ? (
           <Image source={{ uri: pkg.cover_image }} style={styles.cover} />
         ) : (
-          <View style={styles.coverPlaceholder}><Text style={styles.coverEmoji}>🖼️</Text></View>
+          <View style={styles.coverPlaceholder}><MaterialCommunityIcons name="image-off-outline" size={40} color={Colors.textLight} /></View>
         )}
 
         {/* Status */}
@@ -97,8 +98,8 @@ export default function AdminPackageDetailScreen(): React.ReactElement {
           <View style={[styles.badge, { backgroundColor: `${statusColor}18` }]}>
             <Text style={[styles.badgeText, { color: statusColor }]}>{pkg.status.toUpperCase()}</Text>
           </View>
-          {pkg.is_featured && <View style={[styles.badge, { backgroundColor: Colors.accentLight }]}><Text style={[styles.badgeText, { color: Colors.accent }]}>⭐ Featured</Text></View>}
-          {pkg.is_bestseller && <View style={[styles.badge, { backgroundColor: Colors.accentLight }]}><Text style={[styles.badgeText, { color: Colors.accent }]}>🏆 Bestseller</Text></View>}
+          {pkg.is_featured && <View style={[styles.badge, { backgroundColor: Colors.accentLight }]}><Text style={[styles.badgeText, { color: Colors.accent }]}>★ Featured</Text></View>}
+          {pkg.is_bestseller && <View style={[styles.badge, { backgroundColor: Colors.accentLight }]}><Text style={[styles.badgeText, { color: Colors.accent }]}>✦ Bestseller</Text></View>}
         </View>
 
         {/* Info */}
@@ -110,7 +111,7 @@ export default function AdminPackageDetailScreen(): React.ReactElement {
           <InfoRow label="Category" value={pkg.category.label} />
           <InfoRow label="Duration" value={`${pkg.duration_days}D / ${pkg.duration_nights}N`} />
           <InfoRow label="Group" value={`${pkg.min_group_size}–${pkg.max_group_size} pax`} />
-          <InfoRow label="Rating" value={`⭐ ${pkg.avg_rating.toFixed(1)} (${pkg.review_count} reviews)`} />
+          <InfoRow label="Rating" value={`★ ${pkg.avg_rating.toFixed(1)} (${pkg.review_count} reviews)`} />
           <InfoRow label="Bookings" value={String(pkg.total_bookings)} />
           <InfoRow label="Created" value={new Date(pkg.created_at).toLocaleDateString('en-IN')} />
         </View>
@@ -211,7 +212,6 @@ const styles = StyleSheet.create({
   content: { padding: 16, paddingBottom: 32, gap: 16 },
   cover: { width: '100%', height: 180, borderRadius: 12 },
   coverPlaceholder: { width: '100%', height: 180, borderRadius: 12, backgroundColor: Colors.borderLight, alignItems: 'center', justifyContent: 'center' },
-  coverEmoji: { fontSize: 40 },
   statusRow: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
   badge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
   badgeText: { fontWeight: '700', fontSize: 11 },

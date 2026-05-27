@@ -275,61 +275,86 @@ export default function ProfileScreen(): React.ReactElement {
             </>
           ) : (
             <View style={styles.editSection}>
-              <Text style={styles.editTitle}>Edit Profile</Text>
-              <Avatar
-                uri={user?.avatar_url}
-                name={displayName}
-                size={80}
-                onPress={() => void uploadAvatar()}
-                loading={uploading}
-              />
-              <Text style={styles.avatarHint}>Tap avatar to change photo</Text>
+              {/* ── Header row ──────────────────────────────── */}
+              <View style={styles.editHeader}>
+                <TouchableOpacity
+                  style={styles.editBackBtn}
+                  onPress={handleCancel}
+                  disabled={isSaving}
+                  accessibilityRole="button"
+                  accessibilityLabel="Go back"
+                >
+                  <Ionicons name="arrow-back" size={22} color={Colors.navy} />
+                </TouchableOpacity>
+                <Text style={styles.editTitle}>Edit Profile</Text>
+                <View style={styles.editHeaderSpacer} />
+              </View>
 
-              <Input
-                label="Full Name"
-                value={form.full_name}
-                onChangeText={(value) => setForm((current) => ({ ...current, full_name: value }))}
-                placeholder="Your full name"
-                autoCapitalize="words"
-                autoCorrect={false}
-                editable={!isSaving}
-              />
-              <Input
-                label="Phone"
-                value={form.phone}
-                onChangeText={(value) => setForm((current) => ({ ...current, phone: value }))}
-                placeholder="+91 98765 43210"
-                keyboardType="phone-pad"
-                editable={!isSaving}
-              />
-              <Input
-                label="City"
-                value={form.city}
-                onChangeText={(value) => setForm((current) => ({ ...current, city: value }))}
-                placeholder="e.g. Mumbai"
-                autoCapitalize="words"
-                editable={!isSaving}
-              />
-              <StateSelector
-                value={form.state}
-                onChange={(value) => setForm((current) => ({ ...current, state: value }))}
-                disabled={isSaving}
-              />
+              {/* ── Avatar card ─────────────────────────────── */}
+              <View style={[styles.avatarCard, Shadows.soft]}>
+                <Avatar
+                  uri={user?.avatar_url}
+                  name={displayName}
+                  size={84}
+                  onPress={() => void uploadAvatar()}
+                  loading={uploading}
+                />
+                <Text style={styles.avatarHint}>Tap photo to update</Text>
+              </View>
 
-              <Button
-                label="Save Changes"
-                onPress={handleSave}
-                loading={isSaving}
-                fullWidth
-                style={styles.actionButton}
-              />
-              <Button
-                label="Cancel"
-                variant="outline"
-                onPress={handleCancel}
-                disabled={isSaving}
-                fullWidth
-              />
+              {/* ── Form fields ─────────────────────────────── */}
+              <View style={styles.editForm}>
+                <Input
+                  label="Full Name"
+                  value={form.full_name}
+                  onChangeText={(value) => setForm((current) => ({ ...current, full_name: value }))}
+                  placeholder="Your full name"
+                  autoCapitalize="words"
+                  autoCorrect={false}
+                  editable={!isSaving}
+                  leftIcon={<Ionicons name="person-outline" size={18} color={Colors.primary} />}
+                />
+                <Input
+                  label="Phone"
+                  value={form.phone}
+                  onChangeText={(value) => setForm((current) => ({ ...current, phone: value }))}
+                  placeholder="+91 98765 43210"
+                  keyboardType="phone-pad"
+                  editable={!isSaving}
+                  leftIcon={<Ionicons name="call-outline" size={18} color={Colors.primary} />}
+                />
+                <Input
+                  label="City"
+                  value={form.city}
+                  onChangeText={(value) => setForm((current) => ({ ...current, city: value }))}
+                  placeholder="e.g. Mumbai"
+                  autoCapitalize="words"
+                  editable={!isSaving}
+                  leftIcon={<Ionicons name="business-outline" size={18} color={Colors.primary} />}
+                />
+                <StateSelector
+                  value={form.state}
+                  onChange={(value) => setForm((current) => ({ ...current, state: value }))}
+                  disabled={isSaving}
+                />
+
+                {/* ── Action buttons ────────────────────────── */}
+                <View style={styles.editActions}>
+                  <Button
+                    label="Save Changes"
+                    onPress={handleSave}
+                    loading={isSaving}
+                    fullWidth
+                  />
+                  <Button
+                    label="Discard Changes"
+                    variant="outline"
+                    onPress={handleCancel}
+                    disabled={isSaving}
+                    fullWidth
+                  />
+                </View>
+              </View>
             </View>
           )}
         </ScrollView>
@@ -431,25 +456,60 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
   },
+  // ── Edit profile section ──────────────────────────────────────────────────
   editSection: {
+    // No alignItems here — children must stretch to full width naturally.
+  },
+  editHeader: {
     alignItems: 'center',
-    padding: 20,
+    flexDirection: 'row',
+    paddingBottom: 4,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+  },
+  editBackBtn: {
+    alignItems: 'center',
+    borderRadius: 20,
+    height: 40,
+    justifyContent: 'center',
+    width: 40,
   },
   editTitle: {
-    alignSelf: 'stretch',
     color: Colors.navy,
-    fontSize: 24,
+    flex: 1,
+    fontSize: 20,
     fontWeight: '800',
-    marginBottom: 20,
+    textAlign: 'center',
+  },
+  // Balances the back button so the title stays visually centred.
+  editHeaderSpacer: {
+    width: 40,
+  },
+  avatarCard: {
+    alignItems: 'center',
+    backgroundColor: Colors.surface,
+    borderRadius: 20,
+    marginHorizontal: 20,
+    marginBottom: 16,
+    marginTop: 12,
+    paddingVertical: 24,
   },
   avatarHint: {
     color: Colors.textSecondary,
-    fontSize: 13,
-    marginBottom: 20,
+    fontSize: 12,
     marginTop: 10,
   },
+  editForm: {
+    paddingHorizontal: 20,
+    paddingBottom: 8,
+  },
+  editActions: {
+    gap: 12,
+    marginTop: 8,
+    paddingBottom: 32,
+  },
+  // ── State selector ────────────────────────────────────────────────────────
   stateSelectorContainer: {
-    alignSelf: 'stretch',
     marginBottom: 16,
   },
   stateSelectorLabel: {
@@ -483,8 +543,5 @@ const styles = StyleSheet.create({
   stateChipTextSelected: {
     color: Colors.textWhite,
     fontWeight: '700',
-  },
-  actionButton: {
-    marginBottom: 12,
   },
 });

@@ -64,9 +64,10 @@ function AppLayout(): React.ReactElement {
     if (isLoading) return;
 
     const isInAuthGroup = rootSegment === '(auth)';
-    // FIXED: 1 - Treat all role app groups as protected shells.
+    // Treat all role app groups as protected shells.
+    // (admin) was removed from this app; admins should use xyz-admin-app.
     const isInProtectedGroup =
-      rootSegment === '(tabs)' || rootSegment === '(vendor)' || rootSegment === '(admin)';
+      rootSegment === '(tabs)' || rootSegment === '(vendor)';
 
     if (user && isInAuthGroup) {
       // Logged in while on an auth screen — send to the main app.
@@ -157,6 +158,7 @@ function AppLayout(): React.ReactElement {
         <Stack.Screen name="review" />
         <Stack.Screen name="compare" />
         <Stack.Screen name="notifications" />
+        <Stack.Screen name="category/[slug]" />
       </Stack>
     </>
   );

@@ -3,6 +3,7 @@
  * @description Admin location CRUD — create, edit, toggle popular/active, delete.
  */
 
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -167,7 +168,7 @@ function LocationRow({
   return (
     <View style={styles.row}>
       <View style={styles.rowIconWrap}>
-        <Text style={styles.rowIconText}>📍</Text>
+        <MaterialCommunityIcons name="map-marker" size={18} color={Colors.primary} />
       </View>
       <View style={styles.rowMeta}>
         <Text style={styles.rowCity}>{loc.city}</Text>
@@ -204,19 +205,14 @@ export default function AdminLocationsScreen(): React.ReactElement {
   const [initialForm, setInitialForm] = useState<FormState>(defaultForm);
   const [search, setSearch] = useState('');
 
-  const { data, isLoading, isError, refetch } = useAdminLocations({ limit: 100 });
+  const { data, isLoading, isError, refetch } = useAdminLocations({
+    search: search.trim() || undefined,
+  });
   const create = useCreateLocation();
   const update = useUpdateLocation();
   const del = useDeleteLocation();
 
-  const locations = data?.items ?? [];
-  const filtered = search.trim()
-    ? locations.filter(
-        (l) =>
-          l.city.toLowerCase().includes(search.toLowerCase()) ||
-          l.state.toLowerCase().includes(search.toLowerCase()),
-      )
-    : locations;
+  const filtered = data?.items ?? [];
 
   const openCreate = () => {
     setMode('create');
@@ -331,6 +327,9 @@ export default function AdminLocationsScreen(): React.ReactElement {
               onDelete={() => handleDelete(item)}
             />
           )}
+          windowSize={5}
+          maxToRenderPerBatch={10}
+          removeClippedSubviews
           ListEmptyComponent={
             <View style={styles.center}>
               <Text style={styles.emptyText}>
@@ -339,8 +338,8 @@ export default function AdminLocationsScreen(): React.ReactElement {
             </View>
           }
           ListFooterComponent={
-            locations.length > 0 ? (
-              <Text style={styles.countText}>{locations.length} locations total</Text>
+            (data?.total ?? 0) > 0 ? (
+              <Text style={styles.countText}>{data?.total ?? filtered.length} locations total</Text>
             ) : null
           }
           contentContainerStyle={{ flexGrow: 1 }}
@@ -408,7 +407,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  rowIconText: { fontSize: 18 },
+  // rowIconText removed — icon now rendered by MaterialCommunityIcons
   rowMeta: { flex: 1, gap: 2 },
   rowCity: { fontSize: 14, fontWeight: '600', color: Colors.text },
   rowState: { fontSize: 12, color: Colors.textSecondary },

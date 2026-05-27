@@ -287,10 +287,9 @@ export default function HomeScreen(): React.ReactElement {
       router.push('/(tabs)/search');
       return;
     }
-    router.push({
-      pathname: '/(tabs)/search',
-      params: { category: label.toLowerCase() },
-    });
+    // Navigate to the dedicated category screen — no search bar, no recent
+    // searches, just a clean package listing filtered by this category.
+    router.push(`/category/${label.toLowerCase()}`);
   }, []);
 
   const renderCategory = useCallback(

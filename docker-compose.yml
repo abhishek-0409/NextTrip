@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./xyz-backend
+      dockerfile: Dockerfile
+    container_name: xyz-backend
+    restart: unless-stopped
+
+    # Load environment variables from the .env file next to docker-compose.yml.
+    # Copy xyz-backend/.env.example → .env and fill in real values before running.
+    env_file:
+      - ./xyz-backend/.env
+
+    ports:
+      - "${PORT:-3000}:3000"
+
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+    # Do not run as root inside the container (Dockerfile switches to appuser).
+    # security_opt: ["no-new-privileges:true"]

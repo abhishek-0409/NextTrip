@@ -1,6 +1,7 @@
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
 // FIXED: 4 - Public category reads use the clearly named anon client.
 import { supabasePublic } from '../lib/supabase';
+import { logger } from '../utils/logger';
 import type { Category } from '../types';
 
 const isRecord = (value: unknown): value is Record<string, unknown> => {
@@ -38,7 +39,7 @@ const readBoolean = (record: Record<string, unknown>, key: string): boolean => {
 };
 
 const throwDatabaseError = (operation: string, dbError: unknown): never => {
-  console.error(`[categoryService.${operation}]`, dbError);
+  logger.error({ err: dbError, op: `categoryService.${operation}` }, 'DB error');
   throw new AppError(ERROR_MESSAGES.DATABASE_ERROR, 500);
 };
 

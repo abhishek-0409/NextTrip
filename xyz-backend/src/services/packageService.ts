@@ -1,6 +1,7 @@
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
 // FIXED: 4 - Public package discovery uses the clearly named anon client.
 import { supabasePublic } from '../lib/supabase';
+import { logger } from '../utils/logger';
 import type {
   Badge,
   Category,
@@ -110,7 +111,7 @@ const getEffectivePrice = (pricing: ListPricing): number => {
 };
 
 const throwDatabaseError = (operation: string, dbError: unknown): never => {
-  console.error(`[packageService.${operation}]`, dbError);
+  logger.error({ err: dbError, op: `packageService.${operation}` }, 'DB error');
   throw new AppError(ERROR_MESSAGES.DATABASE_ERROR, 500);
 };
 

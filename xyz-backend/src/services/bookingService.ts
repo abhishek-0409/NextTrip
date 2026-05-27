@@ -13,6 +13,7 @@ import { AppError, ERROR_MESSAGES } from '../constants/errors';
 // FIXED: 4 - Booking and payment workflows use the explicitly named admin client.
 import { supabaseAdmin } from '../lib/supabase';
 import { createNotification } from './notificationService';
+import { logger } from '../utils/logger';
 import type {
   Booking,
   BookingSummary,
@@ -89,7 +90,7 @@ const readBoolean = (
 };
 
 const throwDatabaseError = (operation: string, dbError: unknown): never => {
-  console.error(`[bookingService.${operation}]`, dbError);
+  logger.error({ err: dbError, op: `bookingService.${operation}` }, 'DB error');
   throw new AppError(ERROR_MESSAGES.DATABASE_ERROR, 500);
 };
 
@@ -145,7 +146,7 @@ const emitPaymentNotifications = async ({
 
   results.forEach((result) => {
     if (result.status === 'rejected') {
-      console.error('[bookingService.emitPaymentNotifications]', result.reason);
+      logger.error({ reason: result.reason }, 'emitPaymentNotifications: notification failed');
     }
   });
 };
@@ -537,7 +538,7 @@ export async function confirmMockPayment(
 
   // Payment record failure is non-fatal — log and continue
   if (paymentError !== null) {
-    console.error('[bookingService.confirmMockPayment.payment]', paymentError);
+    logger.error({ err: paymentError }, 'confirmMockPayment: failed to insert payment record');
   }
 
   await emitPaymentNotifications({
@@ -678,7 +679,7 @@ export async function getBookingById(
       .maybeSingle();
 
     if (coverImageError !== null) {
-      console.error('[bookingService.getBookingById.coverImage]', coverImageError);
+      logger.error({ err: coverImageError }, 'getBookingById: failed to fetch cover image');
     } else {
       coverImage = readNullableString(toRecord(coverImageData), 'url');
     }

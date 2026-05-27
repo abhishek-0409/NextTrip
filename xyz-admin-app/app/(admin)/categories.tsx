@@ -207,6 +207,9 @@ export default function AdminCategoriesScreen(): React.ReactElement {
           renderItem={({ item }) => (
             <CategoryRow cat={item} onEdit={() => openEdit(item)} onDelete={() => handleDelete(item)} />
           )}
+          windowSize={5}
+          maxToRenderPerBatch={10}
+          removeClippedSubviews
           ListEmptyComponent={<View style={styles.center}><Text style={styles.emptyText}>No categories yet</Text></View>}
           contentContainerStyle={{ flexGrow: 1 }}
         />

@@ -11,6 +11,7 @@
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
 // FIXED: 4 - Review publishing uses the explicitly named backend service-role client.
 import { supabaseAdmin } from '../lib/supabase';
+import { logger } from '../utils/logger';
 import type {
   CreateReviewInput,
   PaginatedResponse,
@@ -77,7 +78,7 @@ const readBoolean = (
 };
 
 const throwDatabaseError = (operation: string, dbError: unknown): never => {
-  console.error(`[reviewService.${operation}]`, dbError);
+  logger.error({ err: dbError, op: `reviewService.${operation}` }, 'DB error');
   throw new AppError(ERROR_MESSAGES.DATABASE_ERROR, 500);
 };
 

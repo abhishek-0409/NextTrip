@@ -103,6 +103,9 @@ export default function AdminAuditLogsScreen(): React.ReactElement {
         data={logs}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <AuditLogItem log={item} />}
+        windowSize={5}
+        maxToRenderPerBatch={10}
+        removeClippedSubviews
         refreshControl={
           <RefreshControl
             refreshing={isFetching && !isLoading}

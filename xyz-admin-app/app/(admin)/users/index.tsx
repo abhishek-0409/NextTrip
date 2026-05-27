@@ -120,6 +120,9 @@ export default function AdminUsersScreen(): React.ReactElement {
         data={items}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <UserRow user={item} />}
+        windowSize={5}
+        maxToRenderPerBatch={10}
+        removeClippedSubviews
         ItemSeparatorComponent={ItemSeparator}
         ListEmptyComponent={
           <EmptyState

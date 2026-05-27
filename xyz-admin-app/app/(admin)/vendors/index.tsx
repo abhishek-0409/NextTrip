@@ -65,7 +65,7 @@ function VendorRow({ vendor }: { vendor: AdminVendor }): React.ReactElement {
           {vendor.owner?.full_name ?? vendor.owner?.email ?? '—'}
         </Text>
         <Text style={styles.rowMeta} numberOfLines={1}>
-          {vendor.total_packages} packages · ⭐ {vendor.avg_rating.toFixed(1)} ({vendor.total_reviews})
+          {vendor.total_packages} packages · ★ {vendor.avg_rating.toFixed(1)} ({vendor.total_reviews})
         </Text>
       </View>
       <View style={styles.rowRight}>
@@ -148,10 +148,13 @@ export default function AdminVendorsScreen(): React.ReactElement {
           data={items}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <VendorRow vendor={item} />}
+          windowSize={5}
+          maxToRenderPerBatch={10}
+          removeClippedSubviews
           ItemSeparatorComponent={ItemSeparator}
           ListEmptyComponent={
             <EmptyState
-              icon="🏢"
+              icon="—"
               title="No vendors found"
               subtitle={
                 search

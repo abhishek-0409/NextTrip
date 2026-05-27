@@ -8,9 +8,17 @@
  * - Admin payout dashboard aggregates
  */
 
-import { AppError, ERROR_MESSAGES } from '../constants/errors';
+import { AppError } from '../constants/errors';
 import { supabaseAdmin } from '../lib/supabase';
 import type { PaginatedResponse } from '../types';
+import {
+  isRecord,
+  toRecord,
+  readString,
+  readNullableString,
+  readNumber,
+  throwDb,
+} from '../utils/dbHelpers';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -49,34 +57,7 @@ export interface VendorPayout {
   company?: { name: string; logo_url: string | null };
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-const isRecord = (v: unknown): v is Record<string, unknown> =>
-  typeof v === 'object' && v !== null && !Array.isArray(v);
-
-const toRecord = (v: unknown): Record<string, unknown> =>
-  isRecord(v) ? v : Array.isArray(v) && isRecord(v[0]) ? (v[0] as Record<string, unknown>) : {};
-
-const readString = (r: Record<string, unknown>, k: string, fb = ''): string =>
-  typeof r[k] === 'string' ? (r[k] as string) : fb;
-
-const readNullableString = (r: Record<string, unknown>, k: string): string | null =>
-  typeof r[k] === 'string' ? (r[k] as string) : null;
-
-const readNumber = (r: Record<string, unknown>, k: string, fb = 0): number => {
-  const v = r[k];
-  if (typeof v === 'number' && Number.isFinite(v)) return v;
-  if (typeof v === 'string') {
-    const p = Number.parseFloat(v);
-    return Number.isFinite(p) ? p : fb;
-  }
-  return fb;
-};
-
-const throwDb = (op: string, err: unknown): never => {
-  console.error(`[payoutService.${op}]`, err);
-  throw new AppError(ERROR_MESSAGES.DATABASE_ERROR, 500);
-};
+// ── Mappers ───────────────────────────────────────────────────────────────────
 
 const mapPayout = (row: Record<string, unknown>): VendorPayout => {
   const companyRaw = toRecord(row['company']);
@@ -183,7 +164,7 @@ export async function updatePayoutStatus(
     .update(updatePayload)
     .eq('id', payoutId)
     .select('*, company:companies(name, logo_url)')
-    .single();
+    .maybeSingle();
 
   if (error !== null) throwDb('updatePayoutStatus', error);
   if (data === null) throw new AppError('Payout not found', 404);

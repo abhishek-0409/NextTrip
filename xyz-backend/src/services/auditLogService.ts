@@ -10,8 +10,11 @@
  *  'category', 'location', 'payout', 'payout_account'
  */
 
+import { AppError } from '../constants/errors';
 import { supabaseAdmin } from '../lib/supabase';
 import type { PaginatedResponse } from '../types';
+import { isRecord, toRecord, readString, readNullableString } from '../utils/dbHelpers';
+import { logger } from '../utils/logger';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -37,19 +40,7 @@ export interface LogAdminActionInput {
   metadata?: Record<string, unknown>;
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-const isRecord = (v: unknown): v is Record<string, unknown> =>
-  typeof v === 'object' && v !== null && !Array.isArray(v);
-
-const readString = (r: Record<string, unknown>, k: string, fb = ''): string =>
-  typeof r[k] === 'string' ? (r[k] as string) : fb;
-
-const readNullableString = (r: Record<string, unknown>, k: string): string | null =>
-  typeof r[k] === 'string' ? (r[k] as string) : null;
-
-const toRecord = (v: unknown): Record<string, unknown> =>
-  isRecord(v) ? v : Array.isArray(v) && isRecord(v[0]) ? (v[0] as Record<string, unknown>) : {};
+// ── Mapper ────────────────────────────────────────────────────────────────────
 
 const mapAuditLog = (row: Record<string, unknown>): AuditLog => {
   const adminRaw = toRecord(row['admin']);
@@ -75,27 +66,42 @@ const mapAuditLog = (row: Record<string, unknown>): AuditLog => {
 
 // ── Service functions ─────────────────────────────────────────────────────────
 
+/** Waits for `ms` milliseconds (non-blocking). */
+const delay = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
+
 /**
- * Appends one audit log record.
- * Fire-and-forget safe: errors are logged to console but never thrown
- * so they cannot break the calling mutation.
+ * Appends one audit log record, with up to MAX_RETRIES attempts using
+ * exponential back-off.  Errors are logged but never thrown so they
+ * cannot break the calling mutation.
  */
 export async function logAdminAction(input: LogAdminActionInput): Promise<void> {
-  try {
-    const { error } = await supabaseAdmin.from('admin_audit_logs').insert({
-      actor_user_id: input.adminId,   // actual column name
-      action: input.action,
-      entity_type: input.entityType,
-      entity_id: input.entityId ?? null,
-      metadata: input.metadata ?? {},
-    });
+  const MAX_RETRIES = 3;
+  const payload = {
+    actor_user_id: input.adminId,   // actual DB column name
+    action: input.action,
+    entity_type: input.entityType,
+    entity_id: input.entityId ?? null,
+    metadata: input.metadata ?? {},
+  };
 
-    if (error !== null) {
-      console.error('[auditLogService.logAdminAction]', error);
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const { error } = await supabaseAdmin.from('admin_audit_logs').insert(payload);
+
+      if (error === null) return; // success
+
+      logger.error({ err: error, attempt, maxRetries: MAX_RETRIES }, 'logAdminAction DB error');
+    } catch (err) {
+      logger.error({ err, attempt, maxRetries: MAX_RETRIES }, 'logAdminAction unexpected error');
     }
-  } catch (err) {
-    console.error('[auditLogService.logAdminAction] unexpected error', err);
+
+    if (attempt < MAX_RETRIES) {
+      // Exponential back-off: 200 ms, 400 ms
+      await delay(200 * attempt);
+    }
   }
+
+  logger.error({ payload }, 'logAdminAction all retries exhausted — audit record lost');
 }
 
 /**
@@ -131,8 +137,8 @@ export async function getAuditLogs(params: {
   const { data, error, count } = await query;
 
   if (error !== null) {
-    console.error('[auditLogService.getAuditLogs]', error);
-    throw new Error('Unable to fetch audit logs');
+    logger.error({ err: error }, 'getAuditLogs DB error');
+    throw new AppError('Unable to fetch audit logs', 500);
   }
 
   const rows = (data as unknown[] | null) ?? [];
@@ -153,7 +159,7 @@ export async function getAuditLogs(params: {
       .in('id', actorIds);
 
     if (adminsError !== null) {
-      console.error('[auditLogService.getAuditLogs.admins]', adminsError);
+      logger.error({ err: adminsError }, 'getAuditLogs failed to fetch admin users');
     } else {
       ((admins as unknown[] | null) ?? []).forEach((admin) => {
         const record = toRecord(admin);

@@ -10,3 +10,8 @@ yarn-error.log*
 pnpm-debug.log*
 *.tsbuildinfo
 .DS_Store
+
+# Runtime log files
+*.log
+*.err.log
+*.out.log

@@ -1,6 +1,7 @@
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
 // FIXED: 4 - Authenticated profile writes use the explicitly named admin client.
 import { supabaseAdmin } from '../lib/supabase';
+import { logger } from '../utils/logger';
 // FIXED: 2 - Use the shared vendor role constant instead of hardcoding the role value.
 import { VENDOR_ROLE, type User, type UserRole } from '../types';
 import type { UpdateProfileInput } from '../utils/validation';
@@ -28,7 +29,7 @@ const readRole = (record: Record<string, unknown>): UserRole => {
 };
 
 const throwDatabaseError = (operation: string, dbError: unknown): never => {
-  console.error(`[userService.${operation}]`, dbError);
+  logger.error({ err: dbError, op: `userService.${operation}` }, 'DB error');
   throw new AppError(ERROR_MESSAGES.DATABASE_ERROR, 500);
 };
 

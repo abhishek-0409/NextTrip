@@ -20,13 +20,14 @@ import { cloudinary } from '../lib/cloudinary';
 // FIXED: 4 - Vendor image writes use the explicitly named admin client.
 import { supabaseAdmin } from '../lib/supabase';
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
+import { logger } from '../utils/logger';
 import type { PackageImage } from '../types';
 import type { PackageImageSaveInput } from '../utils/validation';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const throwDatabaseError = (operation: string, dbError: unknown): never => {
-  console.error(`[packageImageService.${operation}]`, dbError);
+  logger.error({ err: dbError, op: `packageImageService.${operation}` }, 'DB error');
   throw new AppError(ERROR_MESSAGES.DATABASE_ERROR, 500);
 };
 
@@ -283,7 +284,7 @@ export const deletePackageImage = async (
     try {
       await cloudinary.uploader.destroy(publicId);
     } catch (err) {
-      console.warn('[packageImageService.deletePackageImage] Cloudinary delete failed:', err);
+      logger.warn({ err }, 'deletePackageImage: Cloudinary delete failed (non-fatal)');
     }
   }
 

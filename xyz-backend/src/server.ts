@@ -1,19 +1,20 @@
 import 'dotenv/config';
 import { app } from './app';
 import { config } from './config';
+import { logger } from './utils/logger';
 
 const port = config.PORT;
 
 const server = app.listen(port, () => {
-  console.log(`NEXTTRP API server listening on port ${port}`);
+  logger.info({ port }, `${config.APP_NAME} server listening`);
 });
 
 const shutdown = (signal: NodeJS.Signals): void => {
-  console.log(`${signal} received. Closing HTTP server.`);
+  logger.info({ signal }, 'Signal received — closing HTTP server');
 
   server.close((error) => {
     if (error !== undefined) {
-      console.error('Error while closing HTTP server', error);
+      logger.error({ err: error }, 'Error while closing HTTP server');
       process.exit(1);
     }
 
@@ -25,11 +26,11 @@ process.on('SIGTERM', shutdown);
 process.on('SIGINT', shutdown);
 
 process.on('unhandledRejection', (reason) => {
-  console.error('Unhandled promise rejection', reason);
+  logger.error({ reason }, 'Unhandled promise rejection');
   process.exit(1);
 });
 
 process.on('uncaughtException', (error) => {
-  console.error('Uncaught exception', error);
+  logger.error({ err: error }, 'Uncaught exception');
   process.exit(1);
 });

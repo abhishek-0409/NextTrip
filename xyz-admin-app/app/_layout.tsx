@@ -11,6 +11,7 @@ import { StatusBar } from 'expo-status-bar';
 import { supabase } from '../lib/supabase';
 import { getMyProfile } from '../lib/api/auth';
 import { useAuthStore } from '../store/authStore';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -20,33 +21,63 @@ const queryClient = new QueryClient({
   },
 });
 
+/** Resolves with the value, or rejects after `ms` milliseconds. */
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(`Timed out after ${ms}ms`)), ms),
+    ),
+  ]);
+}
+
 function AuthBootstrap(): null {
   const { setSession, setLoading, clearUser } = useAuthStore();
 
   useEffect(() => {
-    // Restore session on cold start
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (session) {
-        const profile = await getMyProfile();
-        if (profile?.role === 'admin') {
-          setSession(profile, session);
-          router.replace('/(admin)');
+    // Restore session on cold start — wrapped in try/catch so a slow or
+    // failing network call never leaves the splash screen up forever.
+    const bootstrap = async (): Promise<void> => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (session) {
+          // Give the profile fetch 8 s; on timeout fall through to login.
+          const profile = await withTimeout(getMyProfile(), 8000);
+
+          if (profile?.role === 'admin') {
+            setSession(profile, session);
+            router.replace('/(admin)');
+          } else {
+            // Has a session but is not an admin — sign out and show login.
+            await supabase.auth.signOut();
+            clearUser();
+            router.replace('/(auth)/login');
+          }
         } else {
-          // Has a session but not admin — sign out and show login
-          await supabase.auth.signOut();
-          clearUser();
           router.replace('/(auth)/login');
         }
-      } else {
+      } catch (err) {
+        // Network failure, timeout, invalid/expired refresh token, or unexpected
+        // error — sign out to clear any stale stored session so it doesn't keep
+        // attempting (and failing) on every subsequent cold start.
+        console.warn('[AuthBootstrap] session restore failed, redirecting to login:', err);
+        try { await supabase.auth.signOut(); } catch { /* already signed out */ }
+        clearUser();
         router.replace('/(auth)/login');
+      } finally {
+        setLoading(false);
+        void SplashScreen.hideAsync();
       }
-      setLoading(false);
-      void SplashScreen.hideAsync();
-    });
+    };
 
-    // Listen for auth state changes
+    void bootstrap();
+
+    // Listen for auth state changes (token revocation, sign-out from another tab,
+    // or a failed token refresh — e.g. "Invalid Refresh Token" after server reset).
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_OUT' || !session) {
+      if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESH_FAILED' || !session) {
+        try { await supabase.auth.signOut(); } catch { /* already signed out */ }
         clearUser();
         router.replace('/(auth)/login');
       }
@@ -61,12 +92,16 @@ function AuthBootstrap(): null {
 export default function RootLayout(): React.ReactElement {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthBootstrap />
-      <StatusBar style="dark" />
-      <Stack screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
-        <Stack.Screen name="(auth)" />
-        <Stack.Screen name="(admin)" />
-      </Stack>
+      {/* ErrorBoundary catches any render-time exception from screens/components.
+          Without it, a single bad render leaves the whole app as a blank screen. */}
+      <ErrorBoundary>
+        <AuthBootstrap />
+        <StatusBar style="dark" />
+        <Stack screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
+          <Stack.Screen name="(auth)" />
+          <Stack.Screen name="(admin)" />
+        </Stack>
+      </ErrorBoundary>
     </QueryClientProvider>
   );
 }

@@ -2,6 +2,7 @@ import type { ErrorRequestHandler } from 'express';
 import { ZodError } from 'zod';
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
 import { error as errorResponse, validationError } from '../utils/response';
+import { logger } from '../utils/logger';
 
 const isProduction = (): boolean => process.env.NODE_ENV === 'production';
 
@@ -13,8 +14,7 @@ const formatZodIssues = (err: ZodError): Array<{ path: string; message: string }
 };
 
 const logError = (err: unknown): void => {
-  const timestamp = new Date().toISOString();
-  console.error(`[${timestamp}] Unhandled error`, err);
+  logger.error({ err }, 'Unhandled error');
 };
 
 /**

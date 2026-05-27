@@ -109,6 +109,7 @@ function EmptyState({ tab }: EmptyStateProps): React.ReactElement {
         <Button
           label="Browse Packages"
           onPress={browsePackages}
+          fullWidth
           style={styles.emptyButton}
         />
       ) : null}
@@ -124,7 +125,7 @@ function ErrorState({ onRetry }: { onRetry: () => void }): React.ReactElement {
       </View>
       <Text style={styles.emptyTitle}>Bookings could not be loaded</Text>
       <Text style={styles.errorCopy}>Pull to refresh or try again.</Text>
-      <Button label="Retry" variant="outline" onPress={onRetry} />
+      <Button label="Retry" variant="outline" onPress={onRetry} fullWidth />
     </View>
   );
 }
@@ -141,7 +142,7 @@ function AuthGuard(): React.ReactElement {
           <Ionicons name="lock-closed-outline" size={30} color={Colors.primary} />
         </View>
         <Text style={styles.guardTitle}>Login to view bookings</Text>
-        <Button label="Login" onPress={handleLogin} style={styles.guardButton} />
+        <Button label="Login" onPress={handleLogin} fullWidth style={styles.guardButton} />
       </View>
     </SafeAreaView>
   );
@@ -389,7 +390,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   emptyButton: {
-    minWidth: 180,
+    marginTop: 6,
   },
   errorCopy: {
     color: Colors.textSecondary,

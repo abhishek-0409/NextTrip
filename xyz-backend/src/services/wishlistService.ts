@@ -1,6 +1,7 @@
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
 // FIXED: 4 - Wishlist business logic runs through the trusted backend client.
 import { supabaseAdmin } from '../lib/supabase';
+import { logger } from '../utils/logger';
 import type { PackageListItem } from '../types';
 import { getPackageListItemsByIds } from './packageService';
 
@@ -16,7 +17,7 @@ const readString = (record: Record<string, unknown>, key: string): string => {
 };
 
 const throwDatabaseError = (operation: string, dbError: unknown): never => {
-  console.error(`[wishlistService.${operation}]`, dbError);
+  logger.error({ err: dbError, op: `wishlistService.${operation}` }, 'DB error');
   throw new AppError(ERROR_MESSAGES.DATABASE_ERROR, 500);
 };
 

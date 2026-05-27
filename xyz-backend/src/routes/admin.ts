@@ -20,7 +20,7 @@
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth';
 import { requireRole } from '../middleware/roles';
-import { strictLimiter } from '../middleware/rateLimiter';
+import { strictLimiter, readLimiter } from '../middleware/rateLimiter';
 import {
   getAdminDashboard,
   listUsers,
@@ -56,7 +56,7 @@ import {
 import { getAuditLogs } from '../services/auditLogService';
 import { logAdminAction } from '../services/auditLogService';
 import { listPayouts, updatePayoutStatus } from '../services/payoutService';
-import { success, notFound, validationError } from '../utils/response';
+import { success, notFound, validationError, error as errorResponse } from '../utils/response';
 import { AppError } from '../constants/errors';
 import {
   AdminUuidParamSchema,
@@ -69,11 +69,13 @@ import {
   AdminApprovePackageSchema,
   AdminRejectPackageSchema,
   AdminFeaturePackageSchema,
+  AdminBestsellerPackageSchema,
   AdminListBookingsQuerySchema,
   AdminUpdateBookingStatusSchema,
   AdminListReviewsQuerySchema,
   AdminCreateCategorySchema,
   AdminUpdateCategorySchema,
+  AdminListLocationsQuerySchema,
   AdminCreateLocationSchema,
   AdminUpdateLocationSchema,
   AdminListPayoutsQuerySchema,
@@ -85,6 +87,13 @@ export const adminRouter = Router();
 
 // All admin routes require auth + admin role
 adminRouter.use(requireAuth, requireRole(['admin']));
+
+// Apply a read limiter (120 req/min) to all GET requests in this router.
+// Write operations use strictLimiter applied per-route.
+adminRouter.use((req, res, next) => {
+  if (req.method === 'GET') return readLimiter(req, res, next);
+  return next();
+});
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
@@ -145,18 +154,21 @@ adminRouter.get('/users/:id', async (req, res, next) => {
  */
 adminRouter.patch('/users/:id/role', strictLimiter, async (req, res, next) => {
   try {
+    const adminUser = req.user;
+    if (!adminUser) return errorResponse(res, 'Unauthorized', 401);
+
     const { id } = AdminUuidParamSchema.parse(req.params);
     const parsed = AdminUpdateUserRoleSchema.safeParse(req.body);
     if (!parsed.success) return validationError(res, parsed.error.flatten().fieldErrors);
 
-    if (id === req.user!.id) {
-      return res.status(403).json({ success: false, data: null, error: 'You cannot change your own role' });
+    if (id === adminUser.id) {
+      return errorResponse(res, 'You cannot change your own role', 403);
     }
 
     const user = await updateUserRole(id, parsed.data.role);
 
     void logAdminAction({
-      adminId: req.user!.id,
+      adminId: adminUser.id,
       action: 'update_user_role',
       entityType: 'user',
       entityId: id,
@@ -165,6 +177,10 @@ adminRouter.patch('/users/:id/role', strictLimiter, async (req, res, next) => {
 
     return success(res, user);
   } catch (err) {
+    if (err instanceof AppError && err.statusCode === 404) return notFound(res, 'User');
+    if (err instanceof AppError && err.statusCode === 409) {
+      return errorResponse(res, err.message, 409);
+    }
     return next(err);
   }
 });
@@ -212,6 +228,9 @@ adminRouter.get('/vendors/:id', async (req, res, next) => {
  */
 adminRouter.patch('/vendors/:id/approve', strictLimiter, async (req, res, next) => {
   try {
+    const adminUser = req.user;
+    if (!adminUser) return errorResponse(res, 'Unauthorized', 401);
+
     const { id } = AdminUuidParamSchema.parse(req.params);
     const parsed = AdminApproveVendorSchema.safeParse(req.body);
     if (!parsed.success) return validationError(res, parsed.error.flatten().fieldErrors);
@@ -219,7 +238,7 @@ adminRouter.patch('/vendors/:id/approve', strictLimiter, async (req, res, next) 
     const vendor = await approveVendor(id);
 
     void logAdminAction({
-      adminId: req.user!.id,
+      adminId: adminUser.id,
       action: 'approve_vendor',
       entityType: 'vendor',
       entityId: id,
@@ -238,6 +257,9 @@ adminRouter.patch('/vendors/:id/approve', strictLimiter, async (req, res, next) 
  */
 adminRouter.patch('/vendors/:id/reject', strictLimiter, async (req, res, next) => {
   try {
+    const adminUser = req.user;
+    if (!adminUser) return errorResponse(res, 'Unauthorized', 401);
+
     const { id } = AdminUuidParamSchema.parse(req.params);
     const parsed = AdminRejectVendorSchema.safeParse(req.body);
     if (!parsed.success) return validationError(res, parsed.error.flatten().fieldErrors);
@@ -245,7 +267,7 @@ adminRouter.patch('/vendors/:id/reject', strictLimiter, async (req, res, next) =
     const vendor = await rejectVendor(id, parsed.data.reason);
 
     void logAdminAction({
-      adminId: req.user!.id,
+      adminId: adminUser.id,
       action: 'reject_vendor',
       entityType: 'vendor',
       entityId: id,
@@ -264,11 +286,14 @@ adminRouter.patch('/vendors/:id/reject', strictLimiter, async (req, res, next) =
  */
 adminRouter.patch('/vendors/:id/verify', strictLimiter, async (req, res, next) => {
   try {
+    const adminUser = req.user;
+    if (!adminUser) return errorResponse(res, 'Unauthorized', 401);
+
     const { id } = AdminUuidParamSchema.parse(req.params);
     const vendor = await verifyVendor(id);
 
     void logAdminAction({
-      adminId: req.user!.id,
+      adminId: adminUser.id,
       action: 'verify_vendor',
       entityType: 'vendor',
       entityId: id,
@@ -325,14 +350,17 @@ adminRouter.get('/packages/:id', async (req, res, next) => {
  */
 adminRouter.patch('/packages/:id/approve', strictLimiter, async (req, res, next) => {
   try {
+    const adminUser = req.user;
+    if (!adminUser) return errorResponse(res, 'Unauthorized', 401);
+
     const { id } = AdminUuidParamSchema.parse(req.params);
     const parsed = AdminApprovePackageSchema.safeParse(req.body);
     if (!parsed.success) return validationError(res, parsed.error.flatten().fieldErrors);
 
-    const pkg = await approvePackage(id, req.user!.id, parsed.data.note);
+    const pkg = await approvePackage(id, adminUser.id, parsed.data.note);
 
     void logAdminAction({
-      adminId: req.user!.id,
+      adminId: adminUser.id,
       action: 'approve_package',
       entityType: 'package',
       entityId: id,
@@ -351,14 +379,17 @@ adminRouter.patch('/packages/:id/approve', strictLimiter, async (req, res, next)
  */
 adminRouter.patch('/packages/:id/reject', strictLimiter, async (req, res, next) => {
   try {
+    const adminUser = req.user;
+    if (!adminUser) return errorResponse(res, 'Unauthorized', 401);
+
     const { id } = AdminUuidParamSchema.parse(req.params);
     const parsed = AdminRejectPackageSchema.safeParse(req.body);
     if (!parsed.success) return validationError(res, parsed.error.flatten().fieldErrors);
 
-    const pkg = await rejectPackage(id, req.user!.id, parsed.data.reason);
+    const pkg = await rejectPackage(id, adminUser.id, parsed.data.reason);
 
     void logAdminAction({
-      adminId: req.user!.id,
+      adminId: adminUser.id,
       action: 'reject_package',
       entityType: 'package',
       entityId: id,
@@ -377,6 +408,9 @@ adminRouter.patch('/packages/:id/reject', strictLimiter, async (req, res, next) 
  */
 adminRouter.patch('/packages/:id/feature', strictLimiter, async (req, res, next) => {
   try {
+    const adminUser = req.user;
+    if (!adminUser) return errorResponse(res, 'Unauthorized', 401);
+
     const { id } = AdminUuidParamSchema.parse(req.params);
     const parsed = AdminFeaturePackageSchema.safeParse(req.body);
     if (!parsed.success) return validationError(res, parsed.error.flatten().fieldErrors);
@@ -384,7 +418,7 @@ adminRouter.patch('/packages/:id/feature', strictLimiter, async (req, res, next)
     const pkg = await featurePackage(id, parsed.data.is_featured, parsed.data.is_bestseller);
 
     void logAdminAction({
-      adminId: req.user!.id,
+      adminId: adminUser.id,
       action: parsed.data.is_featured ? 'feature_package' : 'unfeature_package',
       entityType: 'package',
       entityId: id,
@@ -402,15 +436,18 @@ adminRouter.patch('/packages/:id/feature', strictLimiter, async (req, res, next)
  */
 adminRouter.patch('/packages/:id/bestseller', strictLimiter, async (req, res, next) => {
   try {
+    const adminUser = req.user;
+    if (!adminUser) return errorResponse(res, 'Unauthorized', 401);
+
     const { id } = AdminUuidParamSchema.parse(req.params);
-    const parsed = AdminFeaturePackageSchema.safeParse(req.body);
+    const parsed = AdminBestsellerPackageSchema.safeParse(req.body);
     if (!parsed.success) return validationError(res, parsed.error.flatten().fieldErrors);
 
-    const pkg = await setBestsellerPackage(id, parsed.data.is_featured);
+    const pkg = await setBestsellerPackage(id, parsed.data.is_bestseller);
 
     void logAdminAction({
-      adminId: req.user!.id,
-      action: parsed.data.is_featured ? 'set_bestseller' : 'unset_bestseller',
+      adminId: adminUser.id,
+      action: parsed.data.is_bestseller ? 'set_bestseller' : 'unset_bestseller',
       entityType: 'package',
       entityId: id,
     });
@@ -467,14 +504,17 @@ adminRouter.get('/bookings/:id', async (req, res, next) => {
  */
 adminRouter.patch('/bookings/:id/status', strictLimiter, async (req, res, next) => {
   try {
+    const adminUser = req.user;
+    if (!adminUser) return errorResponse(res, 'Unauthorized', 401);
+
     const { id } = AdminUuidParamSchema.parse(req.params);
     const parsed = AdminUpdateBookingStatusSchema.safeParse(req.body);
     if (!parsed.success) return validationError(res, parsed.error.flatten().fieldErrors);
 
-    const booking = await updateBookingStatus(id, parsed.data.status, req.user!.id, parsed.data.note);
+    const booking = await updateBookingStatus(id, parsed.data.status, adminUser.id, parsed.data.note);
 
     void logAdminAction({
-      adminId: req.user!.id,
+      adminId: adminUser.id,
       action: `update_booking_status_${parsed.data.status}`,
       entityType: 'booking',
       entityId: id,
@@ -501,6 +541,7 @@ adminRouter.get('/reviews', async (req, res, next) => {
     const result = await listReviews({
       page: parsed.data.page,
       limit: parsed.data.limit,
+      search: parsed.data.search,
       isPublished: parsed.data.is_published,
       isVerified: parsed.data.is_verified,
       packageId: parsed.data.package_id,
@@ -517,11 +558,14 @@ adminRouter.get('/reviews', async (req, res, next) => {
  */
 adminRouter.patch('/reviews/:id/publish', strictLimiter, async (req, res, next) => {
   try {
+    const adminUser = req.user;
+    if (!adminUser) return errorResponse(res, 'Unauthorized', 401);
+
     const { id } = AdminUuidParamSchema.parse(req.params);
     const review = await publishReview(id);
 
     void logAdminAction({
-      adminId: req.user!.id,
+      adminId: adminUser.id,
       action: 'publish_review',
       entityType: 'review',
       entityId: id,
@@ -539,11 +583,14 @@ adminRouter.patch('/reviews/:id/publish', strictLimiter, async (req, res, next) 
  */
 adminRouter.patch('/reviews/:id/unpublish', strictLimiter, async (req, res, next) => {
   try {
+    const adminUser = req.user;
+    if (!adminUser) return errorResponse(res, 'Unauthorized', 401);
+
     const { id } = AdminUuidParamSchema.parse(req.params);
     const review = await unpublishReview(id);
 
     void logAdminAction({
-      adminId: req.user!.id,
+      adminId: adminUser.id,
       action: 'unpublish_review',
       entityType: 'review',
       entityId: id,
@@ -561,11 +608,14 @@ adminRouter.patch('/reviews/:id/unpublish', strictLimiter, async (req, res, next
  */
 adminRouter.patch('/reviews/:id/verify', strictLimiter, async (req, res, next) => {
   try {
+    const adminUser = req.user;
+    if (!adminUser) return errorResponse(res, 'Unauthorized', 401);
+
     const { id } = AdminUuidParamSchema.parse(req.params);
     const review = await verifyReview(id);
 
     void logAdminAction({
-      adminId: req.user!.id,
+      adminId: adminUser.id,
       action: 'verify_review',
       entityType: 'review',
       entityId: id,
@@ -582,10 +632,13 @@ adminRouter.patch('/reviews/:id/verify', strictLimiter, async (req, res, next) =
 
 /**
  * GET /api/v1/admin/categories
+ * Supports optional ?page and ?limit query params (default: page=1, limit=100, max limit=200).
  */
 adminRouter.get('/categories', async (req, res, next) => {
   try {
-    const categories = await listAllCategories();
+    const page = Math.max(1, Number(req.query['page']) || 1);
+    const limit = Math.min(200, Math.max(1, Number(req.query['limit']) || 100));
+    const categories = await listAllCategories({ page, limit });
     return success(res, categories);
   } catch (err) {
     return next(err);
@@ -597,13 +650,16 @@ adminRouter.get('/categories', async (req, res, next) => {
  */
 adminRouter.post('/categories', strictLimiter, async (req, res, next) => {
   try {
+    const adminUser = req.user;
+    if (!adminUser) return errorResponse(res, 'Unauthorized', 401);
+
     const parsed = AdminCreateCategorySchema.safeParse(req.body);
     if (!parsed.success) return validationError(res, parsed.error.flatten().fieldErrors);
 
     const category = await createCategory(parsed.data);
 
     void logAdminAction({
-      adminId: req.user!.id,
+      adminId: adminUser.id,
       action: 'create_category',
       entityType: 'category',
       entityId: category.id,
@@ -613,7 +669,7 @@ adminRouter.post('/categories', strictLimiter, async (req, res, next) => {
     return success(res, category, 201);
   } catch (err) {
     if (err instanceof AppError && err.statusCode === 409) {
-      return res.status(409).json({ success: false, data: null, error: err.message });
+      return errorResponse(res, err.message, 409);
     }
     return next(err);
   }
@@ -624,6 +680,9 @@ adminRouter.post('/categories', strictLimiter, async (req, res, next) => {
  */
 adminRouter.patch('/categories/:id', strictLimiter, async (req, res, next) => {
   try {
+    const adminUser = req.user;
+    if (!adminUser) return errorResponse(res, 'Unauthorized', 401);
+
     const { id } = AdminUuidParamSchema.parse(req.params);
     const parsed = AdminUpdateCategorySchema.safeParse(req.body);
     if (!parsed.success) return validationError(res, parsed.error.flatten().fieldErrors);
@@ -631,7 +690,7 @@ adminRouter.patch('/categories/:id', strictLimiter, async (req, res, next) => {
     const category = await updateCategory(id, parsed.data);
 
     void logAdminAction({
-      adminId: req.user!.id,
+      adminId: adminUser.id,
       action: 'update_category',
       entityType: 'category',
       entityId: id,
@@ -649,11 +708,14 @@ adminRouter.patch('/categories/:id', strictLimiter, async (req, res, next) => {
  */
 adminRouter.delete('/categories/:id', strictLimiter, async (req, res, next) => {
   try {
+    const adminUser = req.user;
+    if (!adminUser) return errorResponse(res, 'Unauthorized', 401);
+
     const { id } = AdminUuidParamSchema.parse(req.params);
     await deleteCategory(id);
 
     void logAdminAction({
-      adminId: req.user!.id,
+      adminId: adminUser.id,
       action: 'delete_category',
       entityType: 'category',
       entityId: id,
@@ -663,7 +725,7 @@ adminRouter.delete('/categories/:id', strictLimiter, async (req, res, next) => {
   } catch (err) {
     if (err instanceof AppError && err.statusCode === 404) return notFound(res, 'Category');
     if (err instanceof AppError && err.statusCode === 409) {
-      return res.status(409).json({ success: false, data: null, error: err.message });
+      return errorResponse(res, err.message, 409);
     }
     return next(err);
   }
@@ -676,10 +738,14 @@ adminRouter.delete('/categories/:id', strictLimiter, async (req, res, next) => {
  */
 adminRouter.get('/locations', async (req, res, next) => {
   try {
-    const page = Math.max(1, Number(req.query['page']) || 1);
-    const limit = Math.min(100, Math.max(1, Number(req.query['limit']) || 20));
-    const search = typeof req.query['search'] === 'string' ? req.query['search'] : undefined;
-    const result = await listAllLocations({ page, limit, search });
+    const parsed = AdminListLocationsQuerySchema.safeParse(req.query);
+    if (!parsed.success) return validationError(res, parsed.error.flatten().fieldErrors);
+
+    const result = await listAllLocations({
+      page: parsed.data.page,
+      limit: parsed.data.limit,
+      search: parsed.data.search,
+    });
     return success(res, result);
   } catch (err) {
     return next(err);
@@ -691,13 +757,16 @@ adminRouter.get('/locations', async (req, res, next) => {
  */
 adminRouter.post('/locations', strictLimiter, async (req, res, next) => {
   try {
+    const adminUser = req.user;
+    if (!adminUser) return errorResponse(res, 'Unauthorized', 401);
+
     const parsed = AdminCreateLocationSchema.safeParse(req.body);
     if (!parsed.success) return validationError(res, parsed.error.flatten().fieldErrors);
 
     const location = await createLocation(parsed.data);
 
     void logAdminAction({
-      adminId: req.user!.id,
+      adminId: adminUser.id,
       action: 'create_location',
       entityType: 'location',
       entityId: location.id,
@@ -715,6 +784,9 @@ adminRouter.post('/locations', strictLimiter, async (req, res, next) => {
  */
 adminRouter.patch('/locations/:id', strictLimiter, async (req, res, next) => {
   try {
+    const adminUser = req.user;
+    if (!adminUser) return errorResponse(res, 'Unauthorized', 401);
+
     const { id } = AdminUuidParamSchema.parse(req.params);
     const parsed = AdminUpdateLocationSchema.safeParse(req.body);
     if (!parsed.success) return validationError(res, parsed.error.flatten().fieldErrors);
@@ -722,7 +794,7 @@ adminRouter.patch('/locations/:id', strictLimiter, async (req, res, next) => {
     const location = await updateLocation(id, parsed.data);
 
     void logAdminAction({
-      adminId: req.user!.id,
+      adminId: adminUser.id,
       action: 'update_location',
       entityType: 'location',
       entityId: id,
@@ -740,11 +812,14 @@ adminRouter.patch('/locations/:id', strictLimiter, async (req, res, next) => {
  */
 adminRouter.delete('/locations/:id', strictLimiter, async (req, res, next) => {
   try {
+    const adminUser = req.user;
+    if (!adminUser) return errorResponse(res, 'Unauthorized', 401);
+
     const { id } = AdminUuidParamSchema.parse(req.params);
     await deleteLocation(id);
 
     void logAdminAction({
-      adminId: req.user!.id,
+      adminId: adminUser.id,
       action: 'delete_location',
       entityType: 'location',
       entityId: id,
@@ -754,7 +829,7 @@ adminRouter.delete('/locations/:id', strictLimiter, async (req, res, next) => {
   } catch (err) {
     if (err instanceof AppError && err.statusCode === 404) return notFound(res, 'Location');
     if (err instanceof AppError && err.statusCode === 409) {
-      return res.status(409).json({ success: false, data: null, error: err.message });
+      return errorResponse(res, err.message, 409);
     }
     return next(err);
   }
@@ -789,6 +864,9 @@ adminRouter.get('/payouts', async (req, res, next) => {
  */
 adminRouter.patch('/payouts/:id/status', strictLimiter, async (req, res, next) => {
   try {
+    const adminUser = req.user;
+    if (!adminUser) return errorResponse(res, 'Unauthorized', 401);
+
     const { id } = AdminUuidParamSchema.parse(req.params);
     const parsed = AdminUpdatePayoutStatusSchema.safeParse(req.body);
     if (!parsed.success) return validationError(res, parsed.error.flatten().fieldErrors);
@@ -796,7 +874,7 @@ adminRouter.patch('/payouts/:id/status', strictLimiter, async (req, res, next) =
     const payout = await updatePayoutStatus(id, parsed.data.status, parsed.data.gateway_response);
 
     void logAdminAction({
-      adminId: req.user!.id,
+      adminId: adminUser.id,
       action: `update_payout_status_${parsed.data.status}`,
       entityType: 'payout',
       entityId: id,

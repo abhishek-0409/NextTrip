@@ -33,7 +33,7 @@ import type { Category, Location, PaginatedResponse, Review } from '../../types'
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
 export async function getAdminDashboard(): Promise<BackendApiResponse<AdminDashboardMetrics>> {
-  return apiClient.get<AdminDashboardMetrics>('/admin/dashboard', undefined, true);
+  return apiClient.get<AdminDashboardMetrics>('/admin/dashboard');
 }
 
 // ── Users ─────────────────────────────────────────────────────────────────────
@@ -41,7 +41,7 @@ export async function getAdminDashboard(): Promise<BackendApiResponse<AdminDashb
 export async function getAdminUsers(
   params: AdminListParams & { role?: string },
 ): Promise<BackendApiResponse<PaginatedResponse<AdminUser>>> {
-  return apiClient.get<PaginatedResponse<AdminUser>>('/admin/users', params as Record<string, string | number | boolean | null | undefined>, true);
+  return apiClient.get<PaginatedResponse<AdminUser>>('/admin/users', params as Record<string, string | number | boolean | null | undefined>);
 }
 
 export async function getAdminUser(
@@ -49,8 +49,6 @@ export async function getAdminUser(
 ): Promise<BackendApiResponse<AdminUser & { email: string; booking_count: number }>> {
   return apiClient.get<AdminUser & { email: string; booking_count: number }>(
     `/admin/users/${encodeURIComponent(userId)}`,
-    undefined,
-    true,
   );
 }
 
@@ -69,14 +67,13 @@ export async function getAdminVendors(
   return apiClient.get<PaginatedResponse<AdminVendor>>(
     '/admin/vendors',
     params as Record<string, string | number | boolean | null | undefined>,
-    true,
   );
 }
 
 export async function getAdminVendor(
   vendorId: string,
 ): Promise<BackendApiResponse<AdminVendor>> {
-  return apiClient.get<AdminVendor>(`/admin/vendors/${encodeURIComponent(vendorId)}`, undefined, true);
+  return apiClient.get<AdminVendor>(`/admin/vendors/${encodeURIComponent(vendorId)}`);
 }
 
 export async function approveAdminVendor(
@@ -107,7 +104,6 @@ export async function getAdminPackages(
   return apiClient.get<PaginatedResponse<AdminPackageListItem>>(
     '/admin/packages',
     params as Record<string, string | number | boolean | null | undefined>,
-    true,
   );
 }
 
@@ -116,8 +112,6 @@ export async function getAdminPackage(
 ): Promise<BackendApiResponse<AdminPackageListItem>> {
   return apiClient.get<AdminPackageListItem>(
     `/admin/packages/${encodeURIComponent(packageId)}`,
-    undefined,
-    true,
   );
 }
 
@@ -158,7 +152,7 @@ export async function setBestsellerAdminPackage(
 ): Promise<BackendApiResponse<AdminPackageListItem>> {
   return apiClient.patch<AdminPackageListItem>(
     `/admin/packages/${encodeURIComponent(packageId)}/bestseller`,
-    { is_featured: isBestseller },
+    { is_bestseller: isBestseller },
   );
 }
 
@@ -170,7 +164,6 @@ export async function getAdminBookings(
   return apiClient.get<PaginatedResponse<AdminBooking>>(
     '/admin/bookings',
     params as Record<string, string | number | boolean | null | undefined>,
-    true,
   );
 }
 
@@ -179,8 +172,6 @@ export async function getAdminBooking(
 ): Promise<BackendApiResponse<AdminBooking>> {
   return apiClient.get<AdminBooking>(
     `/admin/bookings/${encodeURIComponent(bookingId)}`,
-    undefined,
-    true,
   );
 }
 
@@ -203,7 +194,6 @@ export async function getAdminReviews(
   return apiClient.get<PaginatedResponse<Review>>(
     '/admin/reviews',
     params as Record<string, string | number | boolean | null | undefined>,
-    true,
   );
 }
 
@@ -228,7 +218,7 @@ export async function verifyAdminReview(
 // ── Categories ────────────────────────────────────────────────────────────────
 
 export async function getAdminCategories(): Promise<BackendApiResponse<Category[]>> {
-  return apiClient.get<Category[]>('/admin/categories', undefined, true);
+  return apiClient.get<Category[]>('/admin/categories');
 }
 
 export async function createAdminCategory(input: {
@@ -272,7 +262,6 @@ export async function getAdminLocations(params: {
   return apiClient.get<PaginatedResponse<Location>>(
     '/admin/locations',
     params as Record<string, string | number | boolean | null | undefined>,
-    true,
   );
 }
 
@@ -319,7 +308,6 @@ export async function getAdminPayouts(
   return apiClient.get<PaginatedResponse<AdminPayout>>(
     '/admin/payouts',
     params as Record<string, string | number | boolean | null | undefined>,
-    true,
   );
 }
 
@@ -342,6 +330,5 @@ export async function getAdminAuditLogs(
   return apiClient.get<PaginatedResponse<AdminAuditLog>>(
     '/admin/audit-logs',
     params as Record<string, string | number | boolean | null | undefined>,
-    true,
   );
 }

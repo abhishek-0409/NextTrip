@@ -107,8 +107,16 @@ export const AdminFeaturePackageSchema = z
   })
   .strict();
 
+/** Dedicated schema for the /bestseller endpoint — only accepts is_bestseller. */
+export const AdminBestsellerPackageSchema = z
+  .object({
+    is_bestseller: z.boolean(),
+  })
+  .strict();
+
 export type AdminRejectPackageInput = z.infer<typeof AdminRejectPackageSchema>;
 export type AdminFeaturePackageInput = z.infer<typeof AdminFeaturePackageSchema>;
+export type AdminBestsellerPackageInput = z.infer<typeof AdminBestsellerPackageSchema>;
 
 // ── Admin: Booking management ─────────────────────────────────────────────────
 
@@ -211,6 +219,14 @@ export const AdminUpdateLocationSchema = z
 
 export type AdminCreateLocationInput = z.infer<typeof AdminCreateLocationSchema>;
 export type AdminUpdateLocationInput = z.infer<typeof AdminUpdateLocationSchema>;
+
+// ── Admin: Location list query ────────────────────────────────────────────────
+
+export const AdminListLocationsQuerySchema = paginationSchema.extend({
+  search: optionalTrimmed(1, 120),
+});
+
+export type AdminListLocationsQueryInput = z.infer<typeof AdminListLocationsQuerySchema>;
 
 // ── Admin: Payout management ──────────────────────────────────────────────────
 

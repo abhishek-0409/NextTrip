@@ -134,6 +134,9 @@ export default function AdminReviewsScreen(): React.ReactElement {
               onVerify={() => verify.mutate(item.id, { onError: (e) => Alert.alert('Error', e.message) })}
             />
           )}
+          windowSize={5}
+          maxToRenderPerBatch={10}
+          removeClippedSubviews
           ListEmptyComponent={<View style={styles.center}><Text style={styles.emptyText}>No reviews found</Text></View>}
           ListFooterComponent={data ? <Text style={styles.countText}>{data.total} reviews total</Text> : null}
           contentContainerStyle={{ padding: 12, paddingBottom: 32, flexGrow: 1, gap: 10 }}

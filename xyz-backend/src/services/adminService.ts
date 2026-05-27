@@ -18,6 +18,7 @@
 
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
 import { supabaseAdmin } from '../lib/supabase';
+import { logger } from '../utils/logger';
 import type {
   Category,
   Location,
@@ -32,41 +33,16 @@ import type {
   AdminUpdateCategoryInput,
   AdminUpdateLocationInput,
 } from '../utils/adminValidation';
-
-// ── Safe accessor helpers ─────────────────────────────────────────────────────
-
-const isRecord = (v: unknown): v is Record<string, unknown> =>
-  typeof v === 'object' && v !== null && !Array.isArray(v);
-
-const toRecord = (v: unknown): Record<string, unknown> =>
-  isRecord(v) ? v : Array.isArray(v) && isRecord(v[0]) ? (v[0] as Record<string, unknown>) : {};
-
-const readString = (r: Record<string, unknown>, k: string, fb = ''): string =>
-  typeof r[k] === 'string' ? (r[k] as string) : fb;
-
-const readNullableString = (r: Record<string, unknown>, k: string): string | null =>
-  typeof r[k] === 'string' ? (r[k] as string) : null;
-
-const readNumber = (r: Record<string, unknown>, k: string, fb = 0): number => {
-  const v = r[k];
-  if (typeof v === 'number' && Number.isFinite(v)) return v;
-  if (typeof v === 'string') {
-    const p = Number.parseFloat(v);
-    return Number.isFinite(p) ? p : fb;
-  }
-  return fb;
-};
-
-const readBoolean = (r: Record<string, unknown>, k: string, fb = false): boolean =>
-  typeof r[k] === 'boolean' ? (r[k] as boolean) : fb;
-
-const readArray = (r: Record<string, unknown>, k: string): unknown[] =>
-  Array.isArray(r[k]) ? (r[k] as unknown[]) : [];
-
-const throwDb = (op: string, err: unknown): never => {
-  console.error(`[adminService.${op}]`, err);
-  throw new AppError(ERROR_MESSAGES.DATABASE_ERROR, 500);
-};
+import {
+  isRecord,
+  toRecord,
+  readString,
+  readNullableString,
+  readNumber,
+  readBoolean,
+  readArray,
+  throwDb,
+} from '../utils/dbHelpers';
 
 // ── Mappers ───────────────────────────────────────────────────────────────────
 
@@ -230,65 +206,127 @@ export interface AdminDashboardMetrics {
   pending_payouts: number;
 }
 
-export async function getAdminDashboard(): Promise<AdminDashboardMetrics> {
-  const now = new Date();
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+// ── Dashboard helpers ─────────────────────────────────────────────────────────
 
-  const [
-    usersRes,
-    newUsersRes,
-    vendorsRes,
-    pendingVendorsRes,
-    packagesRes,
-    pendingPackagesRes,
-    activePackagesRes,
-    bookingsRes,
-    bookingsMonthRes,
-    revenueRes,
-    revenueMonthRes,
-    pendingReviewsRes,
-    pendingPayoutsRes,
-  ] = await Promise.all([
-    supabaseAdmin.from('users').select('id', { count: 'exact', head: true }),
-    supabaseAdmin.from('users').select('id', { count: 'exact', head: true }).gte('created_at', monthStart),
-    supabaseAdmin.from('companies').select('id', { count: 'exact', head: true }),
-    supabaseAdmin.from('companies').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-    supabaseAdmin.from('packages').select('id', { count: 'exact', head: true }),
-    supabaseAdmin.from('packages').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-    supabaseAdmin.from('packages').select('id', { count: 'exact', head: true }).eq('status', 'active'),
-    supabaseAdmin.from('bookings').select('id', { count: 'exact', head: true }),
-    supabaseAdmin.from('bookings').select('id', { count: 'exact', head: true }).gte('created_at', monthStart),
-    supabaseAdmin.from('payments').select('amount_paid'),
-    supabaseAdmin.from('payments').select('amount_paid').gte('created_at', monthStart),
-    supabaseAdmin.from('reviews').select('id', { count: 'exact', head: true }).eq('is_published', false),
-    supabaseAdmin.from('vendor_payouts').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+/**
+ * Detects the PostgREST "function not found" error (PGRST202).
+ * This happens when get_admin_dashboard() hasn't been deployed to Supabase yet.
+ */
+function isRpcNotFound(err: unknown): boolean {
+  if (!isRecord(err)) return false;
+  const code = String(err['code'] ?? '');
+  const msg  = String(err['message'] ?? '').toLowerCase();
+  return (
+    code === 'PGRST202' ||
+    msg.includes('could not find the function') ||
+    msg.includes('function') && msg.includes('does not exist')
+  );
+}
+
+/**
+ * Fallback: 11 parallel COUNT queries + 2 PostgREST aggregate selects.
+ * Used automatically when get_admin_dashboard() RPC is not yet deployed.
+ *
+ * To enable the optimised single-query path, run:
+ *   xyz-backend/supabase/get_admin_dashboard.sql  in the Supabase SQL Editor.
+ */
+async function getDashboardFallback(): Promise<AdminDashboardMetrics> {
+  logger.warn(
+    'get_admin_dashboard RPC not found — falling back to parallel queries. ' +
+    'Deploy xyz-backend/supabase/get_admin_dashboard.sql to Supabase to enable the optimised path.',
+  );
+
+  const ms = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
+
+  // ── Count queries (head:true → no row data, just count) ───────────────────
+  const [c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10] = await Promise.all([
+    supabaseAdmin.from('users').select('*', { count: 'exact', head: true }),
+    supabaseAdmin.from('users').select('*', { count: 'exact', head: true }).gte('created_at', ms),
+    supabaseAdmin.from('companies').select('*', { count: 'exact', head: true }),
+    supabaseAdmin.from('companies').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+    supabaseAdmin.from('packages').select('*', { count: 'exact', head: true }),
+    supabaseAdmin.from('packages').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+    supabaseAdmin.from('packages').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+    supabaseAdmin.from('bookings').select('*', { count: 'exact', head: true }),
+    supabaseAdmin.from('bookings').select('*', { count: 'exact', head: true }).gte('created_at', ms),
+    supabaseAdmin.from('reviews').select('*', { count: 'exact', head: true }).eq('is_published', false),
+    supabaseAdmin.from('vendor_payouts').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
   ]);
 
-  const sumRevenue = (rows: unknown[] | null): number =>
-    ((rows as Array<{ amount_paid?: unknown }> | null) ?? []).reduce((acc, row) => {
-      const v = row?.amount_paid;
-      if (typeof v === 'number' && Number.isFinite(v)) return acc + v;
-      if (typeof v === 'string') {
-        const p = Number.parseFloat(v);
-        return acc + (Number.isFinite(p) ? p : 0);
-      }
-      return acc;
-    }, 0);
+  const cnt = (r: { count: number | null }): number => r.count ?? 0;
+
+  // ── Revenue aggregates (PostgREST column alias syntax: total:col.sum()) ────
+  // Returns a single row: { total: "12345.00" }
+  const [revAll, revMonth] = await Promise.all([
+    supabaseAdmin.from('payments').select('total:amount.sum()').maybeSingle(),
+    supabaseAdmin.from('payments').select('total:amount.sum()').gte('created_at', ms).maybeSingle(),
+  ]);
+
+  const sumOf = (r: { data: unknown }): number => {
+    if (!isRecord(r.data)) return 0;
+    const v = r.data['total'];
+    if (typeof v === 'number' && Number.isFinite(v)) return v;
+    if (typeof v === 'string') return Number.parseFloat(v) || 0;
+    return 0;
+  };
 
   return {
-    total_users: usersRes.count ?? 0,
-    new_users_this_month: newUsersRes.count ?? 0,
-    total_vendors: vendorsRes.count ?? 0,
-    pending_vendors: pendingVendorsRes.count ?? 0,
-    total_packages: packagesRes.count ?? 0,
-    pending_packages: pendingPackagesRes.count ?? 0,
-    active_packages: activePackagesRes.count ?? 0,
-    total_bookings: bookingsRes.count ?? 0,
-    bookings_this_month: bookingsMonthRes.count ?? 0,
-    total_revenue: sumRevenue(revenueRes.data),
-    revenue_this_month: sumRevenue(revenueMonthRes.data),
-    pending_reviews: pendingReviewsRes.count ?? 0,
-    pending_payouts: pendingPayoutsRes.count ?? 0,
+    total_users:            cnt(c0),
+    new_users_this_month:   cnt(c1),
+    total_vendors:          cnt(c2),
+    pending_vendors:        cnt(c3),
+    total_packages:         cnt(c4),
+    pending_packages:       cnt(c5),
+    active_packages:        cnt(c6),
+    total_bookings:         cnt(c7),
+    bookings_this_month:    cnt(c8),
+    pending_reviews:        cnt(c9),
+    pending_payouts:        cnt(c10),
+    total_revenue:          sumOf(revAll),
+    revenue_this_month:     sumOf(revMonth),
+  };
+}
+
+// ── Dashboard ─────────────────────────────────────────────────────────────────
+
+export async function getAdminDashboard(): Promise<AdminDashboardMetrics> {
+  // Fast path: single DB round-trip via PL/pgSQL RPC.
+  // SQL: xyz-backend/supabase/get_admin_dashboard.sql (run once in Supabase SQL Editor).
+  const { data, error } = await supabaseAdmin.rpc('get_admin_dashboard');
+
+  if (error !== null) {
+    // If the function hasn't been deployed yet, degrade gracefully.
+    if (isRpcNotFound(error)) return getDashboardFallback();
+    throwDb('getAdminDashboard', error);
+  }
+
+  // RPC returns one jsonb object; parse each field defensively.
+  const row = isRecord(data) ? (data as Record<string, unknown>) : {};
+
+  const num = (key: string): number => {
+    const v = row[key];
+    if (typeof v === 'number' && Number.isFinite(v)) return v;
+    if (typeof v === 'string') {
+      const p = Number.parseFloat(v);
+      return Number.isFinite(p) ? p : 0;
+    }
+    return 0;
+  };
+
+  return {
+    total_users:            num('total_users'),
+    new_users_this_month:   num('new_users_this_month'),
+    total_vendors:          num('total_vendors'),
+    pending_vendors:        num('pending_vendors'),
+    total_packages:         num('total_packages'),
+    pending_packages:       num('pending_packages'),
+    active_packages:        num('active_packages'),
+    total_bookings:         num('total_bookings'),
+    bookings_this_month:    num('bookings_this_month'),
+    total_revenue:          num('total_revenue'),
+    revenue_this_month:     num('revenue_this_month'),
+    pending_reviews:        num('pending_reviews'),
+    pending_payouts:        num('pending_payouts'),
   };
 }
 
@@ -311,8 +349,10 @@ export async function listUsers(params: {
 
   if (params.role) query = query.eq('role', params.role);
   if (params.search) {
+    // Escape ILIKE special characters to prevent logical injection
+    const escaped = params.search.replace(/[%_\\]/g, '\\$&');
     query = query.or(
-      `full_name.ilike.%${params.search}%,phone.ilike.%${params.search}%`,
+      `full_name.ilike.%${escaped}%,phone.ilike.%${escaped}%,email.ilike.%${escaped}%`,
     );
   }
 
@@ -361,12 +401,38 @@ export async function updateUserRole(
   userId: string,
   role: 'traveler' | 'company_owner' | 'admin',
 ): Promise<User> {
+  // Guard: prevent demoting the last admin out of the admin role
+  if (role !== 'admin') {
+    const { data: currentUser, error: lookupErr } = await supabaseAdmin
+      .from('users')
+      .select('role')
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (lookupErr !== null) throwDb('updateUserRole.lookup', lookupErr);
+
+    if (currentUser !== null && (currentUser as Record<string, unknown>)['role'] === 'admin') {
+      const { count, error: countErr } = await supabaseAdmin
+        .from('users')
+        .select('id', { count: 'exact', head: true })
+        .eq('role', 'admin');
+
+      if (countErr !== null) throwDb('updateUserRole.countAdmins', countErr);
+
+      if ((count ?? 0) <= 1) {
+        throw new AppError('Cannot remove the last admin from the system', 409);
+      }
+    }
+  }
+
+  // .maybeSingle() returns null (not an error) when 0 rows are matched,
+  // making the data === null check reachable and correct.
   const { data, error } = await supabaseAdmin
     .from('users')
     .update({ role, updated_at: new Date().toISOString() })
     .eq('id', userId)
     .select()
-    .single();
+    .maybeSingle();
 
   if (error !== null) throwDb('updateUserRole', error);
   if (data === null) throw new AppError('User not found', 404);
@@ -393,7 +459,13 @@ export async function listVendors(params: {
 
   if (params.status) query = query.eq('status', params.status);
   if (params.isVerified !== undefined) query = query.eq('is_verified', params.isVerified);
-  if (params.search) query = query.ilike('name', `%${params.search}%`);
+  if (params.search) {
+    const escaped = params.search.replace(/[%_\\]/g, '\\$&');
+    // Search by company name OR owner's full name / email via the existing users join
+    query = query.or(
+      `name.ilike.%${escaped}%,users.full_name.ilike.%${escaped}%,users.email.ilike.%${escaped}%`,
+    );
+  }
 
   const { data, error, count } = await query;
   if (error !== null) throwDb('listVendors', error);
@@ -427,7 +499,7 @@ export async function approveVendor(vendorId: string): Promise<AdminVendor> {
     .update({ status: 'approved', updated_at: new Date().toISOString() })
     .eq('id', vendorId)
     .select('*, owner:users!owner_id(full_name, email, phone)')
-    .single();
+    .maybeSingle();
 
   if (error !== null) throwDb('approveVendor', error);
   if (data === null) throw new AppError('Vendor not found', 404);
@@ -444,7 +516,7 @@ export async function rejectVendor(vendorId: string, reason: string): Promise<Ad
     } as Record<string, unknown>)
     .eq('id', vendorId)
     .select('*, owner:users!owner_id(full_name, email, phone)')
-    .single();
+    .maybeSingle();
 
   if (error !== null) throwDb('rejectVendor', error);
   if (data === null) throw new AppError('Vendor not found', 404);
@@ -457,7 +529,7 @@ export async function verifyVendor(vendorId: string): Promise<AdminVendor> {
     .update({ is_verified: true, updated_at: new Date().toISOString() })
     .eq('id', vendorId)
     .select('*, owner:users!owner_id(full_name, email, phone)')
-    .single();
+    .maybeSingle();
 
   if (error !== null) throwDb('verifyVendor', error);
   if (data === null) throw new AppError('Vendor not found', 404);
@@ -529,7 +601,10 @@ export async function listPackages(params: {
   if (params.status) query = query.eq('status', params.status);
   if (params.companyId) query = query.eq('company_id', params.companyId);
   if (params.isFeatured !== undefined) query = query.eq('is_featured', params.isFeatured);
-  if (params.search) query = query.ilike('title', `%${params.search}%`);
+  if (params.search) {
+    const escaped = params.search.replace(/[%_\\]/g, '\\$&');
+    query = query.ilike('title', `%${escaped}%`);
+  }
 
   const { data, error, count } = await query;
   if (error !== null) throwDb('listPackages', error);
@@ -582,7 +657,7 @@ async function recordPackageStatusHistory(
     reason: reason ?? null,
   });
   if (error !== null) {
-    console.error('[adminService.recordPackageStatusHistory]', error);
+    logger.error({ err: error, packageId }, 'Failed to record package status history');
   }
 }
 
@@ -644,7 +719,7 @@ export async function featurePackage(
     .update(updatePayload)
     .eq('id', packageId)
     .select()
-    .single();
+    .maybeSingle();
 
   if (error !== null) throwDb('featurePackage', error);
   if (data === null) throw new AppError('Package not found', 404);
@@ -662,6 +737,40 @@ export async function setBestsellerPackage(packageId: string, isBestseller: bool
   if (error !== null) throwDb('setBestsellerPackage', error);
   if (data === null) throw new AppError('Package not found', 404);
   return mapPackage(toRecord(data));
+}
+
+// ── Booking helpers ───────────────────────────────────────────────────────────
+
+/**
+ * Batch-fetches { full_name, email } from public.users by id.
+ *
+ * Used by booking queries because bookings.user_id references auth.users (not
+ * public.users), so PostgREST cannot resolve the join automatically (PGRST200).
+ * We fetch user profile data in a separate query instead.
+ */
+async function fetchUserMap(
+  userIds: string[],
+): Promise<Map<string, { full_name: string | null; email: string }>> {
+  const map = new Map<string, { full_name: string | null; email: string }>();
+  if (userIds.length === 0) return map;
+
+  const { data } = await supabaseAdmin
+    .from('users')
+    .select('id, full_name, email')
+    .in('id', userIds);
+
+  (data as unknown[] | null)?.forEach((u) => {
+    const ur = toRecord(u);
+    const id = readString(ur, 'id');
+    if (id) {
+      map.set(id, {
+        full_name: readNullableString(ur, 'full_name'),
+        email: readString(ur, 'email'),
+      });
+    }
+  });
+
+  return map;
 }
 
 // ── Booking management ────────────────────────────────────────────────────────
@@ -740,13 +849,14 @@ export async function listBookings(params: {
   const from = (params.page - 1) * params.limit;
   const to = from + params.limit - 1;
 
+  // NOTE: bookings.user_id → auth.users (cross-schema), so PostgREST cannot
+  // resolve it as a join (PGRST200). User data is fetched separately below.
   let query = supabaseAdmin
     .from('bookings')
     .select(
       `*,
-       user:users!user_id(full_name, email),
-       package:packages(title, duration_days, location:locations(city, state)),
-       company:companies(name, logo_url)`,
+       package:packages!bookings_package_id_fkey(title, duration_days, location:locations(city, state)),
+       company:companies!bookings_company_id_fkey(name, logo_url)`,
       { count: 'exact' },
     )
     .order('created_at', { ascending: false })
@@ -757,15 +867,31 @@ export async function listBookings(params: {
   if (params.companyId) query = query.eq('company_id', params.companyId);
   if (params.fromDate) query = query.gte('travel_date', params.fromDate);
   if (params.toDate) query = query.lte('travel_date', params.toDate);
-  if (params.search) query = query.ilike('booking_reference', `%${params.search}%`);
+  if (params.search) {
+    const escaped = params.search.replace(/[%_\\]/g, '\\$&');
+    query = query.ilike('booking_reference', `%${escaped}%`);
+  }
 
   const { data, error, count } = await query;
   if (error !== null) throwDb('listBookings', error);
 
   const rows = (data as unknown[] | null) ?? [];
   const total = count ?? 0;
+
+  // Batch-fetch user profiles for all bookings in this page
+  const userIds = [
+    ...new Set(
+      rows.map((r) => readString(toRecord(r), 'user_id')).filter(Boolean),
+    ),
+  ];
+  const userMap = await fetchUserMap(userIds);
+
   return {
-    items: rows.map((r) => mapAdminBooking(toRecord(r))),
+    items: rows.map((r) => {
+      const record = toRecord(r);
+      const userId = readString(record, 'user_id');
+      return mapAdminBooking({ ...record, user: userMap.get(userId) });
+    }),
     total,
     page: params.page,
     limit: params.limit,
@@ -778,16 +904,20 @@ export async function getBookingById(bookingId: string): Promise<AdminBooking> {
     .from('bookings')
     .select(`
       *,
-      user:users!user_id(full_name, email),
-      package:packages(title, duration_days, location:locations(city, state)),
-      company:companies(name, logo_url)
+      package:packages!bookings_package_id_fkey(title, duration_days, location:locations(city, state)),
+      company:companies!bookings_company_id_fkey(name, logo_url)
     `)
     .eq('id', bookingId)
     .maybeSingle();
 
   if (error !== null) throwDb('getBookingById', error);
   if (data === null) throw new AppError('Booking not found', 404);
-  return mapAdminBooking(toRecord(data));
+
+  const record = toRecord(data);
+  const userId = readString(record, 'user_id');
+  const userMap = await fetchUserMap(userId ? [userId] : []);
+
+  return mapAdminBooking({ ...record, user: userMap.get(userId) });
 }
 
 export async function updateBookingStatus(
@@ -804,9 +934,8 @@ export async function updateBookingStatus(
     .eq('id', bookingId)
     .select(`
       *,
-      user:users!user_id(full_name, email),
-      package:packages(title, duration_days, location:locations(city, state)),
-      company:companies(name, logo_url)
+      package:packages!bookings_package_id_fkey(title, duration_days, location:locations(city, state)),
+      company:companies!bookings_company_id_fkey(name, logo_url)
     `)
     .single();
 
@@ -823,9 +952,13 @@ export async function updateBookingStatus(
     changed_by: changedBy,
     reason: note ?? null,
   });
-  if (evtErr !== null) console.error('[adminService.updateBookingStatus.event]', evtErr);
+  if (evtErr !== null) logger.error({ err: evtErr, bookingId }, 'Failed to record booking status event');
 
-  return mapAdminBooking(toRecord(data));
+  const record = toRecord(data);
+  const userId = readString(record, 'user_id');
+  const userMap = await fetchUserMap(userId ? [userId] : []);
+
+  return mapAdminBooking({ ...record, user: userMap.get(userId) });
 }
 
 // ── Review moderation ─────────────────────────────────────────────────────────
@@ -852,6 +985,13 @@ export async function listReviews(params: {
   if (params.isVerified !== undefined) query = query.eq('is_verified', params.isVerified);
   if (params.packageId) query = query.eq('package_id', params.packageId);
   if (params.minRating !== undefined) query = query.gte('overall_rating', params.minRating);
+  if (params.search) {
+    const escaped = params.search.replace(/[%_\\]/g, '\\$&');
+    // Filter on review content (body/title) and the reviewer's name via the joined users table
+    query = query.or(
+      `body.ilike.%${escaped}%,title.ilike.%${escaped}%,users.full_name.ilike.%${escaped}%`,
+    );
+  }
 
   const { data, error, count } = await query;
   if (error !== null) throwDb('listReviews', error);
@@ -873,7 +1013,7 @@ export async function publishReview(reviewId: string): Promise<Review> {
     .update({ is_published: true })
     .eq('id', reviewId)
     .select('*, user:users(full_name, avatar_url)')
-    .single();
+    .maybeSingle();
 
   if (error !== null) throwDb('publishReview', error);
   if (data === null) throw new AppError('Review not found', 404);
@@ -886,7 +1026,7 @@ export async function unpublishReview(reviewId: string): Promise<Review> {
     .update({ is_published: false })
     .eq('id', reviewId)
     .select('*, user:users(full_name, avatar_url)')
-    .single();
+    .maybeSingle();
 
   if (error !== null) throwDb('unpublishReview', error);
   if (data === null) throw new AppError('Review not found', 404);
@@ -899,7 +1039,7 @@ export async function verifyReview(reviewId: string): Promise<Review> {
     .update({ is_verified: true })
     .eq('id', reviewId)
     .select('*, user:users(full_name, avatar_url)')
-    .single();
+    .maybeSingle();
 
   if (error !== null) throwDb('verifyReview', error);
   if (data === null) throw new AppError('Review not found', 404);
@@ -908,14 +1048,33 @@ export async function verifyReview(reviewId: string): Promise<Review> {
 
 // ── Category CRUD ─────────────────────────────────────────────────────────────
 
-export async function listAllCategories(): Promise<Category[]> {
-  const { data, error } = await supabaseAdmin
+export async function listAllCategories(params: {
+  page?: number;
+  limit?: number;
+} = {}): Promise<PaginatedResponse<Category>> {
+  const MAX_LIMIT = 200;
+  const page = params.page ?? 1;
+  const limit = Math.min(params.limit ?? 100, MAX_LIMIT);
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+
+  const { data, error, count } = await supabaseAdmin
     .from('categories')
-    .select('*')
-    .order('display_order', { ascending: true });
+    .select('*', { count: 'exact' })
+    .order('display_order', { ascending: true })
+    .range(from, to);
 
   if (error !== null) throwDb('listAllCategories', error);
-  return ((data as unknown[] | null) ?? []).map((r) => mapCategory(toRecord(r)));
+
+  const rows = (data as unknown[] | null) ?? [];
+  const total = count ?? 0;
+  return {
+    items: rows.map((r) => mapCategory(toRecord(r))),
+    total,
+    page,
+    limit,
+    has_more: from + rows.length < total,
+  };
 }
 
 export async function createCategory(input: AdminCreateCategoryInput): Promise<Category> {
@@ -942,7 +1101,7 @@ export async function updateCategory(
     .update({ ...input, updated_at: new Date().toISOString() } as Record<string, unknown>)
     .eq('id', categoryId)
     .select()
-    .single();
+    .maybeSingle();
 
   if (error !== null) throwDb('updateCategory', error);
   if (data === null) throw new AppError('Category not found', 404);
@@ -974,7 +1133,8 @@ export async function listAllLocations(params: {
     .range(from, to);
 
   if (params.search) {
-    query = query.or(`city.ilike.%${params.search}%,state.ilike.%${params.search}%`);
+    const escaped = params.search.replace(/[%_\\]/g, '\\$&');
+    query = query.or(`city.ilike.%${escaped}%,state.ilike.%${escaped}%`);
   }
 
   const { data, error, count } = await query;
@@ -1009,10 +1169,10 @@ export async function updateLocation(
 ): Promise<Location> {
   const { data, error } = await supabaseAdmin
     .from('locations')
-    .update(input as Record<string, unknown>)
+    .update({ ...input, updated_at: new Date().toISOString() } as Record<string, unknown>)
     .eq('id', locationId)
     .select()
-    .single();
+    .maybeSingle();
 
   if (error !== null) throwDb('updateLocation', error);
   if (data === null) throw new AppError('Location not found', 404);

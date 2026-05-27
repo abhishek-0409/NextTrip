@@ -23,19 +23,20 @@ import { VENDOR_ROLE, type AuthState, type UserRole } from '../types';
 export const selectUserRole = (state: AuthState): UserRole | undefined =>
   state.user?.role;
 
-// FIXED: 1 - Central mapping for post-login and cold-start role redirects.
+// Central mapping for post-login and cold-start role redirects.
+// Admin users should use the dedicated xyz-admin-app, not this consumer app.
+// If an admin somehow lands here, redirect to login so they can sign out.
 export const getHomeRouteForRole = (role: UserRole | null | undefined): Href => {
-  // FIXED: 1 - Future admin/vendor route groups are intentional even before screens exist.
-  if (role === 'admin') return '/(admin)' as Href;
+  if (role === 'admin') return '/(auth)/login' as Href;
   if (role === VENDOR_ROLE) return '/(vendor)' as Href;
   return '/(tabs)';
 };
 
-// FIXED: 1 - Compare current Expo Router segment with the role-specific home group.
+// Compare current Expo Router segment with the role-specific home group.
+// Admin role is no longer served by this consumer app (use xyz-admin-app instead).
 export const getHomeGroupForRole = (
   role: UserRole | null | undefined
-): '(tabs)' | '(vendor)' | '(admin)' => {
-  if (role === 'admin') return '(admin)';
+): '(tabs)' | '(vendor)' => {
   if (role === VENDOR_ROLE) return '(vendor)';
   return '(tabs)';
 };

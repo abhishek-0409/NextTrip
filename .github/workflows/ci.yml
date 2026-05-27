@@ -1,0 +1,127 @@
+name: CI
+
+# Run on every pull request and every push to main.
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  # ── Job 1: Lint ─────────────────────────────────────────────────────────────
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: |
+            xyz-backend/package-lock.json
+            xyz-admin-app/package-lock.json
+
+      - name: Install backend deps
+        working-directory: xyz-backend
+        run: npm ci --frozen-lockfile
+
+      - name: Lint backend
+        working-directory: xyz-backend
+        run: npx eslint "src/**/*.ts" --max-warnings 0
+
+      - name: Install admin-app deps
+        working-directory: xyz-admin-app
+        run: npm ci --frozen-lockfile
+
+      # admin-app uses expo's default TypeScript strict mode; run tsc for
+      # linting since there is no separate eslint config there yet.
+      - name: Check admin-app (tsc as lint proxy)
+        working-directory: xyz-admin-app
+        run: npx tsc --noEmit
+
+  # ── Job 2: Type-check ────────────────────────────────────────────────────────
+  typecheck:
+    name: Type-check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: |
+            xyz-backend/package-lock.json
+            xyz-admin-app/package-lock.json
+
+      - name: Install backend deps
+        working-directory: xyz-backend
+        run: npm ci --frozen-lockfile
+
+      - name: Type-check backend
+        working-directory: xyz-backend
+        run: npx tsc --noEmit
+
+      - name: Install admin-app deps
+        working-directory: xyz-admin-app
+        run: npm ci --frozen-lockfile
+
+      - name: Type-check admin-app
+        working-directory: xyz-admin-app
+        run: npx tsc --noEmit
+
+  # ── Job 3: Build ─────────────────────────────────────────────────────────────
+  build:
+    name: Build backend
+    runs-on: ubuntu-latest
+    # Only run build after type-check passes.
+    needs: [typecheck]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: xyz-backend/package-lock.json
+
+      - name: Install backend deps
+        working-directory: xyz-backend
+        run: npm ci --frozen-lockfile
+
+      - name: Build backend
+        working-directory: xyz-backend
+        run: npm run build
+
+      # Verify the compiled entry-point exists so the Docker stage can always
+      # COPY dist/ without missing-file surprises.
+      - name: Verify dist/server.js exists
+        run: test -f xyz-backend/dist/server.js
+
+  # ── Job 4: Test ──────────────────────────────────────────────────────────────
+  test:
+    name: Test backend
+    runs-on: ubuntu-latest
+    needs: [build]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: xyz-backend/package-lock.json
+
+      - name: Install backend deps
+        working-directory: xyz-backend
+        run: npm ci --frozen-lockfile
+
+      - name: Run tests
+        working-directory: xyz-backend
+        run: npm test

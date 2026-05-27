@@ -108,6 +108,9 @@ export default function AdminBookingsScreen(): React.ReactElement {
         data={items}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <BookingRow booking={item} />}
+        windowSize={5}
+        maxToRenderPerBatch={10}
+        removeClippedSubviews
         ItemSeparatorComponent={ItemSeparator}
         ListEmptyComponent={
           <EmptyState

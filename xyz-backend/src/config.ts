@@ -26,4 +26,5 @@ export const config = {
   NODE_ENV: process.env.NODE_ENV?.trim() || 'development',
   PORT: port,
   API_BASE_URL: normalizeBaseUrl(process.env.API_BASE_URL?.trim() || `http://localhost:${port}`),
+  APP_NAME: process.env.APP_NAME?.trim() || 'API',
 } as const;

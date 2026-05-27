@@ -1,6 +1,7 @@
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
 // FIXED: 4 - Notification writes and user-scoped reads use the backend admin client.
 import { supabaseAdmin } from '../lib/supabase';
+import { logger } from '../utils/logger';
 import type {
   Notification,
   NotificationRelatedType,
@@ -58,7 +59,7 @@ const readRelatedType = (value: unknown): NotificationRelatedType | null => {
 };
 
 const throwDatabaseError = (operation: string, dbError: unknown): never => {
-  console.error(`[notificationService.${operation}]`, dbError);
+  logger.error({ err: dbError, op: `notificationService.${operation}` }, 'DB error');
   throw new AppError(ERROR_MESSAGES.DATABASE_ERROR, 500);
 };
 

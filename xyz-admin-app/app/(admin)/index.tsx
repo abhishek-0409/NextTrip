@@ -3,6 +3,7 @@
  * Admin dashboard with overview metrics, pending queues, and module navigation.
  */
 
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useCallback, useMemo } from 'react';
 import {
@@ -36,6 +37,28 @@ import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 
 const INR = '\u20B9';
 
+// \u2500\u2500 Layout constants \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+/** Minimum width of a pending-queue card in the horizontal scroll strip. */
+const PENDING_CARD_MIN_WIDTH = 210;
+/** Maximum width of a pending-queue card in the horizontal scroll strip. */
+const PENDING_CARD_MAX_WIDTH = 260;
+/** Fraction of the available content width used to size pending cards. */
+const PENDING_CARD_WIDTH_RATIO = 0.72;
+
+/** Minimum column width used when sizing stat overview cards. */
+const STAT_CARD_MIN_WIDTH = 150;
+/** Maximum number of stat columns on any screen size. */
+const STAT_CARD_MAX_COLUMNS = 4;
+
+/** Column width for nav-module cards on desktop. */
+const NAV_CARD_WIDTH_DESKTOP = 220;
+/** Column width for nav-module cards on mobile. */
+const NAV_CARD_WIDTH_MOBILE = 156;
+/** Maximum columns for the nav grid on desktop. */
+const NAV_CARD_MAX_COLUMNS_DESKTOP = 4;
+/** Maximum columns for the nav grid on mobile. */
+const NAV_CARD_MAX_COLUMNS_MOBILE = 2;
+
 function pushRoute(route: string) {
   router.push(route as Parameters<typeof router.push>[0]);
 }
@@ -63,8 +86,10 @@ function todayLabel(): string {
   });
 }
 
+type MCIcon = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+
 interface PendingItem {
-  icon: string;
+  icon: MCIcon;
   label: string;
   count: number;
   route: string;
@@ -89,7 +114,7 @@ function PendingCard({
       <View style={[styles.pendingAccent, { backgroundColor: item.accent }]} />
       <View style={styles.pendingBody}>
         <View style={styles.pendingTopRow}>
-          <Text style={styles.pendingIcon}>{item.icon}</Text>
+          <MaterialCommunityIcons name={item.icon} size={22} color={item.accent} />
           <View style={[styles.pendingBadge, { backgroundColor: `${item.accent}18` }]}>
             <Text style={[styles.pendingBadgeText, { color: item.accent }]}>
               {item.count}
@@ -106,21 +131,21 @@ function PendingCard({
 }
 
 interface NavItem {
-  icon: string;
+  icon: MCIcon;
   label: string;
   route: string;
   description: string;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { icon: '\u{1F465}', label: 'Users', route: '/(admin)/users', description: 'Roles and access' },
-  { icon: '\u{1F3E2}', label: 'Vendors', route: '/(admin)/vendors', description: 'Onboarding and KYC' },
-  { icon: '\u{1F4E6}', label: 'Packages', route: '/(admin)/packages', description: 'Approve and feature' },
-  { icon: '\u{1F4CB}', label: 'Bookings', route: '/(admin)/bookings', description: 'Status and history' },
-  { icon: '\u2605', label: 'Reviews', route: '/(admin)/reviews', description: 'Moderation' },
-  { icon: '\u{1F3F7}', label: 'Categories', route: '/(admin)/categories', description: 'Taxonomy' },
-  { icon: '\u{1F4CD}', label: 'Locations', route: '/(admin)/locations', description: 'Destinations' },
-  { icon: '\u{1F4B3}', label: 'Payouts', route: '/(admin)/payouts', description: 'Vendor settlements' },
+  { icon: 'account-group',      label: 'Users',      route: '/(admin)/users',      description: 'Roles and access' },
+  { icon: 'office-building',    label: 'Vendors',    route: '/(admin)/vendors',    description: 'Onboarding and KYC' },
+  { icon: 'package-variant',    label: 'Packages',   route: '/(admin)/packages',   description: 'Approve and feature' },
+  { icon: 'calendar',           label: 'Bookings',   route: '/(admin)/bookings',   description: 'Status and history' },
+  { icon: 'star',               label: 'Reviews',    route: '/(admin)/reviews',    description: 'Moderation' },
+  { icon: 'tag',                label: 'Categories', route: '/(admin)/categories', description: 'Taxonomy' },
+  { icon: 'map-marker',         label: 'Locations',  route: '/(admin)/locations',  description: 'Destinations' },
+  { icon: 'cash',               label: 'Payouts',    route: '/(admin)/payouts',    description: 'Vendor settlements' },
 ];
 
 export default function AdminDashboardScreen(): React.ReactElement {
@@ -130,11 +155,17 @@ export default function AdminDashboardScreen(): React.ReactElement {
     useAdminDashboard();
   const layout = useResponsiveLayout();
 
-  const statColumns = layout.columnsFor(150, 4);
-  const navColumns = layout.columnsFor(layout.isDesktop ? 220 : 156, layout.isDesktop ? 4 : 2);
+  const statColumns = layout.columnsFor(STAT_CARD_MIN_WIDTH, STAT_CARD_MAX_COLUMNS);
+  const navColumns = layout.columnsFor(
+    layout.isDesktop ? NAV_CARD_WIDTH_DESKTOP : NAV_CARD_WIDTH_MOBILE,
+    layout.isDesktop ? NAV_CARD_MAX_COLUMNS_DESKTOP : NAV_CARD_MAX_COLUMNS_MOBILE,
+  );
   const statWidth = layout.itemWidth(statColumns);
   const navWidth = layout.itemWidth(navColumns);
-  const pendingWidth = Math.min(260, Math.max(210, Math.floor(layout.contentWidth * 0.72)));
+  const pendingWidth = Math.min(
+    PENDING_CARD_MAX_WIDTH,
+    Math.max(PENDING_CARD_MIN_WIDTH, Math.floor(layout.contentWidth * PENDING_CARD_WIDTH_RATIO)),
+  );
 
   const displayName = (user?.full_name ?? 'Admin').trim() || 'Admin';
 
@@ -148,28 +179,28 @@ export default function AdminDashboardScreen(): React.ReactElement {
   const pendingItems: PendingItem[] = useMemo(() => {
     const items: PendingItem[] = [
       {
-        icon: '\u23F3',
+        icon: 'timer-sand',
         label: 'Vendors awaiting approval',
         count: metrics?.pending_vendors ?? 0,
         route: '/(admin)/vendors',
         accent: Colors.warning,
       },
       {
-        icon: '\u{1F4E6}',
+        icon: 'package-variant',
         label: 'Packages pending review',
         count: metrics?.pending_packages ?? 0,
         route: '/(admin)/packages',
         accent: Colors.primary,
       },
       {
-        icon: '\u2605',
+        icon: 'star',
         label: 'Reviews to moderate',
         count: metrics?.pending_reviews ?? 0,
         route: '/(admin)/reviews',
         accent: Colors.accent,
       },
       {
-        icon: '\u{1F4B3}',
+        icon: 'cash',
         label: 'Payouts pending',
         count: metrics?.pending_payouts ?? 0,
         route: '/(admin)/payouts',
@@ -322,7 +353,11 @@ export default function AdminDashboardScreen(): React.ReactElement {
                     style={styles.navCell}
                   >
                     <View style={styles.navIcon}>
-                      <Text style={styles.navIconText}>{nav.icon}</Text>
+                      <MaterialCommunityIcons
+                        name={nav.icon}
+                        size={22}
+                        color={Colors.primary}
+                      />
                     </View>
                     <View style={styles.navTextWrap}>
                       <Text style={styles.navLabel} numberOfLines={1}>
@@ -480,7 +515,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  pendingIcon: { fontSize: 22 },
+  // pendingIcon removed — now rendered by MaterialCommunityIcons directly
   pendingBadge: {
     paddingHorizontal: Spacing.sm,
     minHeight: 24,
@@ -518,7 +553,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  navIconText: { fontSize: 21 },
+  // navIconText removed — now rendered by MaterialCommunityIcons directly
   navTextWrap: { flex: 1, minWidth: 0 },
   navLabel: {
     fontSize: 15,

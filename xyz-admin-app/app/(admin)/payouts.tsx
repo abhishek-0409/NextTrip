@@ -211,6 +211,9 @@ export default function AdminPayoutsScreen(): React.ReactElement {
               onFail={() => openSheet(item.id, 'failed')}
             />
           )}
+          windowSize={5}
+          maxToRenderPerBatch={10}
+          removeClippedSubviews
           ListEmptyComponent={
             <View style={styles.center}>
               <Text style={styles.emptyText}>No payouts found</Text>
