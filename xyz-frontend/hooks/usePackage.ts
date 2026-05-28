@@ -10,7 +10,7 @@
 import { useQuery } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';
 
-import { apiClient } from '../lib/api/client';
+import { getPackageDetail } from '../lib/api/packages';
 import { Config } from '../constants/config';
 import type { PackageDetail } from '../types';
 
@@ -44,21 +44,17 @@ export function usePackageDetail(
         throw new Error('Package ID is required.');
       }
 
-      const response = await apiClient.get<PackageDetail>(
-        `/packages/${encodeURIComponent(id)}`,
-        undefined,
-        false
-      );
+      const { data, error } = await getPackageDetail(id);
 
-      if (response.error) {
-        throw new Error(response.error);
+      if (error) {
+        throw new Error(error);
       }
 
-      if (!response.data) {
+      if (!data) {
         throw new Error('Package not found.');
       }
 
-      return response.data;
+      return data;
     },
     enabled: Boolean(id && id.trim().length > 0),
     staleTime: Config.queryStaleTimeMs,

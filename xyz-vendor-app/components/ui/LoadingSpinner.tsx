@@ -27,9 +27,13 @@ export const FullScreenLoader: React.FC<FullScreenLoaderProps> = ({
 /**
  * Inline loading indicator for lists and content areas.
  */
-export const InlineLoader: React.FC<{ size?: 'small' | 'large' }> = ({ size = 'large' }) => (
+export const InlineLoader: React.FC<{ size?: 'small' | 'large'; message?: string }> = ({
+  size = 'large',
+  message,
+}) => (
   <View style={styles.inline}>
     <ActivityIndicator size={size} color={Colors.primary} />
+    {message != null && <Text style={styles.message}>{message}</Text>}
   </View>
 );
 

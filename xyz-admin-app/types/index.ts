@@ -90,3 +90,16 @@ export interface Package {
   created_at: string;
   updated_at: string;
 }
+
+export interface AdminNotification {
+  id: string;
+  user_id: string;
+  type: string;
+  title: string;
+  body: string;
+  data: Record<string, unknown> | null;
+  related_id: string | null;
+  related_type: string | null;
+  is_read: boolean;
+  created_at: string;
+}

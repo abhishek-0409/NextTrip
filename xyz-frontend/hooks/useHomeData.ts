@@ -6,7 +6,7 @@
 import { useQuery } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';
 
-import { apiClient } from '../lib/api/client';
+import { getLocations, getCategories, getFeaturedPackagesFromBackend } from '../lib/api/home';
 import { Config } from '../constants/config';
 import type { Category, Location, PackageListItem } from '../types';
 
@@ -34,12 +34,7 @@ export function useLocations(
   return useQuery({
     queryKey: homeQueryKeys.locations(popular),
     queryFn: async () => {
-      const response = await apiClient.get<Location[]>(
-        '/locations',
-        popular === undefined ? undefined : { popular },
-        false
-      );
-
+      const response = await getLocations(popular);
       return assertData(response.data, response.error);
     },
     staleTime: 10 * 60 * 1000, // 10 min — locations rarely change
@@ -51,7 +46,7 @@ export function useCategories(): UseQueryResult<Category[], Error> {
   return useQuery({
     queryKey: homeQueryKeys.categories,
     queryFn: async () => {
-      const response = await apiClient.get<Category[]>('/categories');
+      const response = await getCategories();
       return assertData(response.data, response.error);
     },
     staleTime: 10 * 60 * 1000, // 10 min — categories rarely change
@@ -66,9 +61,7 @@ export function useFeaturedPackages(): UseQueryResult<
   return useQuery({
     queryKey: homeQueryKeys.featuredPackages,
     queryFn: async () => {
-      const response =
-        await apiClient.get<PackageListItem[]>('/packages/featured');
-
+      const response = await getFeaturedPackagesFromBackend();
       return assertData(response.data, response.error);
     },
     staleTime: 5 * 60 * 1000, // 5 min — featured packages

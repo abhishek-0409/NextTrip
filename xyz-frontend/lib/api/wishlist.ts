@@ -80,7 +80,7 @@ export async function removeFromWishlist(
 export async function toggleWishlist(
   packageId: string,
   _isCurrentlyWishlisted: boolean
-): Promise<ApiResponse<{ wishlisted: boolean }>> {
+): Promise<ApiResponse<WishlistMutationResult>> {
   const response = await apiClient.post<WishlistMutationResult>(
     '/wishlist/toggle',
     { package_id: packageId },
@@ -91,8 +91,5 @@ export async function toggleWishlist(
     return { data: null, error: response.error ?? 'Toggle wishlist failed.' };
   }
 
-  return {
-    data: { wishlisted: response.data.wishlisted },
-    error: null,
-  };
+  return { data: response.data, error: null };
 }

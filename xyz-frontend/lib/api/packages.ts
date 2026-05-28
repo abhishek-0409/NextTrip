@@ -229,6 +229,30 @@ export async function getPackageById(
 }
 
 /**
+ * Fetches the raw PackageDetail for a single package by ID (no field mapping).
+ * Use this when the caller needs the full backend shape, not the mapped Package type.
+ */
+export async function getPackageDetail(
+  packageId: string
+): Promise<ApiResponse<PackageDetail>> {
+  if (!packageId || packageId.trim().length === 0) {
+    return { data: null, error: 'Package ID is required.' };
+  }
+
+  const response = await apiClient.get<PackageDetail>(
+    `/packages/${encodeURIComponent(packageId)}`,
+    undefined,
+    false
+  );
+
+  if (response.error || !response.data) {
+    return { data: null, error: response.error ?? 'Package not found.' };
+  }
+
+  return { data: response.data, error: null };
+}
+
+/**
  * Fetches featured/promoted packages for the home screen.
  */
 // FIXED: 6 - Featured packages now use the backend API.

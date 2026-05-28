@@ -222,7 +222,7 @@ export default function AccountScreen(): React.ReactElement {
           label="Notifications"
           subtitle={unreadCount > 0 ? `${unreadCount} unread` : 'All caught up'}
           badge={unreadCount}
-          onPress={() => Alert.alert('Notifications', 'Full notification screen coming soon.')}
+          onPress={() => router.push('/(vendor)/notifications')}
           iconColor={Colors.secondary}
           iconBg={Colors.secondaryLight}
         />

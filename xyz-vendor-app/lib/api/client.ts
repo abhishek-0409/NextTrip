@@ -6,6 +6,7 @@
  * - Automatic JSON serialisation / deserialisation
  * - Query parameter building
  * - Bearer token injection from the Supabase session
+ * - Silent token refresh on 401 (one retry before sign-out)
  * - Consistent BackendApiResponse<T> return shape — never throws
  *
  * All lib/api/* files that talk to the backend import from this file.
@@ -52,6 +53,62 @@ function extractErrorMessage(error: unknown): string {
   return 'An unexpected error occurred.';
 }
 
+// ── Token refresh on 401 ──────────────────────────────────────────────────────
+
+/**
+ * Attempts to refresh the Supabase session and retry the original fetch once.
+ * If refresh fails the user is signed out.
+ * Returns null if the retry also fails or if refresh itself failed.
+ */
+async function handleUnauthorized<T>(
+  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+  url: string,
+  init: RequestInit,
+): Promise<BackendApiResponse<T> | null> {
+  const { data, error } = await supabase.auth.refreshSession();
+
+  if (error || !data.session) {
+    // Refresh failed — session is truly expired, sign out
+    await supabase.auth.signOut();
+    useAuthStore.getState().clearUser();
+    return null;
+  }
+
+  // Update the store with the new session so subsequent calls use the fresh token
+  const profile = useAuthStore.getState().user;
+  if (profile) {
+    useAuthStore.getState().setSession(profile, data.session);
+  }
+
+  // Retry the original request with the refreshed token
+  const retryHeaders = {
+    ...(init.headers as Record<string, string>),
+    Authorization: `Bearer ${data.session.access_token}`,
+  };
+
+  try {
+    const retryResponse = await fetch(url, { ...init, headers: retryHeaders });
+    const retryText = await retryResponse.text();
+    let retryParsed: unknown;
+    try {
+      retryParsed = retryText.trim() ? JSON.parse(retryText) : undefined;
+    } catch {
+      retryParsed = retryText;
+    }
+
+    if (!retryResponse.ok) {
+      // Still failing after refresh — sign out
+      await supabase.auth.signOut();
+      useAuthStore.getState().clearUser();
+      return null;
+    }
+
+    return retryParsed as BackendApiResponse<T>;
+  } catch {
+    return null;
+  }
+}
+
 // ── Core request ──────────────────────────────────────────────────────────────
 
 async function request<T>(
@@ -76,7 +133,8 @@ async function request<T>(
       body = JSON.stringify(options.body);
     }
 
-    const response = await fetch(url, { method, headers, body });
+    const init: RequestInit = { method, headers, body };
+    const response = await fetch(url, init);
 
     const text = await response.text();
     let parsed: unknown;
@@ -102,11 +160,11 @@ async function request<T>(
         fullMessage = `${message}\n\n${JSON.stringify(details, null, 2)}`;
       }
 
-      // Auto sign-out on 401 — token expired or invalid
       if (response.status === 401) {
-        void supabase.auth.signOut().then(() => {
-          useAuthStore.getState().clearUser();
-        });
+        // Attempt one silent token refresh before signing out
+        const retryResult = await handleUnauthorized<T>(method, url, init);
+        if (retryResult !== null) return retryResult;
+        return { success: false, data: null, error: 'Session expired. Please sign in again.' };
       }
 
       return { success: false, data: null, error: fullMessage };

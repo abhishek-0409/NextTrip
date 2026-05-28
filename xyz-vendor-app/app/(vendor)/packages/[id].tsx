@@ -253,15 +253,19 @@ export default function PackageDetailScreen(): React.ReactElement {
       return;
     }
     try {
+      const parsedDays    = parseInt(durationDays, 10);
+      const parsedNights  = parseInt(durationNights, 10);
+      const parsedMinGrp  = parseInt(minGroup, 10);
+      const parsedMaxGrp  = parseInt(maxGroup, 10);
       await updatePackage.mutateAsync({
         packageId: id ?? '',
         updates: {
           title: title.trim(),
           description: description.trim() || undefined,
-          duration_days: parseInt(durationDays, 10) || undefined,
-          duration_nights: parseInt(durationNights, 10) || undefined,
-          min_group_size: parseInt(minGroup, 10) || undefined,
-          max_group_size: parseInt(maxGroup, 10) || undefined,
+          duration_days:    Number.isFinite(parsedDays)   ? parsedDays   : undefined,
+          duration_nights:  Number.isFinite(parsedNights) ? parsedNights : undefined,
+          min_group_size:   Number.isFinite(parsedMinGrp) ? parsedMinGrp : undefined,
+          max_group_size:   Number.isFinite(parsedMaxGrp) ? parsedMaxGrp : undefined,
           highlights,
           inclusions,
           exclusions,

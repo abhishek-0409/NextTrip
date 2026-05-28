@@ -32,6 +32,7 @@ import {
   useAdminDashboard,
   adminDashboardQueryKeys,
 } from '../../hooks/admin/useAdminDashboard';
+import { useAdminUnreadCount } from '../../hooks/admin/useAdminNotifications';
 import { useAuthStore } from '../../store/authStore';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 
@@ -138,14 +139,16 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { icon: 'account-group',      label: 'Users',      route: '/(admin)/users',      description: 'Roles and access' },
-  { icon: 'office-building',    label: 'Vendors',    route: '/(admin)/vendors',    description: 'Onboarding and KYC' },
-  { icon: 'package-variant',    label: 'Packages',   route: '/(admin)/packages',   description: 'Approve and feature' },
-  { icon: 'calendar',           label: 'Bookings',   route: '/(admin)/bookings',   description: 'Status and history' },
-  { icon: 'star',               label: 'Reviews',    route: '/(admin)/reviews',    description: 'Moderation' },
-  { icon: 'tag',                label: 'Categories', route: '/(admin)/categories', description: 'Taxonomy' },
-  { icon: 'map-marker',         label: 'Locations',  route: '/(admin)/locations',  description: 'Destinations' },
-  { icon: 'cash',               label: 'Payouts',    route: '/(admin)/payouts',    description: 'Vendor settlements' },
+  { icon: 'account-group',      label: 'Users',      route: '/(admin)/users',         description: 'Roles and access' },
+  { icon: 'office-building',    label: 'Vendors',    route: '/(admin)/vendors',       description: 'Onboarding and KYC' },
+  { icon: 'package-variant',    label: 'Packages',   route: '/(admin)/packages',      description: 'Approve and feature' },
+  { icon: 'calendar',           label: 'Bookings',   route: '/(admin)/bookings',      description: 'Status and history' },
+  { icon: 'star',               label: 'Reviews',    route: '/(admin)/reviews',       description: 'Moderation' },
+  { icon: 'tag',                label: 'Categories', route: '/(admin)/categories',    description: 'Taxonomy' },
+  { icon: 'map-marker',         label: 'Locations',  route: '/(admin)/locations',     description: 'Destinations' },
+  { icon: 'cash',               label: 'Payouts',    route: '/(admin)/payouts',       description: 'Vendor settlements' },
+  { icon: 'bell-outline',       label: 'Notifications', route: '/(admin)/notifications', description: 'System alerts' },
+  { icon: 'account-circle',     label: 'Account',    route: '/(admin)/account',       description: 'Profile & sign out' },
 ];
 
 export default function AdminDashboardScreen(): React.ReactElement {
@@ -154,6 +157,7 @@ export default function AdminDashboardScreen(): React.ReactElement {
   const { data: metrics, isLoading, isRefetching, error, refetch } =
     useAdminDashboard();
   const layout = useResponsiveLayout();
+  const unreadNotifications = useAdminUnreadCount();
 
   const statColumns = layout.columnsFor(STAT_CARD_MIN_WIDTH, STAT_CARD_MAX_COLUMNS);
   const navColumns = layout.columnsFor(
@@ -226,15 +230,42 @@ export default function AdminDashboardScreen(): React.ReactElement {
             </Text>
             <Text style={styles.headerDate}>{todayLabel()}</Text>
           </View>
-          <TouchableOpacity
-            onPress={() => pushRoute('/(admin)/audit-logs')}
-            style={styles.auditBtn}
-            activeOpacity={0.82}
-            accessibilityRole="button"
-            accessibilityLabel="Open audit logs"
-          >
-            <Text style={styles.auditBtnText}>Audit</Text>
-          </TouchableOpacity>
+          <View style={styles.topBarActions}>
+            <TouchableOpacity
+              onPress={() => pushRoute('/(admin)/notifications')}
+              style={styles.iconBtn}
+              activeOpacity={0.82}
+              accessibilityRole="button"
+              accessibilityLabel={`Notifications${unreadNotifications > 0 ? `, ${unreadNotifications} unread` : ''}`}
+            >
+              <MaterialCommunityIcons name="bell-outline" size={22} color={Colors.text} />
+              {unreadNotifications > 0 && (
+                <View style={styles.notifBadge}>
+                  <Text style={styles.notifBadgeText}>
+                    {unreadNotifications > 9 ? '9+' : String(unreadNotifications)}
+                  </Text>
+                </View>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => pushRoute('/(admin)/account')}
+              style={styles.iconBtn}
+              activeOpacity={0.82}
+              accessibilityRole="button"
+              accessibilityLabel="Account"
+            >
+              <MaterialCommunityIcons name="account-circle-outline" size={22} color={Colors.text} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => pushRoute('/(admin)/audit-logs')}
+              style={styles.auditBtn}
+              activeOpacity={0.82}
+              accessibilityRole="button"
+              accessibilityLabel="Open audit logs"
+            >
+              <Text style={styles.auditBtnText}>Audit</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
 
@@ -424,6 +455,36 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: Colors.textSecondary,
     marginTop: 2,
+  },
+  topBarActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  iconBtn: {
+    width: TouchTarget.min,
+    height: TouchTarget.min,
+    borderRadius: Radius.md,
+    backgroundColor: Colors.backgroundSoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  notifBadge: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    minWidth: 14,
+    height: 14,
+    borderRadius: 7,
+    backgroundColor: Colors.error,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 2,
+  },
+  notifBadgeText: {
+    color: Colors.textWhite,
+    fontSize: 8,
+    fontWeight: FontWeight.extrabold,
   },
   auditBtn: {
     minHeight: TouchTarget.min,

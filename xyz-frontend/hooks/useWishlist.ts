@@ -6,7 +6,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query';
 
-import { apiClient } from '../lib/api/client';
+import { getWishlist, toggleWishlist } from '../lib/api/wishlist';
 import { Config } from '../constants/config';
 import { useAuthStore } from '../store/authStore';
 import { useWishlistStore } from '../store/wishlistStore';
@@ -43,17 +43,13 @@ export function useWishlistIds(): UseQueryResult<Set<string>, Error> {
     queryKey: wishlistQueryKeys.ids(),
     enabled: Boolean(session?.access_token),
     queryFn: async () => {
-      const response = await apiClient.get<PackageListItem[]>(
-        '/wishlist',
-        undefined,
-        true
-      );
+      const { data, error } = await getWishlist();
 
-      if (response.error) {
-        throw new Error(response.error);
+      if (error) {
+        throw new Error(error);
       }
 
-      const ids = idsFromPackages(response.data ?? []);
+      const ids = idsFromPackages(data ?? []);
       setWishlist(ids);
 
       return new Set(ids);
@@ -71,17 +67,13 @@ export function useWishlistPackages(): UseQueryResult<PackageListItem[], Error> 
     queryKey: wishlistQueryKeys.packages(),
     enabled: Boolean(session?.access_token),
     queryFn: async () => {
-      const response = await apiClient.get<PackageListItem[]>(
-        '/wishlist',
-        undefined,
-        true
-      );
+      const { data, error } = await getWishlist();
 
-      if (response.error) {
-        throw new Error(response.error);
+      if (error) {
+        throw new Error(error);
       }
 
-      const packages = response.data ?? [];
+      const packages = data ?? [];
       setWishlist(idsFromPackages(packages));
 
       return packages;
@@ -109,21 +101,17 @@ export function useToggleWishlist(): UseMutationResult<
     WishlistMutationContext
   >({
     mutationFn: async ({ packageId }) => {
-      const response = await apiClient.post<ToggleWishlistResponse>(
-        '/wishlist/toggle',
-        { package_id: packageId },
-        true
-      );
+      const { data, error } = await toggleWishlist(packageId, false);
 
-      if (response.error) {
-        throw new Error(response.error);
+      if (error) {
+        throw new Error(error);
       }
 
-      if (!response.data) {
+      if (!data) {
         throw new Error('Wishlist update failed.');
       }
 
-      return response.data;
+      return data;
     },
     onMutate: async ({ packageId }) => {
       await queryClient.cancelQueries({ queryKey: wishlistQueryKeys.all });

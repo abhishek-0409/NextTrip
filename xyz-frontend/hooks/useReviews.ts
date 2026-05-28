@@ -20,7 +20,11 @@ import type {
 } from '@tanstack/react-query';
 import { router } from 'expo-router';
 
-import { apiClient } from '../lib/api/client';
+import {
+  submitReview,
+  getPackageReviews,
+  checkReviewEligibility,
+} from '../lib/api/reviews';
 import { Config } from '../constants/config';
 import { useAuthStore } from '../store/authStore';
 import type {
@@ -73,17 +77,9 @@ export function usePackageReviews(packageId: string): UsePackageReviewsReturn {
     queryKey: reviewQueryKeys.package(packageId),
     queryFn: async ({ pageParam }) => {
       const page = typeof pageParam === 'number' ? pageParam : 1;
-      const response = await apiClient.get<PaginatedResponse<Review>>(
-        `/reviews/package/${encodeURIComponent(packageId)}`,
-        { page, limit: REVIEWS_PAGE_LIMIT },
-        false
-      );
-
-      if (response.error || !response.data) {
-        throw new Error(response.error ?? 'Failed to load reviews.');
-      }
-
-      return response.data;
+      const { data, error } = await getPackageReviews(packageId, page, REVIEWS_PAGE_LIMIT);
+      if (error || !data) throw new Error(error ?? 'Failed to load reviews.');
+      return data;
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage) =>
@@ -126,17 +122,9 @@ export function useReviewEligibility(
   return useQuery({
     queryKey: reviewQueryKeys.eligible(packageId),
     queryFn: async () => {
-      const response = await apiClient.get<ReviewEligibility>(
-        `/reviews/eligible/${encodeURIComponent(packageId)}`,
-        undefined,
-        true
-      );
-
-      if (response.error || !response.data) {
-        throw new Error(response.error ?? 'Failed to check review eligibility.');
-      }
-
-      return response.data;
+      const { data, error } = await checkReviewEligibility(packageId);
+      if (error || !data) throw new Error(error ?? 'Failed to check review eligibility.');
+      return data;
     },
     enabled: isAuthenticated && packageId.trim().length > 0,
     staleTime: 5 * 60 * 1000, // 5 min — eligibility rarely changes mid-session
@@ -169,13 +157,9 @@ export function useSubmitReview(): UseMutationResult<
 
   return useMutation<Review, Error, SubmitReviewVariables>({
     mutationFn: async (input) => {
-      const response = await apiClient.post<Review>('/reviews', input, true);
-
-      if (response.error || !response.data) {
-        throw new Error(response.error ?? 'Failed to submit review.');
-      }
-
-      return response.data;
+      const { data, error } = await submitReview(input);
+      if (error || !data) throw new Error(error ?? 'Failed to submit review.');
+      return data;
     },
     onSuccess: (review) => {
       const { package_id: packageId } = review;

@@ -15,7 +15,12 @@ import type {
 } from '@tanstack/react-query';
 
 import { Config } from '../constants/config';
-import { apiClient } from '../lib/api/client';
+import {
+  getNotifications,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+} from '../lib/api/notifications';
+import type { MarkAllReadResult } from '../lib/api/notifications';
 import { useAuthStore } from '../store/authStore';
 import type { AppNotification, NotificationSection } from '../types';
 
@@ -25,10 +30,6 @@ export const notificationsQueryKeys = {
 
 interface NotificationMutationContext {
   previousNotifications?: AppNotification[];
-}
-
-interface MarkAllReadResult {
-  updated_count: number;
 }
 
 const SECTION_ORDER: NotificationSection['key'][] = [
@@ -114,17 +115,9 @@ function groupNotifications(
 }
 
 async function fetchNotifications(): Promise<AppNotification[]> {
-  const response = await apiClient.get<AppNotification[]>(
-    '/notifications',
-    undefined,
-    true
-  );
-
-  if (response.error || !response.data) {
-    throw new Error(response.error ?? 'Failed to load notifications.');
-  }
-
-  return response.data;
+  const { data, error } = await getNotifications();
+  if (error || !data) throw new Error(error ?? 'Failed to load notifications.');
+  return data;
 }
 
 function markRead(
@@ -206,17 +199,9 @@ export function useMarkAsRead(): UseMutationResult<
 
   return useMutation<AppNotification, Error, string, NotificationMutationContext>({
     mutationFn: async (notificationId) => {
-      const response = await apiClient.patch<AppNotification>(
-        `/notifications/${encodeURIComponent(notificationId)}/read`,
-        undefined,
-        true
-      );
-
-      if (response.error || !response.data) {
-        throw new Error(response.error ?? 'Failed to mark notification as read.');
-      }
-
-      return response.data;
+      const { data, error } = await markNotificationAsRead(notificationId);
+      if (error || !data) throw new Error(error ?? 'Failed to mark notification as read.');
+      return data;
     },
     onMutate: async (notificationId) => {
       await queryClient.cancelQueries({
@@ -262,17 +247,9 @@ export function useMarkAllRead(): UseMutationResult<
 
   return useMutation<MarkAllReadResult, Error, void, NotificationMutationContext>({
     mutationFn: async () => {
-      const response = await apiClient.patch<MarkAllReadResult>(
-        '/notifications/read-all',
-        undefined,
-        true
-      );
-
-      if (response.error || !response.data) {
-        throw new Error(response.error ?? 'Failed to mark notifications as read.');
-      }
-
-      return response.data;
+      const { data, error } = await markAllNotificationsAsRead();
+      if (error || !data) throw new Error(error ?? 'Failed to mark notifications as read.');
+      return data;
     },
     onMutate: async () => {
       await queryClient.cancelQueries({

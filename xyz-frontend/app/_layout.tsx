@@ -130,7 +130,12 @@ function AppLayout(): React.ReactElement {
             }
           });
         }, 0);
-      } else if (event === 'SIGNED_OUT') {
+      } else if (event === 'TOKEN_REFRESHED' && session) {
+        // Silent token rotation — update the stored tokens without re-fetching profile.
+        // (profile data hasn't changed; only the access/refresh tokens rotated)
+        setSession(useAuthStore.getState().user, session);
+      } else if (event === 'SIGNED_OUT' || (event === 'TOKEN_REFRESHED' && !session)) {
+        // Covers both explicit sign-out and expired/invalid refresh token scenarios.
         setSession(null, null);
         setWishlist([]);
         queryClient.clear();

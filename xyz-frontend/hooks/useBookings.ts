@@ -15,17 +15,19 @@ import type {
 } from '@tanstack/react-query';
 
 import { Config } from '../constants/config';
-import { apiClient } from '../lib/api/client';
+import {
+  getMyBookings,
+  getBookingById,
+  cancelBooking,
+} from '../lib/api/bookings';
+import type { CancelBookingResult } from '../lib/api/bookings';
 import { useAuthStore } from '../store/authStore';
 import { formatINR } from '../utils/currency';
 import type { Booking, BookingSummary } from '../types';
 
 export type MyBookingsFilter = 'upcoming' | 'completed' | 'cancelled';
 
-export interface CancelBookingResult {
-  booking: Booking;
-  refund_amount: number;
-}
+export type { CancelBookingResult };
 
 export interface CancelBookingToastState {
   message: string;
@@ -82,17 +84,9 @@ function filterBookings(
 }
 
 async function fetchMyBookings(): Promise<BookingSummary[]> {
-  const response = await apiClient.get<BookingSummary[]>(
-    '/bookings',
-    undefined,
-    true
-  );
-
-  if (response.error || !response.data) {
-    throw new Error(response.error ?? 'Failed to load bookings.');
-  }
-
-  return response.data;
+  const { data, error } = await getMyBookings();
+  if (error || !data) throw new Error(error ?? 'Failed to load bookings.');
+  return data;
 }
 
 /**
@@ -124,17 +118,9 @@ export function useBookingDetail(
   return useQuery({
     queryKey: bookingsQueryKeys.detail(id),
     queryFn: async () => {
-      const response = await apiClient.get<Booking>(
-        `/bookings/${encodeURIComponent(id)}`,
-        undefined,
-        true
-      );
-
-      if (response.error || !response.data) {
-        throw new Error(response.error ?? 'Booking not found.');
-      }
-
-      return response.data;
+      const { data, error } = await getBookingById(id);
+      if (error || !data) throw new Error(error ?? 'Booking not found.');
+      return data;
     },
     enabled: isAuthenticated && id.trim().length > 0,
     staleTime: Config.queryStaleTimeMs,
@@ -160,17 +146,9 @@ export function useCancelBooking(): UseCancelBookingReturn {
 
   const mutation = useMutation<CancelBookingResult, Error, string>({
     mutationFn: async (id) => {
-      const response = await apiClient.patch<CancelBookingResult>(
-        `/bookings/${encodeURIComponent(id)}/cancel`,
-        undefined,
-        true
-      );
-
-      if (response.error || !response.data) {
-        throw new Error(response.error ?? 'Failed to cancel booking.');
-      }
-
-      return response.data;
+      const { data, error } = await cancelBooking(id);
+      if (error || !data) throw new Error(error ?? 'Failed to cancel booking.');
+      return data;
     },
     onSuccess: (result) => {
       queryClient.setQueryData(

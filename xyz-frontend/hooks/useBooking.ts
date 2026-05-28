@@ -23,7 +23,13 @@ import type {
 } from '@tanstack/react-query';
 import { router } from 'expo-router';
 
-import { apiClient } from '../lib/api/client';
+import {
+  createBooking,
+  confirmMockPayment,
+  getMyBookings,
+  getBookingById,
+} from '../lib/api/bookings';
+import type { CreateBookingResult, ConfirmMockPaymentResult } from '../lib/api/bookings';
 import { Config } from '../constants/config';
 import type {
   Booking,
@@ -118,11 +124,6 @@ export function usePriceCalculation(
 
 // ── Create booking ────────────────────────────────────────────────────────────
 
-interface CreateBookingResult {
-  booking: Booking;
-  price_calculation: PriceCalculation;
-}
-
 /**
  * Mutation hook for creating a new booking.
  * On success, navigates to the summary screen with the booking data.
@@ -142,19 +143,15 @@ export function useCreateBooking(): UseMutationResult<
     mutationFn: async (input: CreateBookingInput) => {
       console.log('[useCreateBooking] payload:', JSON.stringify(input, null, 2));
 
-      const response = await apiClient.post<CreateBookingResult>(
-        '/bookings/create',
-        input,
-        true
-      );
+      const { data, error } = await createBooking(input);
 
-      console.log('[useCreateBooking] response:', JSON.stringify(response, null, 2));
+      console.log('[useCreateBooking] response:', JSON.stringify({ data, error }, null, 2));
 
-      if (response.error || !response.data) {
-        throw new Error(response.error ?? 'Failed to create booking.');
+      if (error || !data) {
+        throw new Error(error ?? 'Failed to create booking.');
       }
 
-      return response.data;
+      return data;
     },
     onSuccess: (data) => {
       // Invalidate the bookings list so it refetches on next visit
@@ -187,10 +184,6 @@ interface ConfirmMockPaymentInput {
   payment_type: 'full' | 'advance';
 }
 
-interface ConfirmMockPaymentResult {
-  booking: Booking;
-}
-
 /**
  * Mutation hook for confirming a mock payment.
  * On success, navigates to the confirmation screen.
@@ -210,17 +203,16 @@ export function useConfirmMockPayment(): UseMutationResult<
 
   return useMutation({
     mutationFn: async (input: ConfirmMockPaymentInput) => {
-      const response = await apiClient.post<ConfirmMockPaymentResult>(
-        '/bookings/confirm-mock',
-        input,
-        true
+      const { data, error } = await confirmMockPayment(
+        input.booking_id,
+        input.payment_type,
       );
 
-      if (response.error || !response.data) {
-        throw new Error(response.error ?? 'Payment confirmation failed.');
+      if (error || !data) {
+        throw new Error(error ?? 'Payment confirmation failed.');
       }
 
-      return response.data;
+      return data;
     },
     onSuccess: (data) => {
       // Invalidate both list and detail caches
@@ -252,17 +244,9 @@ export function useMyBookings(): UseQueryResult<BookingSummary[], Error> {
   return useQuery({
     queryKey: bookingQueryKeys.list(),
     queryFn: async () => {
-      const response = await apiClient.get<BookingSummary[]>(
-        '/bookings',
-        undefined,
-        true
-      );
-
-      if (response.error || !response.data) {
-        throw new Error(response.error ?? 'Failed to load bookings.');
-      }
-
-      return response.data;
+      const { data, error } = await getMyBookings();
+      if (error || !data) throw new Error(error ?? 'Failed to load bookings.');
+      return data;
     },
     staleTime: Config.queryStaleTimeMs,
     gcTime: Config.queryCacheTimeMs,
@@ -287,17 +271,9 @@ export function useBookingDetail(
   return useQuery({
     queryKey: bookingQueryKeys.detail(id),
     queryFn: async () => {
-      const response = await apiClient.get<Booking>(
-        `/bookings/${encodeURIComponent(id)}`,
-        undefined,
-        true
-      );
-
-      if (response.error || !response.data) {
-        throw new Error(response.error ?? 'Booking not found.');
-      }
-
-      return response.data;
+      const { data, error } = await getBookingById(id);
+      if (error || !data) throw new Error(error ?? 'Booking not found.');
+      return data;
     },
     enabled: Boolean(id && id.trim().length > 0),
     staleTime: Config.queryStaleTimeMs,

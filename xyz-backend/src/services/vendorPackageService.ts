@@ -189,6 +189,13 @@ const mapListItem = (row: Record<string, unknown>): VendorPackageListItem => {
   const catRaw = toRecord(row['category']);
   const pricingRaw = Array.isArray(row['pricing']) ? (row['pricing'] as unknown[]) : [];
 
+  // Derive cover_image from the package_images array (is_cover flag).
+  // PostgREST does not support inline filtered embedded resource aliases in SELECT,
+  // so we fetch all images with url+is_cover and find the cover here.
+  const imagesRaw = Array.isArray(row['package_images']) ? (row['package_images'] as unknown[]) : [];
+  const coverImg = imagesRaw.find((img) => readBoolean(toRecord(img), 'is_cover'));
+  const coverImage = coverImg != null ? readNullableString(toRecord(coverImg), 'url') : null;
+
   const lowestPrice =
     pricingRaw.length > 0
       ? pricingRaw.reduce((min: number | null, p) => {
@@ -217,7 +224,7 @@ const mapListItem = (row: Record<string, unknown>): VendorPackageListItem => {
     avg_rating: readNumber(row, 'avg_rating'),
     review_count: readNumber(row, 'review_count'),
     total_bookings: readNumber(row, 'total_bookings'),
-    cover_image: readNullableString(row, 'cover_image'),
+    cover_image: coverImage,
     created_at: readString(row, 'created_at'),
     updated_at: readString(row, 'updated_at'),
     location:
@@ -294,7 +301,7 @@ export async function listVendorPackages(
        duration_days, duration_nights, min_group_size, max_group_size,
        status, is_featured, is_bestseller, avg_rating, review_count,
        total_bookings, created_at, updated_at,
-       cover_image:package_images(url).is_cover.eq.true.limit.1,
+       package_images(url, is_cover),
        location:locations(city, state),
        category:categories(name, label, icon),
        pricing:package_pricing(base_price, is_active)`,
@@ -424,8 +431,8 @@ export async function createVendorPackage(
     slug,
     status: 'draft',
     description: input.description ?? null,
-    location_id: input.location_id ?? null,
-    category_id: input.category_id ?? null,
+    location_id: input.location_id,
+    category_id: input.category_id,
     highlights: input.highlights ?? [],
     duration_days: input.duration_days ?? 1,
     duration_nights: input.duration_nights ?? 0,
@@ -884,6 +891,10 @@ const mapBookingListItem = (
   userRaw: Record<string, unknown> = {},
 ): VendorBookingListItem => {
   const pkgRaw = toRecord(row['packages']);
+  // Derive cover_image from the nested package_images array.
+  const pkgImages = Array.isArray(pkgRaw['package_images']) ? (pkgRaw['package_images'] as unknown[]) : [];
+  const pkgCoverImg = pkgImages.find((img) => readBoolean(toRecord(img), 'is_cover'));
+  const pkgCoverUrl = pkgCoverImg != null ? readNullableString(toRecord(pkgCoverImg), 'url') : null;
   return {
     id: readString(row, 'id'),
     booking_reference: readString(row, 'booking_reference'),
@@ -900,7 +911,7 @@ const mapBookingListItem = (
     package: {
       id: readString(pkgRaw, 'id'),
       title: readString(pkgRaw, 'title'),
-      cover_image: readNullableString(pkgRaw, 'cover_image'),
+      cover_image: pkgCoverUrl,
     },
     user: {
       id: readString(userRaw, 'id', readString(row, 'user_id')),
@@ -938,7 +949,7 @@ export async function listVendorBookings(
       `id, booking_reference, travel_date, num_travelers, total_amount,
        advance_amount, balance_amount, status, payment_status, special_requests,
        created_at, updated_at, user_id,
-       packages!bookings_package_id_fkey(id, title)`,
+       packages!bookings_package_id_fkey(id, title, package_images(url, is_cover))`,
       { count: 'exact' },
     )
     .eq('company_id', companyId)

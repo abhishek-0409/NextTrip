@@ -28,7 +28,7 @@ import type {
   AdminPayoutListParams,
   AdminAuditLogListParams,
 } from '../../types/admin';
-import type { Category, Location, PaginatedResponse, Review } from '../../types';
+import type { AdminNotification, Category, Location, PaginatedResponse, Review } from '../../types';
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
@@ -331,4 +331,29 @@ export async function getAdminAuditLogs(
     '/admin/audit-logs',
     params as Record<string, string | number | boolean | null | undefined>,
   );
+}
+
+// ── Notifications ─────────────────────────────────────────────────────────────
+
+export async function getAdminNotifications(params?: {
+  page?: number;
+  limit?: number;
+}): Promise<BackendApiResponse<PaginatedResponse<AdminNotification>>> {
+  return apiClient.get<PaginatedResponse<AdminNotification>>(
+    '/admin/notifications',
+    params as Record<string, string | number | boolean | null | undefined>,
+  );
+}
+
+export async function markAdminNotificationRead(
+  notificationId: string,
+): Promise<BackendApiResponse<{ marked_read: boolean }>> {
+  return apiClient.patch<{ marked_read: boolean }>(
+    `/admin/notifications/${encodeURIComponent(notificationId)}/read`,
+    {},
+  );
+}
+
+export async function markAllAdminNotificationsRead(): Promise<BackendApiResponse<{ marked_read: boolean }>> {
+  return apiClient.patch<{ marked_read: boolean }>('/admin/notifications/read-all', {});
 }
