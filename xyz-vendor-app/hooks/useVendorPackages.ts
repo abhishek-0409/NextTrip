@@ -30,6 +30,7 @@ import {
   updatePackage,
   submitPackage,
   deletePackage,
+  duplicatePackage,
   upsertPricing,
   upsertItinerary,
   savePackageImage,
@@ -383,6 +384,25 @@ export function useSetPackageCoverImage(): UseMutationResult<VendorPackageImage,
           };
         },
       );
+    },
+  });
+}
+
+/**
+ * Duplicates an existing package as a new draft.
+ * Invalidates the package list so the copy appears immediately.
+ */
+export function useDuplicatePackage(): UseMutationResult<VendorPackageDetail, Error, string> {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (packageId: string) => {
+      const { data, error } = await duplicatePackage(packageId);
+      if (error !== null || data === null) throw new Error(error ?? 'Failed to duplicate package');
+      return data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: vendorPackageQueryKeys.all });
     },
   });
 }

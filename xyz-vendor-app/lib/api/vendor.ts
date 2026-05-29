@@ -195,6 +195,14 @@ export async function deletePackage(packageId: string): Promise<ApiResponse<{ de
 }
 
 /**
+ * Creates a draft copy of the package with "(Copy)" suffix.
+ */
+export async function duplicatePackage(packageId: string): Promise<ApiResponse<VendorPackageDetail>> {
+  const res = await apiClient.post<VendorPackageDetail>(`/vendor/packages/${packageId}/duplicate`);
+  return normalise(res);
+}
+
+/**
  * Replaces all pricing tiers for a package. Full replacement strategy.
  */
 export async function upsertPricing(

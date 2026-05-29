@@ -59,6 +59,7 @@ import {
   updateVendorPackage,
   submitVendorPackage,
   deleteVendorPackage,
+  duplicateVendorPackage,
   upsertPackagePricing,
   upsertPackageItinerary,
   savePackageImage,
@@ -68,6 +69,7 @@ import {
   getVendorBooking,
   updateVendorBookingStatus,
 } from '../services/vendorPackageService';
+import { getVendorAnalytics } from '../services/analyticsService';
 import { success, notFound, validationError } from '../utils/response';
 import { AppError } from '../constants/errors';
 import {
@@ -288,6 +290,35 @@ vendorRouter.delete('/packages/:id', strictLimiter, async (req, res, next) => {
     if (err instanceof AppError && err.statusCode === 409) {
       return res.status(409).json({ success: false, data: null, error: err.message });
     }
+    return next(err);
+  }
+});
+
+/**
+ * POST /api/v1/vendor/packages/:id/duplicate
+ * Creates a draft copy of the package with "(Copy)" suffix.
+ */
+vendorRouter.post('/packages/:id/duplicate', strictLimiter, async (req, res, next) => {
+  try {
+    const { id } = VendorUuidParamSchema.parse(req.params);
+    const pkg = await duplicateVendorPackage(req.user!.id, id);
+    return success(res, pkg, 201);
+  } catch (err) {
+    if (err instanceof AppError && err.statusCode === 404) return notFound(res, 'Package');
+    return next(err);
+  }
+});
+
+/**
+ * GET /api/v1/vendor/analytics
+ * Returns revenue charts and performance metrics for the authenticated vendor.
+ */
+vendorRouter.get('/analytics', async (req, res, next) => {
+  try {
+    const companyId = req.user!.id; // resolved internally by getVendorAnalytics
+    const analytics = await getVendorAnalytics(companyId);
+    return success(res, analytics);
+  } catch (err) {
     return next(err);
   }
 });

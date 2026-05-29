@@ -18,8 +18,12 @@ import { getHomeGroupForRole, getHomeRouteForRole, useAuthStore } from '../store
 import { useWishlistStore } from '../store/wishlistStore';
 import { FullScreenLoader } from '../components/ui/LoadingSpinner';
 import { ErrorBoundary } from '../components/ErrorBoundary';
+import { usePushNotifications } from '../hooks/usePushNotifications';
+import { initialiseSentry } from '../lib/sentry';
 import { Config } from '../constants/config';
 import { Colors } from '../constants/colors';
+
+initialiseSentry();
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -43,6 +47,8 @@ function AppLayout(): React.ReactElement {
   const isLoading = useAuthStore((state) => state.isLoading);
   const user = useAuthStore((state) => state.user);
   const setWishlist = useWishlistStore((state) => state.setWishlist);
+
+  usePushNotifications();
   const segments = useSegments();
   const rootSegment = segments[0] as string | undefined;
 

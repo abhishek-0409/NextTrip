@@ -23,9 +23,13 @@ import { getMyProfile } from '../lib/api/auth';
 import { useAuthStore } from '../store/authStore';
 import { FullScreenLoader } from '../components/ui/LoadingSpinner';
 import { ErrorBoundary } from '../components/ErrorBoundary';
+import { initialiseSentry } from '../lib/sentry';
+import { usePushNotifications } from '../hooks/usePushNotifications';
 import { Config } from '../constants/config';
 import { Colors } from '../constants/colors';
 import { VENDOR_ROLE } from '../types';
+
+initialiseSentry();
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -48,6 +52,8 @@ function AppLayout(): React.ReactElement {
   const isLoading = useAuthStore((state) => state.isLoading);
   const user = useAuthStore((state) => state.user);
   const segments = useSegments();
+
+  usePushNotifications();
   const rootSegment = segments[0] as string | undefined;
 
   // ── Post-login / post-logout navigation guard ─────────────────────────────

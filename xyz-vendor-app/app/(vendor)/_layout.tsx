@@ -102,6 +102,7 @@ export default function VendorLayout(): React.ReactElement {
       <Tabs.Screen name="payouts" options={{ href: null }} />
       <Tabs.Screen name="settings" options={{ href: null }} />
       <Tabs.Screen name="notifications" options={{ href: null }} />
+      <Tabs.Screen name="analytics" options={{ href: null }} />
     </Tabs>
   );
 }

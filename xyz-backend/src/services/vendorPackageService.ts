@@ -1142,3 +1142,85 @@ export async function updateVendorBookingStatus(
   if (updateErr !== null) throwDb('updateVendorBookingStatus.update', updateErr);
   return getVendorBooking(ownerId, bookingId);
 }
+
+/**
+ * Duplicates an existing package as a new draft, copying all core fields,
+ * pricing tiers, and itinerary (but NOT images — those belong to the original).
+ *
+ * Returns the newly created draft package.
+ */
+export async function duplicateVendorPackage(
+  ownerId: string,
+  packageId: string,
+): Promise<VendorPackageDetail> {
+  const companyId = await resolveCompanyId(ownerId);
+  await assertPackageOwnership(packageId, companyId);
+
+  // Fetch full detail to copy
+  const source = await getVendorPackage(ownerId, packageId);
+
+  // Insert new package row as draft
+  const { data: newPkg, error: insertErr } = await supabaseAdmin
+    .from('packages')
+    .insert({
+      company_id: companyId,
+      location_id: source.location_id,
+      category_id: source.category_id,
+      title: `${source.title} (Copy)`,
+      description: source.description,
+      highlights: source.highlights,
+      inclusions: source.inclusions,
+      exclusions: source.exclusions,
+      amenities: source.amenities,
+      duration_days: source.duration_days,
+      duration_nights: source.duration_nights,
+      min_group_size: source.min_group_size,
+      max_group_size: source.max_group_size,
+      status: 'draft',
+    })
+    .select('id')
+    .single();
+
+  if (insertErr !== null) throwDb('duplicateVendorPackage.insert', insertErr);
+
+  const newId = (newPkg as { id: string }).id;
+
+  // Copy pricing tiers
+  if (source.pricing.length > 0) {
+    const pricingRows = source.pricing.map((t) => ({
+      package_id: newId,
+      label: t.label,
+      min_people: t.min_people,
+      max_people: t.max_people,
+      base_price: t.base_price,
+      discounted_price: t.discounted_price,
+      currency: t.currency,
+      season: t.season,
+      valid_from: t.valid_from,
+      valid_until: t.valid_until,
+      is_active: t.is_active,
+    }));
+
+    const { error: pricingErr } = await supabaseAdmin.from('package_pricing').insert(pricingRows);
+    if (pricingErr !== null) throwDb('duplicateVendorPackage.pricing', pricingErr);
+  }
+
+  // Copy itinerary days
+  if (source.itinerary.length > 0) {
+    const itineraryRows = source.itinerary.map((d) => ({
+      package_id: newId,
+      day_number: d.day_number,
+      title: d.title,
+      description: d.description,
+      meals: d.meals,
+      accommodation: d.accommodation,
+      activities: d.activities,
+      transport: d.transport,
+    }));
+
+    const { error: itinErr } = await supabaseAdmin.from('package_itinerary').insert(itineraryRows);
+    if (itinErr !== null) throwDb('duplicateVendorPackage.itinerary', itinErr);
+  }
+
+  return getVendorPackage(ownerId, newId);
+}

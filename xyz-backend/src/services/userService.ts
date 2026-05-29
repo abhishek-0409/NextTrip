@@ -1,5 +1,4 @@
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
-// FIXED: 4 - Authenticated profile writes use the explicitly named admin client.
 import { supabaseAdmin } from '../lib/supabase';
 import { logger } from '../utils/logger';
 // FIXED: 2 - Use the shared vendor role constant instead of hardcoding the role value.
@@ -100,4 +99,42 @@ export const updateProfile = async (userId: string, data: UpdateProfileInput): P
   }
 
   return mapUser(updatedUser);
+};
+
+/**
+ * Permanently deletes the user's account:
+ *  1. Soft-cancel any pending/confirmed bookings they have
+ *  2. Remove the public.users profile row
+ *  3. Delete the auth.users entry via the Supabase Admin API
+ *
+ * This is irreversible. All personal data is removed per GDPR/DPDP Act.
+ */
+export const deleteAccount = async (userId: string): Promise<void> => {
+  // Cancel any open bookings before deletion so vendors are notified
+  const { error: cancelErr } = await supabaseAdmin
+    .from('bookings')
+    .update({ status: 'cancelled', updated_at: new Date().toISOString() })
+    .eq('user_id', userId)
+    .in('status', ['pending', 'confirmed']);
+
+  if (cancelErr !== null) {
+    throwDatabaseError('deleteAccount.cancelBookings', cancelErr);
+  }
+
+  // Remove public profile (cascade deletes wishlist, notifications, reviews etc.)
+  const { error: profileErr } = await supabaseAdmin
+    .from('users')
+    .delete()
+    .eq('id', userId);
+
+  if (profileErr !== null) {
+    throwDatabaseError('deleteAccount.deleteProfile', profileErr);
+  }
+
+  // Delete the Supabase auth user
+  const { error: authErr } = await supabaseAdmin.auth.admin.deleteUser(userId);
+
+  if (authErr !== null) {
+    throwDatabaseError('deleteAccount.deleteAuthUser', authErr);
+  }
 };

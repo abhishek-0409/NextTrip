@@ -12,7 +12,9 @@ import { supabase } from '../lib/supabase';
 import { getMyProfile } from '../lib/api/auth';
 import { useAuthStore } from '../store/authStore';
 import { ErrorBoundary } from '../components/ErrorBoundary';
+import { initialiseSentry } from '../lib/sentry';
 
+initialiseSentry();
 SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient({

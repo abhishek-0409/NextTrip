@@ -1,4 +1,6 @@
 import 'dotenv/config';
+import { initialiseSentry } from './lib/sentry';
+initialiseSentry(); // must be first so all downstream errors are captured
 import { app } from './app';
 import { config } from './config';
 import { logger } from './utils/logger';

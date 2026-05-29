@@ -42,6 +42,14 @@
       "expo-router",
       "expo-font",
       [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#E8631A",
+          "sounds": []
+        }
+      ],
+      [
         "expo-image-picker",
         {
           "photosPermission": "NEXTTRP Vendor needs access to your photo library for package images.",

@@ -664,6 +664,55 @@ export const getFeaturedPackages = async (): Promise<PackageListItem[]> => {
 };
 
 /**
+ * Returns up to 6 active packages in the same category and location as the
+ * given package, excluding itself. Falls back to same-category if not enough
+ * location matches.
+ */
+export const getSimilarPackages = async (packageId: string): Promise<PackageListItem[]> => {
+  // First fetch the source package to get its category and location
+  const { data: src, error: srcErr } = await supabasePublic
+    .from('packages')
+    .select('category_id, location_id')
+    .eq('id', packageId)
+    .maybeSingle();
+
+  if (srcErr !== null) throwDatabaseError('getSimilarPackages.source', srcErr);
+  if (src === null) return [];
+
+  const s = src as { category_id: string | null; location_id: string | null };
+
+  // Try same category + same location first
+  let { data, error } = await supabasePublic
+    .from('packages')
+    .select(PACKAGE_LIST_SELECT)
+    .eq('status', 'active')
+    .eq('category_id', s.category_id ?? '')
+    .eq('location_id', s.location_id ?? '')
+    .neq('id', packageId)
+    .order('avg_rating', { ascending: false })
+    .limit(6);
+
+  if (error !== null) throwDatabaseError('getSimilarPackages.byLocation', error);
+
+  // Fall back to same category only if < 3 results
+  if ((data?.length ?? 0) < 3) {
+    const fallback = await supabasePublic
+      .from('packages')
+      .select(PACKAGE_LIST_SELECT)
+      .eq('status', 'active')
+      .eq('category_id', s.category_id ?? '')
+      .neq('id', packageId)
+      .order('avg_rating', { ascending: false })
+      .limit(6);
+
+    if (fallback.error !== null) throwDatabaseError('getSimilarPackages.byCategory', fallback.error);
+    data = fallback.data;
+  }
+
+  return buildListItems((data as unknown[] | null) ?? [], 'min');
+};
+
+/**
  * Applies computed badges to package list items without mutating the original objects.
  */
 export const attachBadgesToPackages = (packages: PackageListItem[], badges: Badge[]): PackageListItem[] => {

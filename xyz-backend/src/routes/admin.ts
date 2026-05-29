@@ -53,8 +53,8 @@ import {
   updateLocation,
   deleteLocation,
 } from '../services/adminService';
-import { getAuditLogs } from '../services/auditLogService';
-import { logAdminAction } from '../services/auditLogService';
+import { getAuditLogs, logAdminAction } from '../services/auditLogService';
+import { getAdminAnalytics } from '../services/analyticsService';
 import { listPayouts, updatePayoutStatus } from '../services/payoutService';
 import { success, notFound, validationError, error as errorResponse } from '../utils/response';
 import { AppError } from '../constants/errors';
@@ -105,6 +105,19 @@ adminRouter.get('/dashboard', async (req, res, next) => {
   try {
     const metrics = await getAdminDashboard();
     return success(res, metrics);
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/**
+ * GET /api/v1/admin/analytics
+ * Returns time-series data for revenue charts, user growth, and booking funnel.
+ */
+adminRouter.get('/analytics', async (_req, res, next) => {
+  try {
+    const analytics = await getAdminAnalytics();
+    return success(res, analytics);
   } catch (err) {
     return next(err);
   }

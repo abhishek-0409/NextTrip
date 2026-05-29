@@ -197,6 +197,15 @@ export default function AccountScreen(): React.ReactElement {
         />
         <View style={styles.separator} />
         <MenuRow
+          icon="bar-chart-outline"
+          label="Analytics"
+          subtitle="Revenue charts and performance"
+          onPress={() => router.push('/(vendor)/analytics')}
+          iconColor={Colors.secondary}
+          iconBg={Colors.secondaryLight}
+        />
+        <View style={styles.separator} />
+        <MenuRow
           icon="star-outline"
           label="Reviews"
           subtitle="Read feedback from your travelers"

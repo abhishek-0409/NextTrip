@@ -19,6 +19,7 @@
   ],
   "license": "UNLICENSED",
   "dependencies": {
+    "@sentry/node": "^10.55.0",
     "@supabase/supabase-js": "^2.45.4",
     "cloudinary": "^2.5.1",
     "compression": "^1.8.1",

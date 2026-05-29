@@ -5,6 +5,7 @@ import {
   getFeaturedPackages,
   getPackageById,
   getPackagesForCompare,
+  getSimilarPackages,
   searchPackages,
 } from '../services/packageService';
 import {
@@ -68,6 +69,21 @@ packagesRouter.get('/:id', async (req, res, next) => {
     const { id } = UuidParamSchema.parse(req.params);
     const packageDetail = await getPackageById(id);
     return success(res, packageDetail);
+  } catch (caughtError) {
+    return next(caughtError);
+  }
+});
+
+/**
+ * GET /api/v1/packages/:id/similar
+ * Returns up to 6 active packages in the same category/location.
+ * Public — no auth required.
+ */
+packagesRouter.get('/:id/similar', async (req, res, next) => {
+  try {
+    const { id } = UuidParamSchema.parse(req.params);
+    const similar = await getSimilarPackages(id);
+    return success(res, similar);
   } catch (caughtError) {
     return next(caughtError);
   }

@@ -539,3 +539,43 @@ export async function resetPassword(
 }
 
 export const sendPasswordResetEmail = resetPassword;
+
+// ── Device token (push notifications) ────────────────────────────────────────
+
+import { apiClient } from './client';
+
+/**
+ * Registers an Expo push token with the backend so the server can send
+ * push notifications to this device.
+ */
+export async function registerDeviceToken(
+  token: string,
+  platform: 'ios' | 'android',
+): Promise<ApiResponse<{ saved: boolean }>> {
+  const res = await apiClient.post<{ saved: boolean }>('/users/device-token', { token, platform });
+  if (res.error || !res.data) return { data: null, error: res.error ?? 'Failed to register token.' };
+  return { data: res.data, error: null };
+}
+
+/**
+ * Removes the push token on logout.
+ */
+export async function unregisterDeviceToken(
+  token: string,
+  platform: 'ios' | 'android',
+): Promise<void> {
+  await apiClient.delete<{ removed: boolean }>(`/users/device-token`);
+  void platform; // platform included for logging but delete uses body-less endpoint
+}
+
+// ── Account deletion ──────────────────────────────────────────────────────────
+
+/**
+ * Permanently deletes the authenticated user's account.
+ * Requires the user to type "DELETE" to confirm.
+ */
+export async function deleteUserAccount(): Promise<ApiResponse<{ deleted: boolean }>> {
+  const res = await apiClient.delete<{ deleted: boolean }>('/users/account');
+  if (res.error || !res.data) return { data: null, error: res.error ?? 'Failed to delete account.' };
+  return { data: res.data, error: null };
+}
