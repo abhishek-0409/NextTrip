@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "scheme": "vendor",
+    "scheme": "nexttrpvendor",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
@@ -15,14 +15,23 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.nexttrp.vendor"
+      "bundleIdentifier": "com.nexttrp.vendor",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "NEXTTRP Vendor needs access to your photo library for package images.",
+        "NSCameraUsageDescription": "NEXTTRP Vendor needs access to your camera to capture package photos.",
+        "NSPhotoLibraryAddUsageDescription": "NEXTTRP Vendor saves package photos to your library."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#E8631A"
       },
-      "package": "com.nexttrp.vendor"
+      "package": "com.nexttrp.vendor",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_MEDIA_IMAGES"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -35,12 +44,18 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow NEXTTRP Vendor to access your photos for package images."
+          "photosPermission": "NEXTTRP Vendor needs access to your photo library for package images.",
+          "cameraPermission": "NEXTTRP Vendor needs access to your camera to capture package photos."
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "your-eas-project-id"
+      }
     }
   }
 }

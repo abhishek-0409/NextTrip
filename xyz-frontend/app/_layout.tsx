@@ -14,10 +14,10 @@ import { router } from 'expo-router';
 import { supabase } from '../lib/supabase';
 import { getProfile } from '../lib/api/users';
 import { getWishlistIds } from '../lib/api/wishlist';
-// FIXED: 1 - Root auth guard routes users by the DB-backed role in authStore.user.
 import { getHomeGroupForRole, getHomeRouteForRole, useAuthStore } from '../store/authStore';
 import { useWishlistStore } from '../store/wishlistStore';
 import { FullScreenLoader } from '../components/ui/LoadingSpinner';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 import { Config } from '../constants/config';
 import { Colors } from '../constants/colors';
 
@@ -172,7 +172,9 @@ function AppLayout(): React.ReactElement {
 export default function RootLayout(): React.ReactElement {
   return (
     <QueryClientProvider client={queryClient}>
-      <AppLayout />
+      <ErrorBoundary>
+        <AppLayout />
+      </ErrorBoundary>
     </QueryClientProvider>
   );
 }

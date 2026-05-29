@@ -1,4 +1,6 @@
-version: "3.9"
+# Docker Compose for local development and staging.
+# For production, inject environment variables through your platform's secrets manager.
+# Do NOT commit .env files containing real credentials.
 
 services:
   backend:
@@ -16,12 +18,14 @@ services:
     ports:
       - "${PORT:-3000}:3000"
 
+    # Use node to run the health check — wget is not available in node:20-alpine.
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/health"]
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/v1/health', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 15s
+      start_period: 20s
 
-    # Do not run as root inside the container (Dockerfile switches to appuser).
-    # security_opt: ["no-new-privileges:true"]
+    # Prevent container from gaining additional privileges at runtime.
+    security_opt:
+      - no-new-privileges:true

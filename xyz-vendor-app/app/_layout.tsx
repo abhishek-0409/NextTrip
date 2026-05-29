@@ -22,6 +22,7 @@ import { supabase } from '../lib/supabase';
 import { getMyProfile } from '../lib/api/auth';
 import { useAuthStore } from '../store/authStore';
 import { FullScreenLoader } from '../components/ui/LoadingSpinner';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 import { Config } from '../constants/config';
 import { Colors } from '../constants/colors';
 import { VENDOR_ROLE } from '../types';
@@ -143,7 +144,9 @@ function AppLayout(): React.ReactElement {
 export default function RootLayout(): React.ReactElement {
   return (
     <QueryClientProvider client={queryClient}>
-      <AppLayout />
+      <ErrorBoundary>
+        <AppLayout />
+      </ErrorBoundary>
     </QueryClientProvider>
   );
 }

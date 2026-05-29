@@ -16,11 +16,12 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": false,
-      "bundleIdentifier": "com.yourname.nexttrp",
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nexttrp.app",
       "infoPlist": {
-        "NSPhotoLibraryUsageDescription": "NEXTTRP needs access to your photo library to upload profile pictures and package images.",
-        "NSCameraUsageDescription": "NEXTTRP needs access to your camera to take profile pictures."
+        "NSPhotoLibraryUsageDescription": "NEXTTRP needs access to your photo library to upload profile pictures.",
+        "NSCameraUsageDescription": "NEXTTRP needs access to your camera to take profile pictures.",
+        "NSPhotoLibraryAddUsageDescription": "NEXTTRP saves photos to your library."
       }
     },
     "android": {
@@ -28,11 +29,10 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFF8F0"
       },
-      "package": "com.yourname.nexttrp",
+      "package": "com.nexttrp.app",
       "permissions": [
-        "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.CAMERA"
+        "android.permission.CAMERA",
+        "android.permission.READ_MEDIA_IMAGES"
       ],
       "intentFilters": [
         {
@@ -63,7 +63,14 @@
           "backgroundColor": "#0B1426"
         }
       ],
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "NEXTTRP needs access to your photo library to upload profile pictures.",
+          "cameraPermission": "NEXTTRP needs access to your camera to take profile pictures."
+        }
+      ]
     ],
     "scheme": "nexttrp",
     "experiments": {
