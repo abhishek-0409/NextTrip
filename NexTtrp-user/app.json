@@ -32,7 +32,8 @@
       "package": "com.nexttrp.app",
       "permissions": [
         "android.permission.CAMERA",
-        "android.permission.READ_MEDIA_IMAGES"
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.RECORD_AUDIO"
       ],
       "intentFilters": [
         {
@@ -43,7 +44,10 @@
               "scheme": "nexttrp"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ]
     },
@@ -57,7 +61,7 @@
       [
         "expo-notifications",
         {
-          "icon": "./assets/notification-icon.png",
+          "icon": "./assets/icon.png",
           "color": "#E8631A",
           "sounds": []
         }
@@ -86,8 +90,10 @@
     },
     "extra": {
       "eas": {
-        "projectId": ""
-      }
-    }
+        "projectId": "61da5299-3f4a-4ccd-a491-46e109940ff1"
+      },
+      "router": {}
+    },
+    "owner": "workpritam"
   }
 }

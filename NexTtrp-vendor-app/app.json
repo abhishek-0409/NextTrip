@@ -30,7 +30,8 @@
       "package": "com.nexttrp.vendor",
       "permissions": [
         "android.permission.CAMERA",
-        "android.permission.READ_MEDIA_IMAGES"
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.RECORD_AUDIO"
       ]
     },
     "web": {
@@ -44,7 +45,7 @@
       [
         "expo-notifications",
         {
-          "icon": "./assets/notification-icon.png",
+          "icon": "./assets/icon.png",
           "color": "#E8631A",
           "sounds": []
         }
@@ -62,8 +63,10 @@
     },
     "extra": {
       "eas": {
-        "projectId": ""
-      }
-    }
+        "projectId": "05fa230d-3ef7-4637-b2ee-943bdb22a061"
+      },
+      "router": {}
+    },
+    "owner": "workpritam"
   }
 }

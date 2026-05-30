@@ -12,7 +12,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#E8631A"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.nexttrp.admin"
@@ -35,8 +37,10 @@
     },
     "extra": {
       "eas": {
-        "projectId": ""
-      }
-    }
+        "projectId": "f211ac0e-9377-4883-95e8-ba1bd970a9e0"
+      },
+      "router": {}
+    },
+    "owner": "workpritam"
   }
 }
