@@ -1,36 +1,20 @@
 /**
  * @file lib/sentry.ts
- * @description Sentry error monitoring initialisation for the traveller app.
- *
- * Set EXPO_PUBLIC_SENTRY_DSN in your .env files and eas.json to enable.
- * Without a DSN, Sentry is silently disabled — no crashes, no false positive logs.
- *
- * Docs: https://docs.sentry.io/platforms/react-native/
+ * @description Optional Sentry error monitoring.
+ * Wrapped in try/catch so the app never crashes if the native Sentry
+ * module is not linked (no @sentry/react-native plugin in app.json).
+ * Set EXPO_PUBLIC_SENTRY_DSN in eas.json to enable.
  */
 
-import * as Sentry from '@sentry/react-native';
-import Constants from 'expo-constants';
-
-const dsn = process.env.EXPO_PUBLIC_SENTRY_DSN;
-const release = Constants.expoConfig?.version ?? '1.0.0';
-const environment = process.env.NODE_ENV === 'production' ? 'production' : 'development';
-
 export function initialiseSentry(): void {
-  if (!dsn) return; // Sentry disabled — no DSN configured
+  const dsn = process.env.EXPO_PUBLIC_SENTRY_DSN;
+  if (!dsn) return;
 
-  Sentry.init({
-    dsn,
-    release,
-    environment,
-    // Capture 100% of transactions in production; reduce for high-traffic apps
-    tracesSampleRate: environment === 'production' ? 0.2 : 1.0,
-    // Do not send events in development unless DSN is explicitly set
-    enabled: environment === 'production' || Boolean(dsn),
-    // Redact sensitive headers before they leave the device
-    integrations: [
-      Sentry.reactNativeTracingIntegration(),
-    ],
-  });
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const Sentry = require('@sentry/react-native') as typeof import('@sentry/react-native');
+    Sentry.init({ dsn, tracesSampleRate: 0.2 });
+  } catch {
+    // Sentry native module not available — continue without it
+  }
 }
-
-export { Sentry };
