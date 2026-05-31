@@ -17,25 +17,23 @@ import {
 } from '../../lib/api/admin';
 import { useAuthStore } from '../../store/authStore';
 import { Config } from '../../constants/config';
-import type { AdminNotification, PaginatedResponse } from '../../types';
+import type { AdminNotification } from '../../types';
 
+// /notifications returns a plain array, not a paginated response.
 export const adminNotificationQueryKeys = {
   all: ['admin', 'notifications'] as const,
-  list: (page: number) => ['admin', 'notifications', 'list', page] as const,
 } as const;
 
 /**
- * Returns paginated notifications for the admin user.
+ * Returns all notifications for the admin user as a plain array.
  */
-export function useAdminNotifications(
-  page = 1,
-): UseQueryResult<PaginatedResponse<AdminNotification>, Error> {
+export function useAdminNotifications(): UseQueryResult<AdminNotification[], Error> {
   const isAdmin = useAuthStore((s) => s.user?.role === 'admin');
 
   return useQuery({
-    queryKey: adminNotificationQueryKeys.list(page),
+    queryKey: adminNotificationQueryKeys.all,
     queryFn: async () => {
-      const { data, error } = await getAdminNotifications({ page, limit: 20 });
+      const { data, error } = await getAdminNotifications();
       if (error !== null || data === null) {
         throw new Error(error ?? 'Failed to load notifications');
       }
@@ -49,12 +47,12 @@ export function useAdminNotifications(
 }
 
 /**
- * Derives the unread badge count from page 1 of admin notifications.
+ * Derives the unread badge count from the notifications list.
  */
 export function useAdminUnreadCount(): number {
-  const query = useAdminNotifications(1);
-  if (query.data == null) return 0;
-  return query.data.items.filter((n) => !n.is_read).length;
+  const query = useAdminNotifications();
+  if (!Array.isArray(query.data)) return 0;
+  return query.data.filter((n) => !n.is_read).length;
 }
 
 /**

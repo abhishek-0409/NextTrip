@@ -337,14 +337,9 @@ export async function getAdminAuditLogs(
 // Admin notifications use the shared /notifications endpoint (same as traveler).
 // The backend scopes results to req.user.id, so each role sees only its own items.
 
-export async function getAdminNotifications(params?: {
-  page?: number;
-  limit?: number;
-}): Promise<BackendApiResponse<PaginatedResponse<AdminNotification>>> {
-  return apiClient.get<PaginatedResponse<AdminNotification>>(
-    '/notifications',
-    params as Record<string, string | number | boolean | null | undefined>,
-  );
+// /notifications returns a plain Notification[] array, not a paginated response.
+export async function getAdminNotifications(): Promise<BackendApiResponse<AdminNotification[]>> {
+  return apiClient.get<AdminNotification[]>('/notifications');
 }
 
 export async function markAdminNotificationRead(

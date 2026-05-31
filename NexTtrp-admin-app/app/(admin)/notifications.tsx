@@ -77,11 +77,11 @@ function NotificationRow({ notification, onPress }: NotificationRowProps): React
 
 export default function AdminNotificationsScreen(): React.ReactElement {
   const { data, isLoading, isError, error, refetch, isFetching } =
-    useAdminNotifications(1);
+    useAdminNotifications();
   const markRead = useMarkAdminNotificationRead();
   const markAllRead = useMarkAllAdminNotificationsRead();
 
-  const notifications = data?.items ?? [];
+  const notifications = Array.isArray(data) ? data : [];
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 
   const handlePress = useCallback(
