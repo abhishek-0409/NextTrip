@@ -12,7 +12,6 @@ import React, {
 } from 'react';
 import {
   Animated,
-  Image,
   Pressable,
   StyleSheet,
   Text,
@@ -85,43 +84,6 @@ function paramsToFilters(params: Record<string, string | string[]>): SearchScree
   return filters;
 }
 
-function destinationImage(index: number): string {
-  return DESTINATION_IMAGES[index % DESTINATION_IMAGES.length] ?? DESTINATION_IMAGES[0];
-}
-
-function DestinationGrid({
-  locations,
-  onPress,
-}: {
-  locations: Location[];
-  onPress: (location: Location) => void;
-}): React.ReactElement | null {
-  if (locations.length === 0) return null;
-
-  return (
-    <View style={styles.destinationGrid}>
-      {locations.slice(0, 6).map((location, index) => (
-        <Pressable
-          key={location.id}
-          style={styles.destinationCell}
-          onPress={() => onPress(location)}
-          accessibilityRole="button"
-          accessibilityLabel={`Search ${location.city}`}
-        >
-          <Image
-            source={{ uri: destinationImage(index) }}
-            style={styles.destinationImage}
-            resizeMode="cover"
-          />
-          <View style={styles.destinationOverlay} pointerEvents="none" />
-          <Text style={styles.destinationCity} numberOfLines={1}>
-            {location.city}
-          </Text>
-        </Pressable>
-      ))}
-    </View>
-  );
-}
 
 export default function SearchScreen(): React.ReactElement {
   const params = useLocalSearchParams<Record<string, string>>();
@@ -260,14 +222,6 @@ export default function SearchScreen(): React.ReactElement {
     setRecentSearches((current) => current.filter((item) => item !== term));
   }, []);
 
-  const handleDestinationPress = useCallback((location: Location) => {
-    setDestinationInput(location.city);
-    setFilters((prev) => ({
-      ...prev,
-      destination: location.city,
-      state: location.state,
-    }));
-  }, []);
 
   const listHeader = useMemo(
     () => (
@@ -314,12 +268,10 @@ export default function SearchScreen(): React.ReactElement {
     [
       activeChips,
       handleClearAllFilters,
-      handleDestinationPress,
       handleRecentPress,
       handleRemoveFilter,
       handleRemoveRecent,
       isLoading,
-      locations,
       recentSearches,
       sort,
       total,

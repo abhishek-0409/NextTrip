@@ -184,7 +184,8 @@ export function PackageListCard({
           <View style={styles.metaRow}>
             <Ionicons name="location" size={14} color={Colors.primary} />
             <Text style={styles.metaText} numberOfLines={1}>
-              {item.location.city}, {item.location.state}
+              {item.location?.city ?? (item as { destination?: string }).destination ?? '—'}
+              {item.location?.state ? `, ${item.location.state}` : ''}
             </Text>
           </View>
 
