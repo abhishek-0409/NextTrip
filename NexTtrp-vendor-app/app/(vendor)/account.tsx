@@ -136,7 +136,7 @@ export default function AccountScreen(): React.ReactElement {
         </View>
         <Pressable
           style={styles.settingsBtn}
-          onPress={() => router.push('/(vendor)/settings')}
+          onPress={() => router.push({ pathname: '/(vendor)/settings', params: { from: 'account' } })}
           accessibilityRole="button"
           accessibilityLabel="Settings"
         >
@@ -220,7 +220,7 @@ export default function AccountScreen(): React.ReactElement {
           icon="settings-outline"
           label="Settings"
           subtitle="Profile, password, preferences"
-          onPress={() => router.push('/(vendor)/settings')}
+          onPress={() => router.push({ pathname: '/(vendor)/settings', params: { from: 'account' } })}
           iconColor={Colors.navyLight}
           iconBg={Colors.borderLight}
         />

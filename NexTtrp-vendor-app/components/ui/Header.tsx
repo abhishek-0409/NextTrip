@@ -31,12 +31,13 @@ export const Header: React.FC<HeaderProps> = ({
   const params = useLocalSearchParams<{ from?: string }>();
 
   const handleBack = onBack ?? (() => {
-    // If screen was opened from the Account tab, go back to it explicitly
-    // because tab switches don't add to the navigation history stack.
+    // Tab switches don't push to the navigation stack, so router.back() from
+    // a sub-screen would skip the tab and land on whatever was before it
+    // (often Dashboard). Use replace() to swap to the correct tab instead.
     if (params.from === 'account') {
-      router.navigate('/(vendor)/account');
+      router.replace('/(vendor)/account');
     } else if (params.from === 'dashboard') {
-      router.navigate('/(vendor)');
+      router.replace('/(vendor)');
     } else {
       router.back();
     }

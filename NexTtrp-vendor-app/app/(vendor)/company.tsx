@@ -35,6 +35,7 @@ import { Shadows } from '../../constants/shadows';
 export default function CompanyScreen(): React.ReactElement {
   const { data: company, isLoading } = useVendorCompany();
   const updateCompany = useUpdateCompany();
+  const { from } = useLocalSearchParams<{ from?: string }>();
 
   const [name, setName] = useState('');
   const [about, setAbout] = useState('');
@@ -95,7 +96,7 @@ export default function CompanyScreen(): React.ReactElement {
         logo_url: logoUrl ?? undefined,
       });
       Alert.alert('Saved', 'Company profile updated successfully.', [
-        { text: 'OK', onPress: () => router.back() },
+        { text: 'OK', onPress: () => from === 'account' ? router.replace('/(vendor)/account') : router.back() },
       ]);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to save changes.';
