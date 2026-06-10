@@ -36,11 +36,11 @@
       "typedRoutes": true
     },
     "extra": {
+      "router": {},
       "eas": {
-        "projectId": "f211ac0e-9377-4883-95e8-ba1bd970a9e0"
-      },
-      "router": {}
+        "projectId": "bbce732d-62c4-47c9-996d-821c7d020551"
+      }
     },
-    "owner": "workpritam"
+    "owner": "pritam1202"
   }
 }

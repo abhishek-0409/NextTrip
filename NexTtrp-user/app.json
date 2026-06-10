@@ -90,11 +90,10 @@
       "typedRoutes": true
     },
     "extra": {
+      "router": {},
       "eas": {
-        "projectId": "61da5299-3f4a-4ccd-a491-46e109940ff1"
-      },
-      "router": {}
-    },
-    "owner": "workpritam"
+        "projectId": "5e8d1e31-52e4-4eff-b19c-5ee9e994c59a"
+      }
+    }
   }
 }
