@@ -383,6 +383,11 @@ export interface PriceCalculation {
 /**
  * A single review submitted by a verified traveler after a completed booking.
  */
+export interface ReviewImage {
+  url: string;
+  public_id: string;
+}
+
 export interface Review {
   id: string;
   booking_id: string;
@@ -398,6 +403,7 @@ export interface Review {
   body: string | null;
   is_verified: boolean;
   is_published: boolean;
+  images: ReviewImage[];
   created_at: string;
   user: {
     display_name: string;
@@ -431,6 +437,7 @@ export interface CreateReviewInput {
   rating_value?: number;
   title?: string;
   body?: string;
+  images?: ReviewImage[];
 }
 
 /**

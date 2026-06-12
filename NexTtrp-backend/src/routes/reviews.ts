@@ -53,6 +53,15 @@ const CreateReviewSchema = z
       .max(1000, 'Review body must be at most 1000 characters')
       .optional()
       .transform((v) => (v === '' ? undefined : v)),
+    images: z
+      .array(
+        z.object({
+          url: z.string().url('Invalid image URL'),
+          public_id: z.string().min(1, 'Invalid image public_id'),
+        })
+      )
+      .max(5, 'You can attach at most 5 photos')
+      .optional(),
   })
   .strict()
   .refine(
@@ -110,6 +119,7 @@ reviewsRouter.post('/', requireAuth, async (req, res, next) => {
       rating_value: parsed.data.rating_value,
       title: parsed.data.title,
       body: parsed.data.body,
+      images: parsed.data.images,
     });
 
     return success(res, review, 201);

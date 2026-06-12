@@ -159,6 +159,13 @@ const mapReview = (row: Record<string, unknown>): Review => {
     body: readNullableString(row, 'body'),
     is_verified: readBoolean(row, 'is_verified'),
     is_published: readBoolean(row, 'is_published'),
+    images: (readArray(row, 'images') as unknown[])
+      .filter(isRecord)
+      .map((item) => ({
+        url: readString(item, 'url'),
+        public_id: readString(item, 'public_id'),
+      }))
+      .filter((item) => item.url.length > 0),
     created_at: readString(row, 'created_at'),
     user: { display_name: displayName, avatar_url: readNullableString(userRaw, 'avatar_url') },
   };

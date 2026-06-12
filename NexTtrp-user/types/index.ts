@@ -767,6 +767,11 @@ export interface PaginatedResponse<T> {
  * A single review submitted by a verified traveler after a completed booking.
  * Sub-ratings are optional — at least one must be provided.
  */
+export interface ReviewImage {
+  url: string;
+  public_id: string;
+}
+
 export interface Review {
   /** UUID primary key */
   id: string;
@@ -796,6 +801,8 @@ export interface Review {
   is_verified: boolean;
   /** True when an admin has approved the review for display */
   is_published: boolean;
+  /** Photos attached to the review */
+  images: ReviewImage[];
   /** ISO timestamp of submission */
   created_at: string;
   /** Denormalised reviewer info */
@@ -831,6 +838,7 @@ export interface CreateReviewInput {
   rating_value?: number;
   title?: string;
   body?: string;
+  images?: ReviewImage[];
 }
 
 /**

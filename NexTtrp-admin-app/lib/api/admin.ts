@@ -27,6 +27,7 @@ import type {
   AdminReviewListParams,
   AdminPayoutListParams,
   AdminAuditLogListParams,
+  SystemHealth,
 } from '../../types/admin';
 import type { AdminNotification, Category, Location, PaginatedResponse, Review } from '../../types';
 
@@ -34,6 +35,13 @@ import type { AdminNotification, Category, Location, PaginatedResponse, Review }
 
 export async function getAdminDashboard(): Promise<BackendApiResponse<AdminDashboardMetrics>> {
   return apiClient.get<AdminDashboardMetrics>('/admin/dashboard');
+}
+
+// ── System health ─────────────────────────────────────────────────────────────
+
+/** Pings the backend's /health endpoint (service uptime + database connectivity). */
+export async function getSystemHealth(): Promise<BackendApiResponse<SystemHealth>> {
+  return apiClient.get<SystemHealth>('/health');
 }
 
 // ── Users ─────────────────────────────────────────────────────────────────────

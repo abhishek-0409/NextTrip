@@ -38,6 +38,34 @@ function StarBar({ rating }: { rating: number }): React.ReactElement {
   );
 }
 
+const CATEGORY_RATING_LABELS: {
+  key: keyof Pick<Review, 'rating_guide' | 'rating_hotel' | 'rating_food' | 'rating_transport' | 'rating_value'>;
+  label: string;
+}[] = [
+  { key: 'rating_guide', label: 'Guide' },
+  { key: 'rating_hotel', label: 'Hotel' },
+  { key: 'rating_food', label: 'Food' },
+  { key: 'rating_transport', label: 'Transport' },
+  { key: 'rating_value', label: 'Value' },
+];
+
+function CategoryRatings({ review }: { review: Review }): React.ReactElement | null {
+  const provided = CATEGORY_RATING_LABELS.filter(({ key }) => review[key] !== null && review[key] !== undefined);
+  if (provided.length === 0) return null;
+
+  return (
+    <View style={styles.categoryRatings}>
+      {provided.map(({ key, label }) => (
+        <View key={key} style={styles.categoryRatingRow}>
+          <Text style={styles.categoryRatingLabel}>{label}</Text>
+          <StarBar rating={review[key] as number} />
+          <Text style={styles.categoryRatingValue}>{(review[key] as number).toFixed(1)}</Text>
+        </View>
+      ))}
+    </View>
+  );
+}
+
 function ReviewCard({ review, onPublish, onUnpublish, onVerify, loading }: {
   review: Review;
   onPublish: () => void;
@@ -68,6 +96,7 @@ function ReviewCard({ review, onPublish, onUnpublish, onVerify, loading }: {
 
       {review.title && <Text style={styles.reviewTitle}>{review.title}</Text>}
       {review.body && <Text style={styles.reviewBody} numberOfLines={3}>{review.body}</Text>}
+      <CategoryRatings review={review} />
       <Text style={styles.reviewDate}>{new Date(review.created_at).toLocaleDateString('en-IN')}</Text>
 
       <View style={styles.actions}>
@@ -160,6 +189,16 @@ const styles = StyleSheet.create({
   badgeText: { fontSize: 10, fontWeight: '600' },
   reviewTitle: { fontSize: 13, fontWeight: '600', color: Colors.text, marginBottom: 4 },
   reviewBody: { fontSize: 12, color: Colors.textSecondary, lineHeight: 18, marginBottom: 6 },
+  categoryRatings: {
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
+    marginBottom: 8,
+    paddingTop: 8,
+    gap: 4,
+  },
+  categoryRatingRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  categoryRatingLabel: { width: 64, fontSize: 11, color: Colors.textSecondary, fontWeight: '500' },
+  categoryRatingValue: { fontSize: 11, fontWeight: '600', color: Colors.text },
   reviewDate: { fontSize: 11, color: Colors.textLight, marginBottom: 10 },
   actions: { flexDirection: 'row', gap: 8 },
   actionBtn: { flex: 1, borderRadius: 8, paddingVertical: 8, alignItems: 'center' },

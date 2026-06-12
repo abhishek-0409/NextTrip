@@ -17,6 +17,7 @@ import type {
   PaginatedResponse,
   Review,
   ReviewEligibility,
+  ReviewImage,
 } from '../types';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -77,6 +78,18 @@ const readBoolean = (
   return typeof value === 'boolean' ? value : fallback;
 };
 
+const readReviewImages = (record: Record<string, unknown>): ReviewImage[] => {
+  const value = record['images'];
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter(isRecord)
+    .map((item) => ({
+      url: readString(item, 'url'),
+      public_id: readString(item, 'public_id'),
+    }))
+    .filter((item) => item.url.length > 0);
+};
+
 const throwDatabaseError = (operation: string, dbError: unknown): never => {
   logger.error({ err: dbError, op: `reviewService.${operation}` }, 'DB error');
   throw new AppError(ERROR_MESSAGES.DATABASE_ERROR, 500);
@@ -118,6 +131,7 @@ const mapReview = (record: Record<string, unknown>): Review => {
     body: readNullableString(record, 'body'),
     is_verified: readBoolean(record, 'is_verified', true),
     is_published: readBoolean(record, 'is_published', true),
+    images: readReviewImages(record),
     created_at: readString(record, 'created_at'),
     user: {
       display_name: displayName,
@@ -209,6 +223,7 @@ export async function createReview(
       rating_value: input.rating_value ?? null,
       title: input.title?.trim() || null,
       body: input.body?.trim() || null,
+      images: input.images ?? [],
       // is_verified = true because the booking was confirmed by the platform
       is_verified: true,
       // Phase 2: publish immediately; Phase 3 will add admin moderation

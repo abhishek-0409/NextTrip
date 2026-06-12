@@ -328,6 +328,7 @@ create table public.reviews (
   body text,
   is_verified boolean not null default false,
   is_published boolean not null default false,
+  images jsonb not null default '[]'::jsonb,
   created_at timestamptz not null default now(),
   unique (booking_id),
   constraint reviews_at_least_one_rating_check check (

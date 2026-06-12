@@ -70,6 +70,11 @@ export interface Review {
   id: string;
   user_id: string;
   package_id: string;
+  rating_guide: number | null;
+  rating_hotel: number | null;
+  rating_food: number | null;
+  rating_transport: number | null;
+  rating_value: number | null;
   overall_rating: number;
   title: string | null;
   body: string | null;

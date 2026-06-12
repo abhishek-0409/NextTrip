@@ -439,6 +439,7 @@ export default function AdminDashboardScreen(): React.ReactElement {
               { icon: 'cash',            label: 'Payouts',    desc: 'Settlements',          color: D.success, bg: D.successDim, route: '/(admin)/payouts' },
               { icon: 'tag',             label: 'Categories', desc: 'Taxonomy',             color: D.info,    bg: D.infoDim,    route: '/(admin)/categories' },
               { icon: 'map-marker',      label: 'Locations',  desc: 'Destinations',         color: D.warning, bg: D.warningDim, route: '/(admin)/locations' },
+              { icon: 'heart-pulse',     label: 'System Health', desc: 'Service status',    color: D.success, bg: D.successDim, route: '/(admin)/system-health' },
             ] as const).map((m) => (
               <TouchableOpacity key={m.route} style={styles.mgCard} onPress={() => push(m.route)} activeOpacity={0.8}>
                 <View style={[styles.mgIcon, { backgroundColor: m.bg }]}>

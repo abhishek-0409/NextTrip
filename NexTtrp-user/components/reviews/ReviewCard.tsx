@@ -14,7 +14,9 @@
 
 import React, { useCallback, useState } from 'react';
 import {
+  Image,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -177,6 +179,20 @@ export function ReviewCard({ review }: ReviewCardProps): React.ReactElement {
         </>
       ) : null}
 
+      {/* Photos */}
+      {review.images.length > 0 ? (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.photoRow}
+          contentContainerStyle={styles.photoRowContent}
+        >
+          {review.images.map((img) => (
+            <Image key={img.public_id} source={{ uri: img.url }} style={styles.photo} />
+          ))}
+        </ScrollView>
+      ) : null}
+
       {/* Sub-ratings toggle */}
       {hasSubRatings ? (
         <>
@@ -283,6 +299,17 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     lineHeight: 18,
     marginBottom: 6,
+  },
+  photoRow: {
+    marginTop: 8,
+  },
+  photoRowContent: {
+    gap: 8,
+  },
+  photo: {
+    borderRadius: 10,
+    height: 72,
+    width: 72,
   },
   ratingsToggle: {
     marginTop: 8,

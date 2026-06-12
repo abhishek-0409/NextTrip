@@ -26,6 +26,18 @@ export interface AdminDashboardMetrics {
   pending_payouts: number;
 }
 
+// ── System health ─────────────────────────────────────────────────────────────
+
+export interface SystemHealth {
+  service: string;
+  status: 'ok' | 'degraded';
+  uptime_seconds: number;
+  timestamp: string;
+  checks: {
+    database: 'ok' | 'error';
+  };
+}
+
 // ── Users ─────────────────────────────────────────────────────────────────────
 
 export interface AdminUser extends User {

@@ -39,18 +39,23 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
 
 import { RatingCategory } from '../../components/reviews/RatingCategory';
 import { StarRating } from '../../components/reviews/StarRating';
 import { VerifiedBadge } from '../../components/reviews/VerifiedBadge';
 import { Toast } from '../../components/ui/Toast';
 import { Colors } from '../../constants/colors';
+import { uploadImage } from '../../lib/cloudinary';
 import {
   computeOverallRating,
   hasAtLeastOneRating,
   useSubmitReview,
 } from '../../hooks/useReviews';
 import { useBookingDetail } from '../../hooks/useBookings';
+import type { ReviewImage } from '../../types';
+
+const MAX_REVIEW_IMAGES = 5;
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -308,6 +313,8 @@ export default function WriteReviewScreen(): React.ReactElement {
   const [ratings, setRatings] = useState<RatingsState>(INITIAL_RATINGS);
   const [reviewTitle, setReviewTitle] = useState('');
   const [reviewBody, setReviewBody] = useState('');
+  const [images, setImages] = useState<ReviewImage[]>([]);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [toast, setToast] = useState<{
     visible: boolean;
     message: string;
@@ -365,6 +372,50 @@ export default function WriteReviewScreen(): React.ReactElement {
     []
   );
 
+  const handleAddPhoto = useCallback(async () => {
+    if (images.length >= MAX_REVIEW_IMAGES || isUploadingImage) return;
+
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== ImagePicker.PermissionStatus.GRANTED) {
+      setToast({
+        visible: true,
+        message: 'Photo library access is required to add photos. Please enable it in Settings.',
+        type: 'error',
+      });
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      quality: 0.8,
+    });
+
+    if (result.canceled || result.assets.length === 0) return;
+
+    const asset = result.assets[0];
+    if (!asset?.uri) return;
+
+    setIsUploadingImage(true);
+    const { data, error } = await uploadImage(asset.uri, 'reviews');
+    setIsUploadingImage(false);
+
+    if (error || !data) {
+      setToast({
+        visible: true,
+        message: error ?? 'Failed to upload photo. Please try again.',
+        type: 'error',
+      });
+      return;
+    }
+
+    setImages((prev) => [...prev, { url: data.secure_url, public_id: data.public_id }]);
+  }, [images.length, isUploadingImage]);
+
+  const handleRemovePhoto = useCallback((publicId: string) => {
+    setImages((prev) => prev.filter((img) => img.public_id !== publicId));
+  }, []);
+
   const handleSubmit = useCallback(() => {
     if (!booking || !canSubmit) return;
 
@@ -378,8 +429,9 @@ export default function WriteReviewScreen(): React.ReactElement {
       rating_value: ratings.value || undefined,
       title: reviewTitle.trim() || undefined,
       body: reviewBody.trim() || undefined,
+      images: images.length > 0 ? images : undefined,
     });
-  }, [booking, canSubmit, ratings, reviewTitle, reviewBody, submitMutation]);
+  }, [booking, canSubmit, ratings, reviewTitle, reviewBody, images, submitMutation]);
 
   const handleBack = useCallback(() => {
     if (router.canGoBack()) {
@@ -498,6 +550,45 @@ export default function WriteReviewScreen(): React.ReactElement {
             textAlignVertical="top"
             accessibilityLabel="Review body"
           />
+
+          {/* Photos */}
+          <View style={styles.bodyLabelRow}>
+            <Text style={styles.sectionLabel}>Add Photos</Text>
+            <Text style={styles.charCounter} numberOfLines={1}>
+              {images.length}/{MAX_REVIEW_IMAGES}
+            </Text>
+          </View>
+          <View style={styles.photoRow}>
+            {images.map((img) => (
+              <View key={img.public_id} style={styles.photoThumbWrap}>
+                <Image source={{ uri: img.url }} style={styles.photoThumb} />
+                <Pressable
+                  style={styles.photoRemoveButton}
+                  onPress={() => handleRemovePhoto(img.public_id)}
+                  hitSlop={6}
+                  accessibilityRole="button"
+                  accessibilityLabel="Remove photo"
+                >
+                  <Ionicons name="close" size={14} color={Colors.white} />
+                </Pressable>
+              </View>
+            ))}
+            {images.length < MAX_REVIEW_IMAGES ? (
+              <Pressable
+                style={styles.photoAddButton}
+                onPress={handleAddPhoto}
+                disabled={isUploadingImage}
+                accessibilityRole="button"
+                accessibilityLabel="Add photo"
+              >
+                {isUploadingImage ? (
+                  <ActivityIndicator size="small" color={Colors.primary} />
+                ) : (
+                  <Ionicons name="camera-outline" size={24} color={Colors.textSecondary} />
+                )}
+              </Pressable>
+            ) : null}
+          </View>
 
           {/* Submit button */}
           <TouchableOpacity
@@ -646,6 +737,43 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     paddingHorizontal: 14,
     paddingTop: 12,
+  },
+  photoRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    marginBottom: 24,
+  },
+  photoThumbWrap: {
+    height: 72,
+    width: 72,
+  },
+  photoThumb: {
+    borderRadius: 10,
+    height: 72,
+    width: 72,
+  },
+  photoRemoveButton: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    borderRadius: 10,
+    height: 20,
+    justifyContent: 'center',
+    position: 'absolute',
+    right: 4,
+    top: 4,
+    width: 20,
+  },
+  photoAddButton: {
+    alignItems: 'center',
+    backgroundColor: Colors.surfacePrimary,
+    borderColor: Colors.surfaceBorder,
+    borderRadius: 10,
+    borderStyle: 'dashed',
+    borderWidth: 1,
+    height: 72,
+    justifyContent: 'center',
+    width: 72,
   },
   submitButton: {
     alignItems: 'center',
