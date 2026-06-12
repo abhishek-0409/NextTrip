@@ -240,7 +240,8 @@ export type NotificationType =
   | 'payment_received'
   | 'review_received'
   | 'package_approved'
-  | 'wishlist_price_drop';
+  | 'wishlist_price_drop'
+  | 'booking_received';
 
 /**
  * Entity types that can be opened from a notification.

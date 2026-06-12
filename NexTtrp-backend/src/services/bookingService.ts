@@ -378,7 +378,7 @@ export async function createBooking(
   // 1. Verify package exists and is active
   const { data: pkgData, error: pkgError } = await supabaseAdmin
     .from('packages')
-    .select('id, company_id, status')
+    .select('id, company_id, status, title')
     .eq('id', input.package_id)
     .eq('status', 'active')
     .maybeSingle();
@@ -444,6 +444,43 @@ export async function createBooking(
     throw new AppError(ERROR_MESSAGES.DATABASE_ERROR, 500);
 
   const booking = mapBooking(toRecord(bookingData));
+
+  // Keep the denormalized packages.total_bookings counter in sync so admin
+  // and vendor package views reflect real booking counts.
+  const { error: incrementError } = await supabaseAdmin.rpc(
+    'increment_package_total_bookings',
+    { p_package_id: input.package_id },
+  );
+  if (incrementError !== null) {
+    console.error('Failed to increment package total_bookings', incrementError);
+  }
+
+  // Notify the vendor that their package has a new booking.
+  const { data: companyData } = await supabaseAdmin
+    .from('companies')
+    .select('owner_id')
+    .eq('id', companyId)
+    .maybeSingle();
+
+  const ownerId = companyData === null ? null : readString(toRecord(companyData), 'owner_id');
+  if (ownerId !== null && ownerId !== '') {
+    const packageName = readString(pkgRecord, 'title');
+    createNotification(
+      ownerId,
+      'booking_received',
+      'New Booking Received',
+      `${packageName} was booked by a traveler.`,
+      {
+        booking_id: booking.id,
+        package_id: input.package_id,
+        package_name: packageName,
+      },
+      booking.id,
+      'booking'
+    ).catch((err: unknown) => {
+      console.error('Failed to create vendor booking notification', err);
+    });
+  }
 
   return { booking, price_calculation: calc };
 }

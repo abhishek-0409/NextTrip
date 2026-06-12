@@ -163,6 +163,7 @@ create table public.companies (
   trade_license_url text,
   pan_number text,
   status public.company_status not null default 'pending',
+  rejection_reason text,
   is_verified boolean not null default false,
   total_packages integer not null default 0 check (total_packages >= 0),
   avg_rating numeric(3, 2) not null default 0 check (avg_rating between 0 and 5),
@@ -347,7 +348,8 @@ create table public.notifications (
       'payment_received',
       'review_received',
       'package_approved',
-      'wishlist_price_drop'
+      'wishlist_price_drop',
+      'booking_received'
     )
   ),
   title text not null,
@@ -517,6 +519,18 @@ begin
 
   return new;
 end;
+$$;
+
+-- Atomically bumps packages.total_bookings after a booking is created.
+create or replace function public.increment_package_total_bookings(p_package_id uuid)
+returns void
+language sql
+security definer
+set search_path = public
+as $$
+  update public.packages
+  set total_bookings = total_bookings + 1
+  where id = p_package_id;
 $$;
 
 create or replace function public.guard_review_publication_flags()

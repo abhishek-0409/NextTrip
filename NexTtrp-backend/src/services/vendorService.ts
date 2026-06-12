@@ -51,6 +51,7 @@ export interface VendorCompany {
   gst_number: string | null;
   trade_license_url: string | null;
   status: 'pending' | 'approved' | 'rejected';
+  rejection_reason: string | null;
   is_verified: boolean;
   avg_rating: number;
   total_reviews: number;
@@ -143,6 +144,7 @@ const mapCompany = (row: Record<string, unknown>): VendorCompany => ({
   gst_number: readNullableString(row, 'gst_number'),
   trade_license_url: readNullableString(row, 'trade_license_url'),
   status: readString(row, 'status', 'pending') as VendorCompany['status'],
+  rejection_reason: readNullableString(row, 'rejection_reason'),
   is_verified: readBoolean(row, 'is_verified'),
   avg_rating: readNumber(row, 'avg_rating'),
   total_reviews: readNumber(row, 'total_reviews'),
@@ -222,7 +224,7 @@ async function resolveCompanyId(ownerId: string): Promise<string | null> {
  * Resolves the company owned by the given user.
  * Throws 404 if no company exists.
  */
-async function requireCompanyId(ownerId: string): Promise<string> {
+export async function requireCompanyId(ownerId: string): Promise<string> {
   const companyId = await resolveCompanyId(ownerId);
   if (companyId === null) {
     throw new AppError('Company profile not found. Please complete onboarding first.', 404);

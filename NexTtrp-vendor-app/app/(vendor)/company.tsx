@@ -190,7 +190,9 @@ export default function CompanyScreen(): React.ReactElement {
             {company.is_verified
               ? 'Your company is verified and live on NEXTTRP.'
               : company.status === 'rejected'
-                ? 'Your company verification was rejected. Please contact support.'
+                ? company.rejection_reason
+                  ? `Your company verification was rejected. Reason: ${company.rejection_reason}`
+                  : 'Your company verification was rejected. Please contact support.'
                 : 'Your company is pending verification by the NEXTTRP team.'}
           </Text>
         </View>
@@ -317,7 +319,7 @@ const styles = StyleSheet.create({
   },
   statusBanner: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: 8,
     borderRadius: 12,
     padding: 12,

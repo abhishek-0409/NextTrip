@@ -50,7 +50,7 @@ const ACTION_LABELS: Record<string, string> = {
   delete_location:              'Deleted location',
 };
 
-function getActionLabel(action: string): string {
+export function getActionLabel(action: string): string {
   return ACTION_LABELS[action] ?? action.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
@@ -83,15 +83,15 @@ const ACTION_COLORS: Record<string, string> = {
   delete_location:              Colors.error,
 };
 
-function getActionColor(action: string): string {
+export function getActionColor(action: string): string {
   return ACTION_COLORS[action] ?? Colors.textSecondary;
 }
 
 // ── Entity icon + label ───────────────────────────────────────────────────────
 
-type MCIcon = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+export type MCIcon = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
 
-const ENTITY_META: Record<string, { icon: MCIcon; label: string }> = {
+export const ENTITY_META: Record<string, { icon: MCIcon; label: string }> = {
   vendor:   { icon: 'office-building',  label: 'Vendor' },
   package:  { icon: 'package-variant',  label: 'Package' },
   booking:  { icon: 'calendar-check',   label: 'Booking' },
@@ -141,7 +141,7 @@ function buildDetailLines(metadata: Record<string, unknown>): string[] {
 
 // ── Timestamp ─────────────────────────────────────────────────────────────────
 
-function formatTimestamp(iso: string): string {
+export function formatTimestamp(iso: string): string {
   const d = new Date(iso);
   if (!Number.isFinite(d.getTime())) return '—';
 

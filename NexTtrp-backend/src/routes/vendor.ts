@@ -55,6 +55,7 @@ import {
   getVendorNotifications,
   markNotificationRead,
   markAllNotificationsRead,
+  requireCompanyId,
 } from '../services/vendorService';
 import {
   listVendorPackages,
@@ -327,7 +328,7 @@ vendorRouter.post('/packages/:id/duplicate', strictLimiter, async (req, res, nex
  */
 vendorRouter.get('/analytics', async (req, res, next) => {
   try {
-    const companyId = req.user!.id; // resolved internally by getVendorAnalytics
+    const companyId = await requireCompanyId(req.user!.id);
     const analytics = await getVendorAnalytics(companyId);
     return success(res, analytics);
   } catch (err) {

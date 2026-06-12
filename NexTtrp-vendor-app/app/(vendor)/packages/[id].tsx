@@ -230,6 +230,10 @@ export default function PackageDetailScreen(): React.ReactElement {
   const [exclusions, setExclusions] = useState<string[]>([]);
   const [isDirty, setIsDirty] = useState(false);
 
+  // Only seed local form state from the fetched package once per package id —
+  // not every time the cached `pkg` object changes reference (e.g. after
+  // saving pricing on another screen), otherwise unsaved edits made here get
+  // overwritten by the stale server values when navigating back.
   useEffect(() => {
     if (pkg != null) {
       setTitle(pkg.title);
@@ -243,7 +247,8 @@ export default function PackageDetailScreen(): React.ReactElement {
       setExclusions(pkg.exclusions ?? []);
       setIsDirty(false);
     }
-  }, [pkg]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pkg?.id]);
 
   const markDirty = useCallback(() => setIsDirty(true), []);
 

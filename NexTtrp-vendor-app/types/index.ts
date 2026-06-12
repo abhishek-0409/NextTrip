@@ -100,6 +100,7 @@ export interface VendorCompany {
   gst_number: string | null;
   trade_license_url: string | null;
   status: 'pending' | 'approved' | 'rejected';
+  rejection_reason: string | null;
   is_verified: boolean;
   avg_rating: number;
   total_reviews: number;

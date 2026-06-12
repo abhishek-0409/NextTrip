@@ -200,7 +200,7 @@ export default function AdminPackageDetailScreen(): React.ReactElement {
             label: pkg.status === 'active' ? '✓ Approved' : 'Approve',
             variant: 'success',
             onPress: () => setSheet('approve'),
-            disabled: pkg.status === 'active' || isMutating,
+            disabled: pkg.status !== 'pending' || isMutating,
             loading: approve.isPending,
           },
         ]}

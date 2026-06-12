@@ -23,7 +23,15 @@ import {
   adminDashboardQueryKeys,
 } from '../../hooks/admin/useAdminDashboard';
 import { useAdminUnreadCount } from '../../hooks/admin/useAdminNotifications';
+import { useAdminAuditLogs } from '../../hooks/admin/useAdminAuditLogs';
+import {
+  ENTITY_META,
+  formatTimestamp,
+  getActionColor,
+  getActionLabel,
+} from '../../components/admin/AuditLogItem';
 import { useAuthStore } from '../../store/authStore';
+import type { AdminAuditLog } from '../../types/admin';
 
 const { width: SW } = Dimensions.get('window');
 const H_PAD = 16;
@@ -198,24 +206,21 @@ function QAction({ icon, label, bg, color, onPress }: {
 
 // ── Activity item ─────────────────────────────────────────────────────────────
 
-function ActivityItem({ emoji, title, sub, time, badge, badgeColor }: {
-  emoji: string; title: string; sub: string; time: string; badge: string; badgeColor: string;
-}): React.ReactElement {
+function ActivityItem({ log }: { log: AdminAuditLog }): React.ReactElement {
+  const color = getActionColor(log.action);
+  const entityMeta = ENTITY_META[log.entity_type] ?? { icon: 'information-outline' as const, label: log.entity_type };
+  const adminName = log.admin?.full_name?.trim() || log.admin?.email || 'Admin';
+
   return (
     <View style={styles.actRow}>
-      <View style={styles.actAvatar}>
-        <Text style={{ fontSize: 20 }}>{emoji}</Text>
+      <View style={[styles.actAvatar, { backgroundColor: `${color}22` }]}>
+        <MaterialCommunityIcons name={entityMeta.icon} size={18} color={color} />
       </View>
       <View style={{ flex: 1, minWidth: 0 }}>
-        <Text style={styles.actTitle} numberOfLines={1}>{title}</Text>
-        <Text style={styles.actSub} numberOfLines={1}>{sub}</Text>
+        <Text style={styles.actTitle} numberOfLines={1}>{getActionLabel(log.action)}</Text>
+        <Text style={styles.actSub} numberOfLines={1}>{entityMeta.label} · By {adminName}</Text>
       </View>
-      <View style={{ alignItems: 'flex-end', gap: 4 }}>
-        <Text style={styles.actTime}>{time}</Text>
-        <View style={[styles.actBadge, { backgroundColor: badgeColor + '22' }]}>
-          <Text style={[styles.actBadgeTxt, { color: badgeColor }]}>{badge}</Text>
-        </View>
-      </View>
+      <Text style={styles.actTime}>{formatTimestamp(log.created_at)}</Text>
     </View>
   );
 }
@@ -226,6 +231,7 @@ export default function AdminDashboardScreen(): React.ReactElement {
   const queryClient = useQueryClient();
   const user = useAuthStore((s) => s.user);
   const { data: metrics, isLoading, isRefetching, error, refetch } = useAdminDashboard();
+  const { data: activity, isLoading: activityLoading } = useAdminAuditLogs({ page: 1, limit: 3 });
   const unread = useAdminUnreadCount();
 
   const firstName = (user?.full_name ?? 'Admin').split(' ')[0] ?? 'Admin';
@@ -405,11 +411,18 @@ export default function AdminDashboardScreen(): React.ReactElement {
             </TouchableOpacity>
           </View>
           <View style={styles.actCard}>
-            <ActivityItem emoji="🏪" title="New Vendor Registered" sub="Adventure Point joined the platform" time="10:30 AM" badge="Active" badgeColor={D.success} />
-            <View style={styles.actDivider} />
-            <ActivityItem emoji="📅" title="New Booking Received" sub="Goa Beach Holiday · Sarah Smith" time="09:15 AM" badge="Confirmed" badgeColor={D.info} />
-            <View style={styles.actDivider} />
-            <ActivityItem emoji="📦" title="Package Approved" sub="Himachal Delight has been approved" time="Yesterday" badge="Approved" badgeColor={D.purple} />
+            {activityLoading ? (
+              <Text style={styles.actEmpty}>Loading…</Text>
+            ) : activity && activity.items.length > 0 ? (
+              activity.items.map((log, i) => (
+                <React.Fragment key={log.id}>
+                  {i > 0 && <View style={styles.actDivider} />}
+                  <ActivityItem log={log} />
+                </React.Fragment>
+              ))
+            ) : (
+              <Text style={styles.actEmpty}>No recent activity</Text>
+            )}
           </View>
         </View>
 
@@ -540,8 +553,7 @@ const styles = StyleSheet.create({
   actTitle:   { fontSize: 13, fontWeight: '600', color: D.text },
   actSub:     { fontSize: 12, color: D.textSec, marginTop: 1 },
   actTime:    { fontSize: 11, color: D.textMuted },
-  actBadge:   { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 20 },
-  actBadgeTxt:{ fontSize: 10, fontWeight: '700' },
+  actEmpty:   { fontSize: 13, color: D.textSec, padding: 14, textAlign: 'center' },
   actDivider: { height: 1, backgroundColor: D.divider, marginHorizontal: 14 },
 
   // Manage grid

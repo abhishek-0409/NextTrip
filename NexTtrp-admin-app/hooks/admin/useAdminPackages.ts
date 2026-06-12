@@ -94,7 +94,12 @@ export function useRejectPackage(): UseMutationResult<AdminPackageListItem, Erro
   });
 }
 
-export function useFeaturePackage(): UseMutationResult<AdminPackageListItem, Error, { packageId: string; isFeatured: boolean; isBestseller?: boolean }> {
+export function useFeaturePackage(): UseMutationResult<
+  AdminPackageListItem,
+  Error,
+  { packageId: string; isFeatured: boolean; isBestseller?: boolean },
+  { previous?: AdminPackageListItem }
+> {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ packageId, isFeatured, isBestseller }) => {
@@ -102,7 +107,30 @@ export function useFeaturePackage(): UseMutationResult<AdminPackageListItem, Err
       if (res.error || !res.data) throw new Error(res.error ?? 'Failed to update package');
       return res.data;
     },
-    onSuccess: (_pkg, { packageId }) => {
+    // The Switch's `value` is bound to the cached package, so without an
+    // optimistic update it snaps back to its old position the instant the
+    // toggle re-renders (before the request resolves) — making the first
+    // tap appear to do nothing and a second tap required to "stick".
+    onMutate: async ({ packageId, isFeatured, isBestseller }) => {
+      const queryKey = adminPackageQueryKeys.detail(packageId);
+      await queryClient.cancelQueries({ queryKey });
+
+      const previous = queryClient.getQueryData<AdminPackageListItem>(queryKey);
+      if (previous) {
+        queryClient.setQueryData<AdminPackageListItem>(queryKey, {
+          ...previous,
+          is_featured: isFeatured,
+          is_bestseller: isBestseller ?? previous.is_bestseller,
+        });
+      }
+      return { previous };
+    },
+    onError: (_err, { packageId }, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(adminPackageQueryKeys.detail(packageId), context.previous);
+      }
+    },
+    onSettled: (_pkg, _err, { packageId }) => {
       void queryClient.invalidateQueries({
         queryKey: adminPackageQueryKeys.detail(packageId),
       });

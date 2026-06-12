@@ -653,7 +653,10 @@ export const getFeaturedPackages = async (): Promise<PackageListItem[]> => {
     .select(PACKAGE_LIST_SELECT)
     .eq('status', 'active')
     .eq('is_featured', true)
-    .order('avg_rating', { ascending: false })
+    // Order by most recently featured first — ordering by avg_rating pushed
+    // newly-featured packages with no reviews yet past the limit of 6,
+    // so they never showed up in Trending Packages right after being featured.
+    .order('updated_at', { ascending: false })
     .limit(6);
 
   if (error !== null) {
