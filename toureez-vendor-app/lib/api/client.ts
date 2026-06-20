@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file lib/api/client.ts
  * @description Typed HTTP client for the Toureez Node.js/Express backend.
  *
@@ -61,7 +61,6 @@ function extractErrorMessage(error: unknown): string {
  * Returns null if the retry also fails or if refresh itself failed.
  */
 async function handleUnauthorized<T>(
-  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
   url: string,
   init: RequestInit,
 ): Promise<BackendApiResponse<T> | null> {
@@ -161,7 +160,7 @@ async function request<T>(
 
       if (response.status === 401) {
         // Attempt one silent token refresh before signing out
-        const retryResult = await handleUnauthorized<T>(method, url, init);
+        const retryResult = await handleUnauthorized<T>(url, init);
         if (retryResult !== null) return retryResult;
         return { success: false, data: null, error: 'Session expired. Please sign in again.' };
       }

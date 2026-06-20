@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file hooks/useAuth.ts
  * @description Auth state, auth mutations, and auth form controllers.
  */
@@ -361,7 +361,6 @@ export function useAuth(): UseAuthReturn {
 }
 
 export function useSignIn(): UseSignInReturn {
-  const setUser = useAuthStore((state) => state.setUser);
   const setSession = useAuthStore((state) => state.setSession);
   const setWishlist = useWishlistStore((state) => state.setWishlist);
   const [email, setEmailValue] = useState('');
@@ -457,7 +456,6 @@ export function useSignIn(): UseSignInReturn {
 }
 
 export function useSignUp(): UseSignUpReturn {
-  const setUser = useAuthStore((state) => state.setUser);
   // FIXED: 7 - Signup stores the role-bearing profile with the session when available.
   const setSession = useAuthStore((state) => state.setSession);
   const [fullName, setFullNameValue] = useState('');

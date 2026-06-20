@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file components/ErrorBoundary.tsx
  * @description Root error boundary for the traveller app.
  *
@@ -104,7 +104,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
           {showStack && (
             <View style={styles.stackBox}>
               <Text style={styles.stackText} selectable>
-                {error!.stack}
+                {error.stack}
               </Text>
             </View>
           )}

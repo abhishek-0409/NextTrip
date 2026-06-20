@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file app/(tabs)/search.tsx
  * @description Toureez package search screen.
  */
@@ -46,14 +46,6 @@ function recentKey(userId: string): string {
 }
 
 const DESTINATION_DEBOUNCE_MS = 400;
-const DESTINATION_IMAGES = [
-  'https://images.unsplash.com/photo-1598091383021-15ddea10925d?auto=format&fit=crop&w=500&q=80',
-  'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&w=500&q=80',
-  'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=500&q=80',
-  'https://images.unsplash.com/photo-1514222134-b57cbb8ce073?auto=format&fit=crop&w=500&q=80',
-  'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=500&q=80',
-  'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=500&q=80',
-];
 
 function paramsToFilters(params: Record<string, string | string[]>): SearchScreenFilters {
   const get = (key: string): string | undefined => {

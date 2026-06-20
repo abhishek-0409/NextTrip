@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file hooks/usePushNotifications.ts
  * Registers for Expo push notifications in standalone/dev-client builds.
  *
@@ -12,6 +12,7 @@ import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { PermissionStatus } from 'expo-modules-core';
 import { apiClient } from '../lib/api/client';
 import { useAuthStore } from '../store/authStore';
 import { VENDOR_ROLE } from '../types';
@@ -48,14 +49,14 @@ export function usePushNotifications(): void {
         });
 
         const { status: existing } = await Notifications.getPermissionsAsync();
-        if (existing === 'denied') return;
+        if (existing === Notifications.PermissionStatus.DENIED) return;
 
-        let finalStatus = existing;
-        if (existing !== 'granted') {
+        let finalStatus: PermissionStatus = existing;
+        if (existing !== Notifications.PermissionStatus.GRANTED) {
           const { status } = await Notifications.requestPermissionsAsync();
           finalStatus = status;
         }
-        if (finalStatus !== 'granted') return;
+        if (finalStatus !== Notifications.PermissionStatus.GRANTED) return;
 
         if (Platform.OS === 'android') {
           await Notifications.setNotificationChannelAsync('default', {

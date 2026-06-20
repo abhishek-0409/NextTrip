@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file hooks/usePushNotifications.ts
  * @description Registers for Expo push notifications and saves the token to the backend.
  *
@@ -16,15 +16,16 @@
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
 import * as Device from 'expo-device';
-import Constants from 'expo-constants';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { PermissionStatus } from 'expo-modules-core';
 import { registerDeviceToken } from '../lib/api/users';
 import { useAuthStore } from '../store/authStore';
 
 // expo-notifications registers a push token listener at module load time, which
 // triggers a loud warning in Expo Go (SDK 53+). Using a dynamic import prevents
 // the package from loading at all in Expo Go, silencing the warning entirely.
-const isExpoGo = Constants.executionEnvironment === 'storeClient';
+const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 
 const TOKEN_STORAGE_KEY = '@toureez:push_token';
 
@@ -41,7 +42,7 @@ export function usePushNotifications(): void {
         const Notifications = await import('expo-notifications');
 
         Notifications.setNotificationHandler({
-          handleNotification: async () => ({
+          handleNotification: () => Promise.resolve({
             shouldShowAlert: true,
             shouldPlaySound: true,
             shouldSetBadge: true,
@@ -52,13 +53,14 @@ export function usePushNotifications(): void {
 
         const { status: existingStatus } = await Notifications.getPermissionsAsync();
 
-        if (existingStatus === 'denied') return;
+        if (existingStatus === Notifications.PermissionStatus.DENIED) return;
 
-        let finalStatus = existingStatus;
-        if (existingStatus !== 'granted') {
+        let finalStatus: PermissionStatus = existingStatus;
+        if (existingStatus !== Notifications.PermissionStatus.GRANTED) {
           const { status } = await Notifications.requestPermissionsAsync();
           finalStatus = status;
         }
+        if (finalStatus !== Notifications.PermissionStatus.GRANTED) return;
 
         if (Platform.OS === 'android') {
           await Notifications.setNotificationChannelAsync('default', {

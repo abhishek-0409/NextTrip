@@ -4,8 +4,9 @@
  * RLS policies ensure users can only read/update their own profile row.
  */
 
-import { supabase } from '../supabase';
 import * as Linking from 'expo-linking';
+import { supabase } from '../supabase';
+import { apiClient } from './client';
 import type { ApiResponse, User } from '../../types';
 
 // FIXED: 7 - Role changes must go through PATCH /api/v1/admin/users/:id/role, never frontend profile writes.
@@ -543,8 +544,6 @@ export const sendPasswordResetEmail = resetPassword;
 
 // ── Device token (push notifications) ────────────────────────────────────────
 
-import { apiClient } from './client';
-
 /**
  * Registers an Expo push token with the backend so the server can send
  * push notifications to this device.
@@ -566,7 +565,8 @@ export async function unregisterDeviceToken(
   platform: 'ios' | 'android',
 ): Promise<void> {
   await apiClient.delete<{ removed: boolean }>(`/users/device-token`);
-  void platform; // platform included for logging but delete uses body-less endpoint
+  void token;
+  void platform; // parameters kept for API symmetry; delete uses a body-less endpoint
 }
 
 // ── Account deletion ──────────────────────────────────────────────────────────
