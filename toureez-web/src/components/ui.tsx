@@ -82,3 +82,21 @@ export function StatusBadge({ status }: { status: string }) {
   };
   return <Badge tone={tone[status] ?? 'default'}>{status.replace(/_/g, ' ')}</Badge>;
 }
+
+export function PaymentStatusBadge({ status }: { status: string }) {
+  const tone: Record<string, 'default' | 'success' | 'warning' | 'danger'> = {
+    paid: 'success',
+    partial: 'warning',
+    pending: 'default',
+    refunded: 'danger',
+    failed: 'danger',
+  };
+  const label: Record<string, string> = {
+    paid: 'Paid',
+    partial: 'Partial Paid',
+    pending: 'Payment Pending',
+    refunded: 'Refunded',
+    failed: 'Payment Failed',
+  };
+  return <Badge tone={tone[status] ?? 'default'}>{label[status] ?? status.replace(/_/g, ' ')}</Badge>;
+}

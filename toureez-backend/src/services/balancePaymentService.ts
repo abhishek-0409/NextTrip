@@ -57,12 +57,20 @@ export async function createBalancePaymentOrder(
     throw new AppError('Forbidden', 403);
   }
 
-  if (readString(row, 'status') !== 'confirmed') {
-    throw new AppError('Booking is not confirmed', 400);
+  // An advance-paid booking stays 'pending' (not 'confirmed') until the
+  // balance is settled — that's exactly the state this function expects to
+  // act on, so only reject statuses that mean the booking can't be paid at all.
+  const status = readString(row, 'status');
+  if (status === 'cancelled' || status === 'completed') {
+    throw new AppError('This booking can no longer accept payment', 400);
   }
 
   if (readString(row, 'payment_type') !== 'advance') {
     throw new AppError('This booking was paid in full', 400);
+  }
+
+  if (readString(row, 'payment_status') !== 'partial') {
+    throw new AppError('Pay the advance amount before paying the balance', 400);
   }
 
   const balanceAmount = readNumber(row, 'balance_amount');
@@ -182,10 +190,13 @@ export async function verifyBalancePayment(params: {
     // Non-fatal — booking is still updated below
   }
 
-  // Update booking: balance settled
+  // Update booking: balance settled — the full amount is now paid, so the
+  // booking can finally be confirmed (it stayed 'pending' through the advance
+  // payment, since only part of the total had been collected until now).
   const { error: updateErr } = await supabaseAdmin
     .from('bookings')
     .update({
+      status:         'confirmed',
       advance_amount: totalAmount,
       balance_amount: 0,
       payment_status: 'paid',

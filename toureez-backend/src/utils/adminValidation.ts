@@ -123,7 +123,7 @@ export type AdminBestsellerPackageInput = z.infer<typeof AdminBestsellerPackageS
 export const AdminListBookingsQuerySchema = paginationSchema.extend({
   search: optionalTrimmed(1, 120),
   status: z.enum(['pending', 'confirmed', 'cancelled', 'completed']).optional(),
-  payment_status: z.enum(['pending', 'paid', 'refunded', 'failed']).optional(),
+  payment_status: z.enum(['pending', 'partial', 'paid', 'refunded', 'failed']).optional(),
   company_id: z.string().uuid().optional(),
   from_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Must be YYYY-MM-DD').optional(),
   to_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Must be YYYY-MM-DD').optional(),

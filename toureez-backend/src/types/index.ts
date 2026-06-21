@@ -298,7 +298,7 @@ export interface Booking {
   advance_amount: number;
   balance_amount: number;
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
-  payment_status: 'pending' | 'paid' | 'refunded' | 'failed';
+  payment_status: 'pending' | 'partial' | 'paid' | 'refunded' | 'failed';
   special_requests: string | null;
   traveler_details: TravelerDetail[];
   created_at: string;

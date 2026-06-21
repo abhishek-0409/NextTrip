@@ -38,6 +38,10 @@ export interface Booking {
   id: string;
   package_id: string;
   status: string;
+  payment_status: 'pending' | 'partial' | 'paid' | 'refunded' | 'failed';
+  payment_type?: 'full' | 'advance';
+  advance_amount?: number;
+  balance_amount?: number;
   travel_date: string;
   total_amount: number;
   created_at: string;
@@ -62,6 +66,22 @@ export async function createRazorpayOrder(bookingId: string) {
   return apiClient.post<{ order_id: string; amount: number; currency: string; key_id: string; booking_id: string }>(
     '/bookings/create-razorpay-order',
     { booking_id: bookingId }
+  );
+}
+
+export async function createBalancePaymentOrder(bookingId: string) {
+  return apiClient.post<{ order_id: string; amount: number; currency: string; key_id: string; booking_id: string }>(
+    `/bookings/${bookingId}/create-balance-order`
+  );
+}
+
+export async function verifyBalancePayment(
+  bookingId: string,
+  payload: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }
+) {
+  return apiClient.post<{ booking_id: string; payment_id: string; status: string }>(
+    `/bookings/${bookingId}/verify-balance-payment`,
+    payload
   );
 }
 

@@ -203,12 +203,17 @@ export async function verifyRazorpayPayment(params: {
     // Non-fatal — booking is still confirmed below
   }
 
-  // Update booking status to confirmed
+  // Only a 'full' payment confirms the booking. An 'advance' payment has only
+  // covered part of the total — the booking stays pending and the payment
+  // status is 'partial' (not 'paid') until the balance is settled via
+  // verifyBalancePayment.
+  const isFullyPaid = paymentType !== 'advance';
+
   const { error: updateErr } = await supabaseAdmin
     .from('bookings')
     .update({
-      status:         'confirmed',
-      payment_status: 'paid',
+      status:         isFullyPaid ? 'confirmed' : 'pending',
+      payment_status: isFullyPaid ? 'paid' : 'partial',
       balance_amount: balanceAmount,
       updated_at:     new Date().toISOString(),
     })
@@ -220,8 +225,8 @@ export async function verifyRazorpayPayment(params: {
   }
 
   logger.info(
-    { bookingId: params.booking_id, paymentId: params.razorpay_payment_id },
-    'Razorpay payment verified and booking confirmed',
+    { bookingId: params.booking_id, paymentId: params.razorpay_payment_id, isFullyPaid },
+    isFullyPaid ? 'Razorpay payment verified and booking confirmed' : 'Razorpay advance payment verified — balance still due',
   );
 
   // Fire-and-forget booking confirmation email — never block the response

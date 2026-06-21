@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { vendorApi } from '../../lib/api/vendor';
 import { bookingPackageTitle } from '../../lib/api/bookings';
-import { Card, LoadingState, ErrorState, EmptyState, StatusBadge, PageHeader } from '../../components/ui';
+import { Card, LoadingState, ErrorState, EmptyState, StatusBadge, PaymentStatusBadge, PageHeader } from '../../components/ui';
 
 const STATUSES = ['all', 'confirmed', 'pending', 'cancelled', 'completed'] as const;
 
@@ -39,6 +39,7 @@ export default function Bookings() {
             </div>
             <div className="list-card-meta">
               <StatusBadge status={b.status} />
+              <PaymentStatusBadge status={b.payment_status} />
               <span>₹{b.total_amount}</span>
             </div>
           </Card>

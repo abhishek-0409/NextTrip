@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import { adminApi } from '../../lib/api/admin';
 import { bookingPackageTitle } from '../../lib/api/bookings';
-import { Card, LoadingState, ErrorState, StatusBadge } from '../../components/ui';
+import { Card, LoadingState, ErrorState, StatusBadge, PaymentStatusBadge } from '../../components/ui';
 
 const ACTIONS = ['pending', 'confirmed', 'cancelled', 'completed'] as const;
 
@@ -25,6 +25,7 @@ export default function BookingDetail() {
     <div>
       <h1>{bookingPackageTitle(booking)}</h1>
       <StatusBadge status={booking.status} />
+      <PaymentStatusBadge status={booking.payment_status} />
 
       <Card className="detail-section">
         <p>Travel date: {booking.travel_date}</p>

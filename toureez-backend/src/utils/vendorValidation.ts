@@ -313,7 +313,7 @@ export type CreateLocationInput = z.infer<typeof CreateLocationSchema>;
  */
 export const VendorListBookingsQuerySchema = paginationSchema.extend({
   status: z.enum(['pending', 'confirmed', 'cancelled', 'completed']).optional(),
-  payment_status: z.enum(['pending', 'paid', 'refunded', 'failed']).optional(),
+  payment_status: z.enum(['pending', 'partial', 'paid', 'refunded', 'failed']).optional(),
   package_id: z.string().uuid().optional(),
   from_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Use YYYY-MM-DD format').optional(),
   to_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Use YYYY-MM-DD format').optional(),
