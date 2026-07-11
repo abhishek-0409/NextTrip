@@ -1,8 +1,4 @@
-/**
- * @file components/package/InclusionsSection.tsx
- * @description Two-column inclusions / exclusions checklist.
- * Inclusions: green checkmark. Exclusions: red X.
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';

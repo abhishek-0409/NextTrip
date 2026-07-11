@@ -1,15 +1,4 @@
-/**
- * @file components/search/PackageList.tsx
- * @description Infinite-scroll FlatList of search result cards.
- *
- * Handles:
- * - Skeleton loading state (3 placeholder cards on first load)
- * - Inline error state with retry
- * - Empty state with clear-filters CTA
- * - "Load more" footer spinner
- * - "No more results" end-of-list message
- * - Pull-to-refresh (resets to page 1 via refetch)
- */
+
 
 import React, { useCallback, useEffect, useRef } from 'react';
 import {
@@ -209,7 +198,7 @@ export interface PackageListProps {
   isRefreshing: boolean;
   onRetry: () => void;
   onClearFilters: () => void;
-  /** Rendered above the list (ResultsHeader + ActiveFilters) */
+
   ListHeaderComponent: React.ReactElement;
 }
 

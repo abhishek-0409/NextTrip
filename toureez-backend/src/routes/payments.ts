@@ -1,12 +1,4 @@
-/**
- * @file routes/payments.ts
- * @description Payment gateway webhooks.
- *
- * POST /api/v1/payments/webhook/razorpay — Razorpay webhook (no auth, raw body)
- *
- * Safety net: if a user's app crashes after payment but before
- * verify-razorpay-payment is called, this webhook confirms the booking.
- */
+
 
 import crypto from 'crypto';
 import express, { Router } from 'express';

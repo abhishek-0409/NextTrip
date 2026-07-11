@@ -1,30 +1,14 @@
-﻿/**
- * @file types/index.ts
- * @description Central type definitions for the Toureez Vendor Portal.
- *
- * All interfaces are defined here and imported across the codebase to
- * ensure a single source of truth for data shapes.
- *
- * Mirrors the shared domain types from Toureez-user/types/index.ts
- * with vendor-specific extensions.
- */
+
 
 import type { Session } from '@supabase/supabase-js';
 
 // ── Auth types ────────────────────────────────────────────────────────────────
 
-/**
- * Role assigned to an application user.
- * The DB enum uses company_owner; "Vendor" is UI copy only.
- */
-export type UserRole = 'traveler' | 'company_owner' | 'admin';
 
-// FIXED: 2 - The DB enum uses company_owner; reserve "Vendor" for UI labels.
+export type UserRole = 'traveler' | 'company_owner' | 'admin';
 export const VENDOR_ROLE = 'company_owner' as const;
 
-/**
- * Public profile stored for a Supabase-authenticated user.
- */
+
 export interface User {
   id: string;
   full_name: string | null;
@@ -38,9 +22,7 @@ export interface User {
 
 // ── Store state types ─────────────────────────────────────────────────────────
 
-/**
- * Shape of the Zustand auth store state and actions.
- */
+
 export interface AuthState {
   user: User | null;
   session: Session | null;
@@ -53,19 +35,13 @@ export interface AuthState {
 
 // ── API response types ────────────────────────────────────────────────────────
 
-/**
- * Standardised API response wrapper used by all lib/api/* functions.
- * Ensures consistent error handling across the app — callers always
- * check `error` before using `data`.
- */
+
 export interface ApiResponse<T> {
   data: T | null;
   error: string | null;
 }
 
-/**
- * Standard API response envelope from the Node.js backend.
- */
+
 export interface BackendApiResponse<T> {
   success: boolean;
   data: T | null;
@@ -73,9 +49,7 @@ export interface BackendApiResponse<T> {
   meta?: Record<string, unknown>;
 }
 
-/**
- * Standard pagination wrapper returned by list endpoints.
- */
+
 export interface PaginatedResponse<T> {
   items: T[];
   total: number;
@@ -86,9 +60,7 @@ export interface PaginatedResponse<T> {
 
 // ── Company types ─────────────────────────────────────────────────────────────
 
-/**
- * Vendor company profile as returned by GET /api/v1/vendor/company.
- */
+
 export interface VendorCompany {
   id: string;
   owner_id: string;
@@ -109,9 +81,7 @@ export interface VendorCompany {
   updated_at: string;
 }
 
-/**
- * Company document record after Cloudinary upload.
- */
+
 export interface CompanyDocument {
   id: string;
   company_id: string;
@@ -124,14 +94,10 @@ export interface CompanyDocument {
 
 // ── Package types ─────────────────────────────────────────────────────────────
 
-/**
- * Package lifecycle status.
- */
+
 export type PackageStatus = 'draft' | 'pending' | 'active' | 'rejected';
 
-/**
- * Compact package item as returned by the vendor package list endpoint.
- */
+
 export interface VendorPackageListItem {
   id: string;
   company_id: string;
@@ -158,9 +124,7 @@ export interface VendorPackageListItem {
   lowest_price: number | null;
 }
 
-/**
- * Full package detail returned by GET /api/v1/vendor/packages/:id.
- */
+
 export interface VendorPackageDetail extends VendorPackageListItem {
   highlights: string[];
   inclusions: string[];
@@ -172,9 +136,7 @@ export interface VendorPackageDetail extends VendorPackageListItem {
   rejection_reason: string | null;
 }
 
-/**
- * Pricing tier for a vendor package.
- */
+
 export interface VendorPricingTier {
   id: string;
   package_id: string;
@@ -190,9 +152,7 @@ export interface VendorPricingTier {
   is_active: boolean;
 }
 
-/**
- * Single itinerary day for a vendor package.
- */
+
 export interface VendorItineraryDay {
   id: string;
   package_id: string;
@@ -205,9 +165,7 @@ export interface VendorItineraryDay {
   transport: string | null;
 }
 
-/**
- * Package gallery image.
- */
+
 export interface VendorPackageImage {
   id: string;
   package_id: string;
@@ -223,9 +181,7 @@ export interface VendorPackageImage {
 export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
 export type PaymentStatus = 'pending' | 'paid' | 'refunded' | 'failed';
 
-/**
- * Compact booking item as returned by the vendor booking list endpoint.
- */
+
 export interface VendorBookingListItem {
   id: string;
   booking_reference: string;
@@ -243,9 +199,7 @@ export interface VendorBookingListItem {
   user: { id: string; full_name: string | null; phone: string | null; email: string };
 }
 
-/**
- * Full booking detail returned by GET /api/v1/vendor/bookings/:id.
- */
+
 export interface VendorBookingDetail extends VendorBookingListItem {
   pricing_id: string;
   traveler_details: TravelerDetail[];
@@ -257,9 +211,7 @@ export interface VendorBookingDetail extends VendorBookingListItem {
   } | null;
 }
 
-/**
- * Individual traveler details collected during booking.
- */
+
 export interface TravelerDetail {
   name: string;
   age: number;
@@ -271,9 +223,7 @@ export interface TravelerDetail {
 
 // ── Review types ──────────────────────────────────────────────────────────────
 
-/**
- * A review as returned by GET /api/v1/vendor/reviews.
- */
+
 export interface VendorReview {
   id: string;
   booking_id: string;
@@ -298,9 +248,7 @@ export interface VendorReview {
 
 export type PayoutStatus = 'pending' | 'processing' | 'paid' | 'failed';
 
-/**
- * Payout disbursement record.
- */
+
 export interface VendorPayout {
   id: string;
   company_id: string;
@@ -316,9 +264,7 @@ export interface VendorPayout {
   updated_at: string;
 }
 
-/**
- * Payout bank/UPI account record.
- */
+
 export interface VendorPayoutAccount {
   id: string;
   company_id: string;
@@ -335,9 +281,7 @@ export interface VendorPayoutAccount {
 
 // ── Dashboard types ───────────────────────────────────────────────────────────
 
-/**
- * Dashboard metrics aggregated from the vendor's packages, bookings, and reviews.
- */
+
 export interface VendorDashboardMetrics {
   total_packages: number;
   active_packages: number;
@@ -368,9 +312,7 @@ export interface RecentBookingSummary {
 
 // ── Notification types ────────────────────────────────────────────────────────
 
-/**
- * Notification as returned by GET /api/v1/vendor/notifications.
- */
+
 export interface VendorNotification {
   id: string;
   user_id: string;
@@ -386,9 +328,7 @@ export interface VendorNotification {
 
 // ── Cloudinary types ──────────────────────────────────────────────────────────
 
-/**
- * Result returned after a successful Cloudinary upload.
- */
+
 export interface CloudinaryUploadResult {
   public_id: string;
   secure_url: string;
@@ -401,9 +341,7 @@ export interface CloudinaryUploadResult {
 
 // ── Enquiry types ─────────────────────────────────────────────────────────────
 
-/**
- * A single message within an enquiry thread.
- */
+
 export interface EnquiryMessage {
   id: string;
   sender_role: 'user' | 'vendor';
@@ -411,9 +349,7 @@ export interface EnquiryMessage {
   created_at: string;
 }
 
-/**
- * Summary of an enquiry thread as returned in list endpoints.
- */
+
 export interface EnquirySummary {
   id: string;
   package: { id: string; title: string } | null;
@@ -426,9 +362,7 @@ export interface EnquirySummary {
   created_at: string;
 }
 
-/**
- * Full enquiry thread including all messages.
- */
+
 export interface EnquiryDetail extends EnquirySummary {
   messages: EnquiryMessage[];
 }

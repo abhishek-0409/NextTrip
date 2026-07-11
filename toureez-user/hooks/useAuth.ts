@@ -1,7 +1,4 @@
-/**
- * @file hooks/useAuth.ts
- * @description Auth state, auth mutations, and auth form controllers.
- */
+
 
 import { useCallback, useMemo, useState } from 'react';
 import { router } from 'expo-router';
@@ -9,8 +6,6 @@ import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { UseMutationResult } from '@tanstack/react-query';
-
-// FIXED: 1 - Auth mutations use the central role-to-route mapping after login.
 import { getHomeRouteForRole, useAuthStore } from '../store/authStore';
 import { useWishlistStore } from '../store/wishlistStore';
 import { getWishlistIds } from '../lib/api/wishlist';
@@ -208,21 +203,7 @@ function hydrateWishlist(setWishlist: (packageIds: string[]) => void): void {
   });
 }
 
-/**
- * Returns the deep-link URI that Supabase should redirect back to after OAuth.
- *
- * Result:  toureez://auth/callback
- *
- * ⚠️  REQUIRED — Supabase Dashboard setup (one-time):
- *   1. Go to Authentication → URL Configuration in your Supabase project.
- *   2. Add  toureez://auth/callback  to the "Redirect URLs" allow-list.
- *      (A wildcard  toureez://**  also works and covers future paths.)
- *   3. Ensure "Site URL" is NOT localhost:3000 for production builds.
- *      For development you can leave it; what matters is the allow-list entry.
- *
- * Without step 2 Supabase ignores the redirectTo parameter and falls back to
- * the Site URL (localhost:3000), which causes ERR_CONNECTION_REFUSED on mobile.
- */
+
 function createRedirectUri(): string {
   return AuthSession.makeRedirectUri({
     scheme: 'toureez',
@@ -230,18 +211,7 @@ function createRedirectUri(): string {
   });
 }
 
-/**
- * Runs the full Google OAuth flow using Supabase's OAuth URL + WebBrowser.
- *
- * Why WebBrowser.openAuthSessionAsync instead of AuthRequest.promptAsync:
- * - Supabase generates a complete, self-contained OAuth URL (including all
- *   Google params). Wrapping it in AuthRequest would append duplicate params
- *   (client_id, redirect_uri, response_type) that corrupt the URL and cause
- *   Google to immediately reject the session — which surfaces as "cancelled".
- * - openAuthSessionAsync opens the URL as-is in a Chrome Custom Tab (Android)
- *   or SFAuthenticationSession (iOS) and waits for the deep-link redirect back
- *   into the app. This is the pattern Supabase's own docs recommend for RN.
- */
+
 async function runGoogleOAuth(): Promise<User> {
   const redirectUri = createRedirectUri();
 
@@ -436,9 +406,9 @@ export function useSignIn(): UseSignInReturn {
     googleMutation.mutate();
   }, [googleMutation]);
 
-  const formError = mutation.error?.message ?? 
-    (googleMutation.error?.message === '__CANCELLED__' 
-      ? null 
+  const formError = mutation.error?.message ??
+    (googleMutation.error?.message === '__CANCELLED__'
+      ? null
       : googleMutation.error?.message ?? null);
 
   return {
@@ -456,7 +426,6 @@ export function useSignIn(): UseSignInReturn {
 }
 
 export function useSignUp(): UseSignUpReturn {
-  // FIXED: 7 - Signup stores the role-bearing profile with the session when available.
   const setSession = useAuthStore((state) => state.setSession);
   const setUser = useAuthStore((state) => state.setUser);
   const [fullName, setFullNameValue] = useState('');
@@ -492,7 +461,6 @@ export function useSignUp(): UseSignUpReturn {
       return data;
     },
     onSuccess: (user) => {
-      // FIXED: 7 - Store role and session together after signup when Supabase returns a session.
       void supabase.auth.getSession().then(({ data: { session } }) => {
         if (session) {
           setSession(user, session);

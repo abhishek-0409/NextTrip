@@ -1,14 +1,4 @@
-/**
- * @file lib/api/auth.ts
- * @description Authentication API functions for the Vendor Portal.
- *
- * Uses Supabase Auth directly for sign-in/sign-out.
- * The backend is not involved in authentication — only in fetching the
- * vendor's profile and company status after the Supabase session is established.
- *
- * Role enforcement: Only users with role = 'company_owner' may access
- * the vendor portal. Non-vendor users are redirected to login on cold start.
- */
+
 
 import { supabase } from '../supabase';
 import { friendlyError, friendlyThrown } from '../errors';
@@ -17,10 +7,7 @@ import { VENDOR_ROLE } from '../../types';
 
 const PROFILE_SELECT = 'id, full_name, avatar_url, phone, city, state, role, created_at';
 
-/**
- * Fetches the profile for the currently authenticated user.
- * Returns null if the user is not authenticated or has no profile row.
- */
+
 export async function getMyProfile(): Promise<User | null> {
   try {
     const {
@@ -43,11 +30,7 @@ export async function getMyProfile(): Promise<User | null> {
   }
 }
 
-/**
- * Signs the vendor in with email and password.
- * Returns an error if the credentials are invalid or the account
- * does not have the company_owner role.
- */
+
 export async function signIn(
   email: string,
   password: string,
@@ -79,8 +62,6 @@ export async function signIn(
     }
 
     const user = profile as User;
-
-    // FIXED: 2 - Vendor portal only allows company_owner role.
     if (user.role !== VENDOR_ROLE) {
       await supabase.auth.signOut();
       return {
@@ -95,16 +76,7 @@ export async function signIn(
   }
 }
 
-/**
- * Registers a new vendor account with email and password.
- *
- * Passes `role: 'company_owner'` and `full_name` as user metadata so the
- * database trigger (`handle_new_user`) can insert the public.users row with
- * the correct role on first sign-in.
- *
- * Returns `needsEmailVerification: true` when Supabase has email
- * confirmation enabled — the vendor must verify before signing in.
- */
+
 export async function signUpAsVendor(
   fullName: string,
   email: string,
@@ -142,10 +114,7 @@ export async function signUpAsVendor(
   }
 }
 
-/**
- * Signs the currently authenticated user out.
- * Clears the Supabase session and AsyncStorage token.
- */
+
 export async function signOut(): Promise<ApiResponse<null>> {
   try {
     const { error } = await supabase.auth.signOut();
@@ -156,10 +125,7 @@ export async function signOut(): Promise<ApiResponse<null>> {
   }
 }
 
-/**
- * Updates the vendor's basic profile fields (name, phone, city, state, avatar).
- * Role changes are not permitted — only admins can change roles.
- */
+
 export async function updateProfile(updates: {
   full_name?: string;
   phone?: string;

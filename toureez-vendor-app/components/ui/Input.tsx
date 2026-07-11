@@ -1,7 +1,4 @@
-/**
- * @file components/ui/Input.tsx
- * @description Reusable form input component for the Vendor Portal.
- */
+
 
 import React, { useState } from 'react';
 import {

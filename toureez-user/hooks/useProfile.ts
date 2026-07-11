@@ -1,17 +1,4 @@
-/**
- * @file hooks/useProfile.ts
- * @description TanStack Query hooks for user profile management.
- *
- * Exports:
- * - useProfile()       → fetches the current user's profile
- * - useUpdateProfile() → mutation to update profile fields
- * - useUploadAvatar()  → full avatar upload flow (picker → compress → Cloudinary → updateProfile)
- *
- * Architecture rules:
- * - Zero direct API calls in this file — all go through lib/api/users.ts and lib/cloudinary.ts
- * - All async operations wrapped in try/catch
- * - Never throws — errors are surfaced via mutation state or returned objects
- */
+
 
 import { useCallback, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -34,14 +21,7 @@ export const profileKeys = {
 
 // ── useProfile ────────────────────────────────────────────────────────────────
 
-/**
- * Fetches the authenticated user's profile from Supabase.
- *
- * Cached by TanStack Query — subsequent calls within the stale window
- * return the cached value without a network request.
- *
- * @returns TanStack Query result containing the User profile.
- */
+
 export function useProfile(): UseQueryResult<User, Error> {
   return useQuery({
     queryKey: profileKeys.current(),
@@ -62,17 +42,7 @@ export interface UpdateProfileResult {
   user: User;
 }
 
-/**
- * Mutation hook for updating the authenticated user's profile fields.
- *
- * On success:
- * - Invalidates the profile query so the screen refetches fresh data
- * - Updates the Zustand auth store so the header/avatar updates immediately
- *
- * @example
- * const { mutate, isPending, error } = useUpdateProfile();
- * mutate({ full_name: 'Rahul Sharma', city: 'Mumbai', state: 'Maharashtra' });
- */
+
 export function useUpdateProfile(): UseMutationResult<
   UpdateProfileResult,
   Error,
@@ -100,29 +70,15 @@ export function useUpdateProfile(): UseMutationResult<
 // ── useUploadAvatar ───────────────────────────────────────────────────────────
 
 export interface UseUploadAvatarReturn {
-  /** Whether an upload is currently in progress */
+
   uploading: boolean;
-  /** Triggers the full avatar upload flow */
+
   uploadAvatar: () => Promise<void>;
-  /** Error message from the last failed upload, or null */
+
   uploadError: string | null;
 }
 
-/**
- * Handles the complete avatar upload flow:
- * 1. Requests media library permissions
- * 2. Opens the image picker with compression (max 800×800, quality 0.8)
- * 3. Uploads the selected image to Cloudinary (folder: 'avatars')
- * 4. Calls updateProfile with the new avatar_url
- * 5. Invalidates the profile query on success
- *
- * Returns `{ uploading, uploadAvatar, uploadError }`.
- * Never throws — errors are surfaced via `uploadError`.
- *
- * @example
- * const { uploading, uploadAvatar, uploadError } = useUploadAvatar();
- * <Avatar uri={user.avatar_url} onPress={uploadAvatar} loading={uploading} />
- */
+
 export function useUploadAvatar(): UseUploadAvatarReturn {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);

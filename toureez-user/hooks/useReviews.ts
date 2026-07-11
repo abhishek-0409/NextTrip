@@ -1,11 +1,4 @@
-/**
- * @file hooks/useReviews.ts
- * @description Query and mutation hooks for the Reviews & Ratings system.
- *
- * usePackageReviews  — paginated list of published reviews for a package
- * useReviewEligibility — check if the authed user can review a package
- * useSubmitReview    — POST a new review, invalidate caches, navigate to success
- */
+
 
 import { useCallback } from 'react';
 import {
@@ -37,11 +30,11 @@ import type {
 // ── Query keys ────────────────────────────────────────────────────────────────
 
 export const reviewQueryKeys = {
-  /** All review-related queries */
+
   all: ['reviews'] as const,
-  /** Published reviews for a specific package */
+
   package: (packageId: string) => ['reviews', packageId] as const,
-  /** Review eligibility for a specific package */
+
   eligible: (packageId: string) => ['review-eligible', packageId] as const,
 } as const;
 
@@ -50,28 +43,25 @@ export const reviewQueryKeys = {
 const REVIEWS_PAGE_LIMIT = 10;
 
 export interface UsePackageReviewsReturn {
-  /** Flat list of all loaded reviews across pages */
+
   reviews: Review[];
-  /** Total review count from the first page response */
+
   totalCount: number;
-  /** Whether the first page is loading */
+
   isLoading: boolean;
-  /** Whether there was an error */
+
   isError: boolean;
-  /** Whether the next page is being fetched */
+
   isFetchingNextPage: boolean;
-  /** Whether there are more pages */
+
   hasNextPage: boolean;
-  /** Fetch the next page */
+
   fetchNextPage: () => void;
-  /** Refetch all pages */
+
   refetch: () => void;
 }
 
-/**
- * Loads published reviews for a package with infinite scroll pagination.
- * Public route — no auth required.
- */
+
 export function usePackageReviews(packageId: string): UsePackageReviewsReturn {
   const query = useInfiniteQuery<PaginatedResponse<Review>, Error>({
     queryKey: reviewQueryKeys.package(packageId),
@@ -109,11 +99,7 @@ export function usePackageReviews(packageId: string): UsePackageReviewsReturn {
 
 // ── useReviewEligibility ──────────────────────────────────────────────────────
 
-/**
- * Checks whether the authenticated user has a completed booking for the
- * given package and has not yet submitted a review.
- * Only runs when the user is authenticated.
- */
+
 export function useReviewEligibility(
   packageId: string
 ): UseQueryResult<ReviewEligibility, Error> {
@@ -137,17 +123,7 @@ export function useReviewEligibility(
 
 export type SubmitReviewVariables = CreateReviewInput;
 
-/**
- * Submits a new review via POST /api/v1/reviews.
- *
- * On success:
- *  - Invalidates ['reviews', packageId] so the package detail screen refreshes
- *  - Invalidates ['package', packageId] so avg_rating updates
- *  - Invalidates ['review-eligible', packageId] so the CTA disappears
- *  - Navigates to app/review/success
- *
- * On error: the mutation error is exposed to the caller for toast display.
- */
+
 export function useSubmitReview(): UseMutationResult<
   Review,
   Error,
@@ -187,10 +163,7 @@ export function useSubmitReview(): UseMutationResult<
 
 // ── Utility ───────────────────────────────────────────────────────────────────
 
-/**
- * Computes the average of all non-null sub-ratings in a CreateReviewInput.
- * Returns 0 if no ratings are provided.
- */
+
 export function computeOverallRating(
   ratings: Pick<
     CreateReviewInput,
@@ -215,9 +188,7 @@ export function computeOverallRating(
   return Math.round((sum / values.length) * 10) / 10;
 }
 
-/**
- * Returns true if at least one sub-rating has been provided.
- */
+
 export function hasAtLeastOneRating(
   ratings: Pick<
     CreateReviewInput,
@@ -237,9 +208,7 @@ export function hasAtLeastOneRating(
   ].some((v) => v !== undefined && v !== null && v > 0);
 }
 
-/**
- * Formats a review date as "Month YYYY" (e.g. "March 2025").
- */
+
 export function formatReviewDate(isoString: string): string {
   try {
     return new Date(isoString).toLocaleDateString('en-IN', {
@@ -251,10 +220,7 @@ export function formatReviewDate(isoString: string): string {
   }
 }
 
-/**
- * Returns a hook-safe callback that fetches the next page of reviews.
- * Wraps fetchNextPage to satisfy the void-return lint rule.
- */
+
 export function useLoadMoreReviews(
   fetchNextPage: () => Promise<unknown>
 ): () => void {

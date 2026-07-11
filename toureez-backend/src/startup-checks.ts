@@ -1,27 +1,10 @@
-/**
- * @file startup-checks.ts
- * @description Fail-fast environment validation, run once at process boot
- * (before the HTTP server starts listening).
- *
- * Two tiers:
- *  - REQUIRED_ALWAYS    — missing means the server cannot function at all.
- *    The process exits immediately so a misconfigured deploy never serves traffic.
- *  - REQUIRED_PRODUCTION — optional in development (the feature degrades or
- *    throws lazily when first used), but must be present in production so
- *    failures are caught at deploy time instead of by the first real user
- *    (this is what happened with Razorpay: missing keys surfaced only when
- *    a customer tried to pay).
- *
- * Also logs explicit warnings for known footguns (mock payments left enabled
- * in production, CORS wide open in production) so they show up in deploy
- * logs even when they don't hard-fail the boot.
- */
+
 
 import { logger } from './utils/logger';
 
 interface EnvCheck {
   key: string;
-  /** Why it's needed — shown in the fatal/warning log so the fix is obvious. */
+
   reason: string;
 }
 
@@ -42,11 +25,6 @@ const isMissing = (key: string): boolean => {
   return value === undefined || value.trim() === '';
 };
 
-/**
- * Validates required environment variables and logs configuration warnings.
- * Exits the process with code 1 if a hard requirement is missing, so the
- * deployment platform's health check fails instead of serving broken traffic.
- */
 export function runStartupChecks(): void {
   const isProduction = (process.env.NODE_ENV ?? 'development') === 'production';
 

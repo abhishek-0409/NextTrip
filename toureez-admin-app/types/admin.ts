@@ -1,10 +1,4 @@
-/**
- * @file types/admin.ts
- * @description Admin-specific type definitions for the Toureez admin portal.
- *
- * These extend the shared domain types from types/index.ts and are
- * scoped to admin-portal screens and hooks.
- */
+
 
 import type { User } from './index';
 
@@ -142,7 +136,7 @@ export interface AdminPayout {
   status: PayoutStatus;
   period_start: string | null;
   period_end: string | null;
-  /** Timestamp when payout was processed/paid (DB column: processed_at) */
+
   processed_at: string | null;
   failure_reason: string | null;
   metadata: Record<string, unknown>;

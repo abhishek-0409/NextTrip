@@ -1,11 +1,4 @@
-/**
- * @file app/(vendor)/packages/index.tsx
- * @description Vendor package list screen.
- *
- * Shows all packages for the vendor with status filter chips and a search bar.
- * Tapping a package navigates to the detail/edit screen.
- * FAB navigates to the new package form.
- */
+
 
 import React, { useCallback, useState } from 'react';
 import {
@@ -74,13 +67,13 @@ export default function PackagesScreen(): React.ReactElement {
 
   return (
     <View style={[styles.flex, { paddingTop: insets.top }]}>
-      {/* Header */}
+      {}
       <View style={styles.header}>
         <Text style={styles.heading}>My Packages</Text>
         <Text style={styles.count}>{data?.total ?? 0} total</Text>
       </View>
 
-      {/* Search */}
+      {}
       <View style={[styles.searchWrapper, Shadows.sm]}>
         <Ionicons name="search-outline" size={18} color={Colors.textSecondary} style={styles.searchIcon} />
         <TextInput
@@ -94,7 +87,7 @@ export default function PackagesScreen(): React.ReactElement {
         />
       </View>
 
-      {/* Status filter chips */}
+      {}
       <FlatList
         data={STATUS_FILTERS}
         horizontal
@@ -113,7 +106,7 @@ export default function PackagesScreen(): React.ReactElement {
         )}
       />
 
-      {/* Package list */}
+      {}
       {isLoading ? (
         <ListLoader />
       ) : isError ? (
@@ -148,7 +141,7 @@ export default function PackagesScreen(): React.ReactElement {
         />
       )}
 
-      {/* FAB */}
+      {}
       <Pressable
         style={[styles.fab, Shadows.primary, { bottom: insets.bottom + 16 }]}
         onPress={() => router.push('/(vendor)/packages/new')}

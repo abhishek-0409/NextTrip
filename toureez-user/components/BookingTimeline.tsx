@@ -1,7 +1,4 @@
-/**
- * @file components/BookingTimeline.tsx
- * @description Visual status timeline for a booking (pending → confirmed → completed).
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';

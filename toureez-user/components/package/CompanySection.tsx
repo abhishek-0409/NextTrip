@@ -1,8 +1,4 @@
-/**
- * @file components/package/CompanySection.tsx
- * @description Operator info card: logo, name, verified badge, rating,
- * expandable about text, and "View All Packages" link.
- */
+
 
 import React, { useCallback, useState } from 'react';
 import {
@@ -61,9 +57,9 @@ export function CompanySection({
         About the Operator
       </Text>
 
-      {/* Company card */}
+      {}
       <View style={styles.card}>
-        {/* Logo + name row */}
+        {}
         <View style={styles.topRow}>
           {company.logo_url ? (
             <Image
@@ -97,7 +93,7 @@ export function CompanySection({
               )}
             </View>
 
-            {/* Rating */}
+            {}
             <View style={styles.ratingRow}>
               {Array.from({ length: 5 }, (_, i) => {
                 const filled = i < fullStars;
@@ -121,7 +117,7 @@ export function CompanySection({
           </View>
         </View>
 
-        {/* About text */}
+        {}
         {company.slug ? (
           <View style={styles.aboutBlock}>
             <Text
@@ -146,7 +142,7 @@ export function CompanySection({
           </View>
         ) : null}
 
-        {/* View all packages */}
+        {}
         <Pressable
           style={styles.viewAllButton}
           onPress={handleViewAll}

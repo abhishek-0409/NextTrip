@@ -1,8 +1,4 @@
-/**
- * @file app/(vendor)/reviews.tsx
- * @description Vendor reviews screen — shows all published reviews for the
- * vendor's packages with star ratings and review body text.
- */
+
 
 import React, { useCallback } from 'react';
 import {
@@ -101,7 +97,7 @@ function ReviewCard({ review }: ReviewCardProps): React.ReactElement {
 
   return (
     <View style={[cardStyles.card, Shadows.sm]}>
-      {/* Header */}
+      {}
       <View style={cardStyles.header}>
         <View style={cardStyles.avatar}>
           <Text style={cardStyles.avatarInitial}>
@@ -118,17 +114,17 @@ function ReviewCard({ review }: ReviewCardProps): React.ReactElement {
         </View>
       </View>
 
-      {/* Title */}
+      {}
       {review.title != null && (
         <Text style={cardStyles.title}>{review.title}</Text>
       )}
 
-      {/* Body */}
+      {}
       {review.body != null && (
         <Text style={cardStyles.body}>{review.body}</Text>
       )}
 
-      {/* Sub-ratings */}
+      {}
       {(review.rating_guide ?? review.rating_hotel ?? review.rating_food ?? review.rating_transport ?? review.rating_value) != null && (
         <View style={cardStyles.subRatings}>
           <SubRating label="Guide" rating={review.rating_guide} />
@@ -139,7 +135,7 @@ function ReviewCard({ review }: ReviewCardProps): React.ReactElement {
         </View>
       )}
 
-      {/* Verified badge */}
+      {}
       {review.is_verified && (
         <View style={cardStyles.verifiedRow}>
           <Ionicons name="checkmark-circle" size={13} color={Colors.success} />

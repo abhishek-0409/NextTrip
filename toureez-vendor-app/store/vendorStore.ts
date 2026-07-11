@@ -1,15 +1,4 @@
-/**
- * @file store/vendorStore.ts
- * @description Zustand store for vendor portal UI state.
- *
- * Manages client-side state that does not belong in TanStack Query:
- * - Active package edit form state (in-flight, cleared after save)
- * - Selected package filter state (persisted across tab switches)
- * - Active booking filter state
- *
- * Server state (packages list, bookings list, dashboard data) lives
- * exclusively in TanStack Query and is not duplicated here.
- */
+
 
 import { create } from 'zustand';
 import type { PackageStatus, BookingStatus, PaymentStatus } from '../types';
@@ -55,16 +44,7 @@ const DEFAULT_BOOKING_FILTERS: BookingFilters = {};
 
 // ── Store ─────────────────────────────────────────────────────────────────────
 
-/**
- * Client-side UI state for the vendor portal.
- *
- * Use this store for:
- * - Filter/search state that must survive between tab switches
- * - Lightweight ID tracking for the current editing context
- *
- * Do NOT put server data (package lists, booking lists) here.
- * Those live in TanStack Query via the custom hooks in hooks/*.
- */
+
 export const useVendorStore = create<VendorStoreState>((set) => ({
   // ── Package filters ────────────────────────────────────────
   packageFilters: DEFAULT_PACKAGE_FILTERS,

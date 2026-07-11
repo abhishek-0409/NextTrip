@@ -1,10 +1,4 @@
-/**
- * @file app/(vendor)/notifications.tsx
- * @description Vendor notifications inbox.
- *
- * Shows paginated notifications, marks individual items read on tap,
- * and provides a "Mark all read" action in the header.
- */
+
 
 import React, { useCallback } from 'react';
 import {

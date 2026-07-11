@@ -1,7 +1,4 @@
-﻿/**
- * @file constants/shadows.ts
- * @description Toureez shadow presets.
- */
+
 
 import type { ViewStyle } from 'react-native';
 

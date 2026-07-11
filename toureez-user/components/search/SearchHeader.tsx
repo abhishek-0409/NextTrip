@@ -1,7 +1,4 @@
-﻿/**
- * @file components/search/SearchHeader.tsx
- * @description Toureez search input row.
- */
+
 
 import React, { useCallback, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';

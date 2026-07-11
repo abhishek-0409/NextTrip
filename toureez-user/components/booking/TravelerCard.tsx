@@ -1,10 +1,4 @@
-/**
- * @file components/booking/TravelerCard.tsx
- * @description Input card for a single traveler's details.
- *
- * Renders: name, age, gender pill selector, ID type dropdown, ID number.
- * Traveler 1 is always the primary traveler.
- */
+
 
 import React, { useCallback } from 'react';
 import {
@@ -117,7 +111,7 @@ export function TravelerCard({
 
   return (
     <View style={styles.card}>
-      {/* Card header */}
+      {}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <View style={[styles.badge, isPrimary && styles.badgePrimary]}>
@@ -136,7 +130,7 @@ export function TravelerCard({
         )}
       </View>
 
-      {/* Full name */}
+      {}
       <Field label="Full Name" required error={errors?.name}>
         <TextInput
           style={[styles.input, errors?.name ? styles.inputError : null]}
@@ -151,7 +145,7 @@ export function TravelerCard({
         />
       </Field>
 
-      {/* Age */}
+      {}
       <Field label="Age" required error={errors?.age}>
         <TextInput
           style={[styles.input, errors?.age ? styles.inputError : null]}
@@ -169,7 +163,7 @@ export function TravelerCard({
         />
       </Field>
 
-      {/* Gender pill selector */}
+      {}
       <Field label="Gender" required error={errors?.gender}>
         <View style={styles.pillRow}>
           {GENDER_OPTIONS.map((opt) => {
@@ -198,7 +192,7 @@ export function TravelerCard({
         </View>
       </Field>
 
-      {/* ID type selector */}
+      {}
       <Field label="ID Type" required error={errors?.id_type}>
         <View style={styles.pillRow}>
           {ID_TYPE_OPTIONS.map((opt) => {
@@ -227,7 +221,7 @@ export function TravelerCard({
         </View>
       </Field>
 
-      {/* ID number */}
+      {}
       <Field label="ID Number" required error={errors?.id_number}>
         <TextInput
           style={[styles.input, errors?.id_number ? styles.inputError : null]}

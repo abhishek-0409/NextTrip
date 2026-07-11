@@ -1,7 +1,4 @@
-/**
- * @file hooks/useCompare.ts
- * @description Typed compare tray controller over the Zustand store.
- */
+
 
 import { useCallback } from 'react';
 

@@ -1,23 +1,6 @@
-/**
- * @file services/packageImageService.ts
- * @description Vendor package-image management: save, set cover, delete.
- *
- * Upload flow
- * ──────────────────────────────────────────────────────────────────────────────
- * 1. The client (Expo app) picks a photo with expo-image-picker.
- * 2. The client uploads the file DIRECTLY to Cloudinary using an unsigned
- *    upload preset (EXPO_PUBLIC_CLOUDINARY_PRESET).
- * 3. Cloudinary returns { secure_url, public_id }.
- * 4. The client calls  POST /api/v1/packages/:id/images  with only the
- *    metadata — no binary data ever hits our server.
- * 5. This service verifies package ownership and saves the metadata row.
- *
- * When the vendor deletes an image this service also calls the Cloudinary API
- * to remove the asset from their account.
- */
+
 
 import { cloudinary } from '../lib/cloudinary';
-// FIXED: 4 - Vendor image writes use the explicitly named admin client.
 import { supabaseAdmin } from '../lib/supabase';
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
 import { logger } from '../utils/logger';
@@ -78,10 +61,7 @@ function mapImage(value: unknown): PackageImage {
 
 // ── Ownership guard ───────────────────────────────────────────────────────────
 
-/**
- * Throws 404 if the package doesn't exist, 403 if the authenticated user is
- * not the company owner that listed this package.
- */
+
 async function assertPackageOwnership(
   packageId: string,
   userId: string,
@@ -111,10 +91,7 @@ async function assertPackageOwnership(
   }
 }
 
-/**
- * Same as assertPackageOwnership but additionally verifies the image row
- * belongs to that package (prevents cross-package image manipulation).
- */
+
 async function assertImageOwnership(
   packageId: string,
   imageId: string,
@@ -140,10 +117,7 @@ async function assertImageOwnership(
 
 // ── Public service functions ──────────────────────────────────────────────────
 
-/**
- * Returns all images for a package, ordered by display_order.
- * Requires the caller to be the package owner.
- */
+
 export const getPackageImages = async (
   packageId: string,
   userId: string,
@@ -163,11 +137,7 @@ export const getPackageImages = async (
   return ((data as unknown[] | null) ?? []).map(mapImage);
 };
 
-/**
- * Saves Cloudinary image metadata to the package_images table.
- * The actual file upload happens on the client — this call only stores the URL
- * and public_id that Cloudinary returned to the client.
- */
+
 export const savePackageImage = async (
   packageId: string,
   userId: string,
@@ -222,10 +192,7 @@ export const savePackageImage = async (
   return mapImage(data);
 };
 
-/**
- * Promotes one image to be the cover, clearing is_cover on all other images
- * for the same package.
- */
+
 export const setPackageCoverImage = async (
   packageId: string,
   imageId: string,
@@ -254,11 +221,7 @@ export const setPackageCoverImage = async (
   }
 };
 
-/**
- * Deletes an image from both Cloudinary and the package_images table.
- * If Cloudinary deletion fails (e.g. already removed) we still delete the DB
- * row so the UI stays consistent.
- */
+
 export const deletePackageImage = async (
   packageId: string,
   imageId: string,

@@ -1,7 +1,4 @@
-﻿/**
- * @file components/ui/Card.tsx
- * @description Toureez animated card.
- */
+
 
 import React from 'react';
 import { Animated, Pressable, StyleSheet, View, type ViewStyle } from 'react-native';

@@ -1,7 +1,4 @@
-/**
- * @file components/compare/HighlightsRow.tsx
- * @description Highlights cells — first 3 bullet points per package.
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';

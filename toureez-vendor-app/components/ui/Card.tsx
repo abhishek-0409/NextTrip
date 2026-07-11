@@ -1,7 +1,4 @@
-/**
- * @file components/ui/Card.tsx
- * @description Reusable card container with optional press interaction.
- */
+
 
 import React from 'react';
 import { Pressable, StyleSheet, View, type ViewStyle } from 'react-native';

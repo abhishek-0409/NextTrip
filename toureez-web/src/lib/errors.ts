@@ -1,7 +1,4 @@
-/**
- * Maps raw API / Supabase / database error strings into plain, user-facing messages.
- * Call this before displaying any error to the user.
- */
+
 
 const HTTP_STATUS_MESSAGES: Record<number, string> = {
   400: 'Some of the information you entered is invalid. Please check and try again.',
@@ -77,7 +74,6 @@ export function friendlyError(raw: string | null | undefined): string {
   return 'Something went wrong. Please try again.';
 }
 
-/** Extracts a user-friendly message from an Error object or unknown throw. */
 export function friendlyThrown(err: unknown): string {
   if (err instanceof Error) return friendlyError(err.message);
   if (typeof err === 'string') return friendlyError(err);

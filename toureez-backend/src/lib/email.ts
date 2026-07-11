@@ -1,7 +1,4 @@
-/**
- * @file lib/email.ts
- * Transactional email via Resend.
- */
+
 
 import { Resend } from 'resend';
 import { AppError } from '../constants/errors';
@@ -93,10 +90,6 @@ const buildBookingConfirmationHtml = (params: BookingConfirmationEmailParams): s
   `;
 };
 
-/**
- * Sends a booking confirmation email. Failures are logged but never thrown —
- * email delivery must never block the payment confirmation flow.
- */
 export async function sendBookingConfirmationEmail(params: BookingConfirmationEmailParams): Promise<void> {
   try {
     const resend = getResend();

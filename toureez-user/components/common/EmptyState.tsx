@@ -1,7 +1,4 @@
-﻿/**
- * @file components/common/EmptyState.tsx
- * @description Toureez empty state.
- */
+
 
 import React from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';

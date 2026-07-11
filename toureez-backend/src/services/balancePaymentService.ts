@@ -1,13 +1,4 @@
-/**
- * @file services/balancePaymentService.ts
- * Razorpay balance payment flow for advance bookings.
- *
- * Flow:
- *  1. createBalancePaymentOrder() — called before checkout opens, returns order_id
- *     for the remaining balance_amount.
- *  2. verifyBalancePayment() — called after checkout completes, verifies signature
- *     and marks the balance as paid.
- */
+
 
 import crypto from 'crypto';
 import Razorpay from 'razorpay';
@@ -32,9 +23,6 @@ function getRazorpay(): Razorpay {
 
 // ── Create order ─────────────────────────────────────────────────────────────
 
-/**
- * Creates a Razorpay order for the remaining balance of a confirmed advance booking.
- */
 export async function createBalancePaymentOrder(
   bookingId: string,
   userId: string,
@@ -106,11 +94,6 @@ export async function createBalancePaymentOrder(
 
 // ── Verify payment ────────────────────────────────────────────────────────────
 
-/**
- * Verifies the Razorpay balance payment signature and marks the balance as paid.
- *
- * Razorpay signature = HMAC-SHA256(razorpay_order_id + "|" + razorpay_payment_id, key_secret)
- */
 export async function verifyBalancePayment(params: {
   booking_id:          string;
   razorpay_order_id:   string;

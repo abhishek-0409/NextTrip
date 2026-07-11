@@ -1,7 +1,4 @@
-/**
- * @file app/(tabs)/bookings.tsx
- * @description My Bookings tab with status filters and booking history cards.
- */
+
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {

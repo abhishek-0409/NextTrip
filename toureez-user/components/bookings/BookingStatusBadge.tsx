@@ -1,7 +1,4 @@
-/**
- * @file components/bookings/BookingStatusBadge.tsx
- * @description Semantic booking status pill shared by list and detail screens.
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, View, type ViewStyle } from 'react-native';

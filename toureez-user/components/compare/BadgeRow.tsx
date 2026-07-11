@@ -1,8 +1,4 @@
-/**
- * @file components/compare/BadgeRow.tsx
- * @description Badge cells for the Awards row.
- * Exports BadgeCells — rendered inside the shared horizontal scroll by the screen.
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';

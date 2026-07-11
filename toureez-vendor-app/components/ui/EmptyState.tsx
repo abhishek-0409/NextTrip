@@ -1,7 +1,4 @@
-/**
- * @file components/ui/EmptyState.tsx
- * @description Empty state component shown when a list or section has no data.
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';

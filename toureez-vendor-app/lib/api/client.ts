@@ -1,17 +1,4 @@
-/**
- * @file lib/api/client.ts
- * @description Typed HTTP client for the Toureez Node.js/Express backend.
- *
- * Wraps fetch with:
- * - Automatic JSON serialisation / deserialisation
- * - Query parameter building
- * - Bearer token injection from the Supabase session
- * - Silent token refresh on 401 (one retry before sign-out)
- * - Consistent BackendApiResponse<T> return shape — never throws
- *
- * All lib/api/* files that talk to the backend import from this file.
- * Supabase calls continue to use lib/supabase.ts directly.
- */
+
 
 import { Config } from '../../constants/config';
 import { useAuthStore } from '../../store/authStore';
@@ -49,15 +36,8 @@ function getAuthHeader(): Record<string, string> {
   return {};
 }
 
-
-
 // ── Token refresh on 401 ──────────────────────────────────────────────────────
 
-/**
- * Attempts to refresh the Supabase session and retry the original fetch once.
- * If refresh fails the user is signed out.
- * Returns null if the retry also fails or if refresh itself failed.
- */
 async function handleUnauthorized<T>(
   url: string,
   init: RequestInit,

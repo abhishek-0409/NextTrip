@@ -1,7 +1,4 @@
-/**
- * @file components/ui/Badge.tsx
- * @description Status badge component for package and booking statuses.
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';

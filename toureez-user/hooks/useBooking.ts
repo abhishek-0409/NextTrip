@@ -1,14 +1,4 @@
-/**
- * @file hooks/useBooking.ts
- * @description TanStack Query hooks for the complete booking flow.
- *
- * Covers:
- * - useCreateBooking   — POST /api/v1/bookings/create
- * - useConfirmMockPayment — POST /api/v1/bookings/confirm-mock
- * - useMyBookings      — GET  /api/v1/bookings
- * - useBookingDetail   — GET  /api/v1/bookings/:id
- * - usePriceCalculation — pure client-side reactive calculation
- */
+
 
 import { useMemo } from 'react';
 import { Alert } from 'react-native';
@@ -41,16 +31,16 @@ import type {
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-/** GST rate applied to travel packages in India */
+
 const GST_RATE = 0.05;
 
-/** Group discount rate applied when num_travelers >= 7 */
+
 const GROUP_DISCOUNT_RATE = 0.05;
 
-/** Group discount threshold */
+
 const GROUP_DISCOUNT_THRESHOLD = 7;
 
-/** Advance payment fraction (30%) */
+
 const ADVANCE_FRACTION = 0.3;
 
 // ── Query key factory ─────────────────────────────────────────────────────────
@@ -63,20 +53,7 @@ export const bookingQueryKeys = {
 
 // ── Price calculation ─────────────────────────────────────────────────────────
 
-/**
- * Pure client-side price calculation hook.
- * Mirrors the backend calculation exactly so the UI is always consistent
- * with what the server will compute.
- *
- * @param pricingTier - Any object with base_price and discounted_price (or null).
- * @param numTravelers - Number of travelers (>= 1).
- * @param paymentType - 'full' or 'advance'.
- * @returns PriceCalculation object, or null if pricingTier is not provided.
- *
- * @example
- * const calc = usePriceCalculation(selectedTier, 3, 'full');
- * // calc.total_amount → ₹X
- */
+
 export function usePriceCalculation(
   pricingTier: { base_price: number; discounted_price: number | null } | null | undefined,
   numTravelers: number,
@@ -125,14 +102,7 @@ export function usePriceCalculation(
 
 // ── Create booking ────────────────────────────────────────────────────────────
 
-/**
- * Mutation hook for creating a new booking.
- * On success, navigates to the summary screen with the booking data.
- *
- * @example
- * const { mutate, isPending } = useCreateBooking();
- * mutate(input);
- */
+
 export function useCreateBooking(): UseMutationResult<
   CreateBookingResult,
   Error,
@@ -177,16 +147,7 @@ interface ConfirmMockPaymentInput {
   payment_type: 'full' | 'advance';
 }
 
-/**
- * Mutation hook for confirming a mock payment.
- * On success, navigates to the confirmation screen.
- *
- * NOTE: Replace the mutationFn body with Razorpay verification when integrating.
- *
- * @example
- * const { mutate, isPending } = useConfirmMockPayment();
- * mutate({ booking_id, payment_type: 'full' });
- */
+
 export function useConfirmMockPayment(): UseMutationResult<
   ConfirmMockPaymentResult,
   Error,
@@ -227,12 +188,7 @@ export function useConfirmMockPayment(): UseMutationResult<
 
 // ── My bookings list ──────────────────────────────────────────────────────────
 
-/**
- * Query hook for fetching the authenticated user's booking history.
- *
- * @example
- * const { data, isLoading } = useMyBookings();
- */
+
 export function useMyBookings(): UseQueryResult<BookingSummary[], Error> {
   const isAuthenticated = useAuthStore((state) => state.user !== null);
 
@@ -252,15 +208,7 @@ export function useMyBookings(): UseQueryResult<BookingSummary[], Error> {
 
 // ── Booking detail ────────────────────────────────────────────────────────────
 
-/**
- * Query hook for fetching a single booking by ID.
- * Disabled when id is empty.
- *
- * @param id - Booking UUID.
- *
- * @example
- * const { data, isLoading } = useBookingDetail(bookingId);
- */
+
 export function useBookingDetail(
   id: string
 ): UseQueryResult<Booking, Error> {

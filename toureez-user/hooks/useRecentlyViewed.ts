@@ -1,10 +1,4 @@
-﻿/**
- * @file hooks/useRecentlyViewed.ts
- * @description Stores and retrieves recently viewed package IDs in AsyncStorage.
- *
- * Limited to the last 10 packages. The list is maintained in viewing order
- * (most recent first) with no duplicates.
- */
+
 
 import { useCallback, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -31,9 +25,6 @@ async function persistIds(ids: string[]): Promise<void> {
   }
 }
 
-/**
- * Returns the current recently-viewed ID list and a function to record a new view.
- */
 export function useRecentlyViewed(): {
   recentIds: string[];
   recordView: (packageId: string) => void;

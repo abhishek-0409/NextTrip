@@ -1,7 +1,4 @@
-﻿/**
- * @file services/chatService.ts
- * @description Talks to the Google Gemini API to power the Toureez travel assistant.
- */
+
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { AppError } from '../constants/errors';
@@ -32,10 +29,6 @@ const getClient = (): GoogleGenerativeAI => {
   return genAI;
 };
 
-/**
- * Sends the user's message to Gemini, providing prior turns as conversation
- * history, and returns the assistant's reply.
- */
 export const getChatReply = async (message: string, history: ChatMessage[]): Promise<string> => {
   const model = getClient().getGenerativeModel({
     model: 'gemini-2.5-flash',

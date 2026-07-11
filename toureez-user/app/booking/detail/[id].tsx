@@ -1,7 +1,4 @@
-﻿/**
- * @file app/booking/detail/[id].tsx
- * @description Authenticated booking detail and cancellation screen.
- */
+
 
 import React, { useCallback } from 'react';
 import {
@@ -182,10 +179,7 @@ function TravelInfoCard({ booking }: { booking: Booking }): React.ReactElement {
 
 // ── Write Review Section ──────────────────────────────────────────────────────
 
-/**
- * Shown on completed bookings. Uses useReviewEligibility to determine whether
- * the user can still write a review (hides if already reviewed).
- */
+
 function WriteReviewSection({
   booking,
 }: {
@@ -300,10 +294,7 @@ const reviewStyles = StyleSheet.create({
 
 // ── Pay Balance card ──────────────────────────────────────────────────────────
 
-/**
- * Shown on confirmed bookings with an outstanding balance. Links to the
- * pay-balance screen to settle the remaining amount via Razorpay.
- */
+
 function PayBalanceCard({ booking }: { booking: Booking }): React.ReactElement | null {
   if (
     booking.payment_status === 'paid' ||

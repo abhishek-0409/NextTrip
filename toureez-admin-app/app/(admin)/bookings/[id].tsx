@@ -1,7 +1,4 @@
-/**
- * @file app/(admin)/bookings/[id].tsx
- * @description Admin booking detail with status management.
- */
+
 
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';

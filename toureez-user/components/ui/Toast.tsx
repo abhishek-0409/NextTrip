@@ -1,14 +1,4 @@
-/**
- * @file components/ui/Toast.tsx
- * @description Premium Light 3D toast notification — slides up from bottom.
- *
- * - White card with colored left accent bar + 3D shadow
- * - Spring slide-up animation
- * - Types: success (green) | error (red) | info (navy)
- * - Auto dismiss: 3 seconds
- *
- * ✅ All existing props preserved — zero logic changes.
- */
+
 
 import React, { useEffect, useRef, useCallback } from 'react';
 import {
@@ -120,15 +110,15 @@ export const Toast: React.FC<ToastProps> = ({
       accessibilityLabel={`${type}: ${message}`}
       pointerEvents="none"
     >
-      {/* Left accent bar */}
+      {}
       <View style={[styles.accentBar, { backgroundColor: accentColor }]} />
 
-      {/* Icon */}
+      {}
       <View style={[styles.iconWrap, { backgroundColor: accentColor + '18' }]}>
         <Text style={[styles.icon, { color: accentColor }]}>{TYPE_ICON[type]}</Text>
       </View>
 
-      {/* Message */}
+      {}
       <Text style={styles.message} numberOfLines={3}>
         {message}
       </Text>

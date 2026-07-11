@@ -1,12 +1,4 @@
-/**
- * @file components/common/ScreenWrapper.tsx
- * @description Layout wrapper for all screens — Premium Light 3D theme.
- *
- * - Warm white/light background
- * - SafeAreaView + KeyboardAvoidingView + optional ScrollView
- *
- * ✅ All existing props preserved — zero logic changes.
- */
+
 
 import React from 'react';
 import {

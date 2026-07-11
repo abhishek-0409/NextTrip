@@ -1,8 +1,4 @@
-/**
- * @file app/booking/[packageId].tsx
- * @description Step 1 of 4 — Traveler Details. Sage green design system.
- * All hooks, validation, stores, and functionality fully preserved.
- */
+
 
 import React, {
   useCallback,
@@ -314,7 +310,7 @@ export default function TravelerDetailsScreen(): React.ReactElement {
     <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
       <Animated.View style={[styles.flex, slideUp.animatedStyle]}>
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        {/* Header */}
+        {}
         <View style={styles.header}>
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back" hitSlop={8}>
             <Ionicons name="chevron-back" size={22} color={Colors.textPrimary} />
@@ -326,7 +322,7 @@ export default function TravelerDetailsScreen(): React.ReactElement {
         <BookingProgressBar currentStep={1} />
 
         <ScrollView ref={scrollRef} style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-          {/* Pricing tier selector */}
+          {}
           {pkg.pricing.length > 1 && (
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Select Pricing Tier</Text>
@@ -345,7 +341,7 @@ export default function TravelerDetailsScreen(): React.ReactElement {
             </View>
           )}
 
-          {/* Primary Contact */}
+          {}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Primary Contact</Text>
             <Field label="Full Name" required error={contactErrors.full_name}>
@@ -374,7 +370,7 @@ export default function TravelerDetailsScreen(): React.ReactElement {
             </Field>
           </View>
 
-          {/* Travel Date */}
+          {}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Travel Date</Text>
             <TouchableOpacity style={[styles.dateButton, dateError ? styles.inputError : null]} onPress={() => setShowDatePicker(true)} activeOpacity={0.8} accessibilityRole="button" accessibilityLabel="Select travel date">
@@ -386,12 +382,12 @@ export default function TravelerDetailsScreen(): React.ReactElement {
             <DatePickerModal visible={showDatePicker} currentDate={travelDate} onConfirm={(date) => { setTravelDate(date); setDateError(null); setShowDatePicker(false); }} onDismiss={() => setShowDatePicker(false)} />
           </View>
 
-          {/* Traveler Form */}
+          {}
           <View style={styles.section}>
             <TravelerForm numTravelers={numTravelers} maxGroupSize={pkg.max_group_size} travelers={travelers} autoFillPrimary={autoFillPrimary} primaryContact={contact} onNumTravelersChange={setNumTravelers} onTravelerChange={handleTravelerChange} onAutoFillToggle={setAutoFillPrimary} travelerErrors={travelerErrors} />
           </View>
 
-          {/* Price preview */}
+          {}
           {priceCalc && (
             <View style={styles.section}>
               <PriceBreakdown calculation={priceCalc} />
@@ -401,7 +397,7 @@ export default function TravelerDetailsScreen(): React.ReactElement {
           <View style={styles.bottomSpacer} />
         </ScrollView>
 
-        {/* Sticky bottom bar */}
+        {}
         <View style={styles.stickyBar}>
           <View style={styles.stickyTotal}>
             <Text style={styles.stickyTotalLabel}>Total</Text>

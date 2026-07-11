@@ -1,7 +1,4 @@
-/**
- * @file hooks/useHomeSearch.ts
- * @description UI state and navigation controller for the home search card.
- */
+
 
 import { useCallback, useMemo, useState } from 'react';
 import { router } from 'expo-router';

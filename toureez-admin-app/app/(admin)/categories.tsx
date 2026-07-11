@@ -1,7 +1,4 @@
-/**
- * @file app/(admin)/categories.tsx
- * @description Admin category CRUD — create, edit, toggle active, delete.
- */
+
 
 import { router } from 'expo-router';
 import React, { useState } from 'react';

@@ -1,7 +1,4 @@
-/**
- * @file hooks/admin/useAdminVendors.ts
- * @description TanStack Query hooks for admin vendor management.
- */
+
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query';

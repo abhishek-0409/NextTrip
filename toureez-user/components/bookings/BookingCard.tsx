@@ -1,7 +1,4 @@
-/**
- * @file components/bookings/BookingCard.tsx
- * @description Premium Light 3D booking summary card for the My Bookings list.
- */
+
 
 import React, { useCallback } from 'react';
 import {

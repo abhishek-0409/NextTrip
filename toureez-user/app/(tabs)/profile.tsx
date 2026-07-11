@@ -1,7 +1,4 @@
-﻿/**
- * @file app/(tabs)/profile.tsx
- * @description Toureez profile screen.
- */
+
 
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -298,7 +295,7 @@ export default function ProfileScreen(): React.ReactElement {
             </>
           ) : (
             <View style={styles.editSection}>
-              {/* ── Header row ──────────────────────────────── */}
+              {}
               <View style={styles.editHeader}>
                 <TouchableOpacity
                   style={styles.editBackBtn}
@@ -313,7 +310,7 @@ export default function ProfileScreen(): React.ReactElement {
                 <View style={styles.editHeaderSpacer} />
               </View>
 
-              {/* ── Avatar card ─────────────────────────────── */}
+              {}
               <View style={[styles.avatarCard, Shadows.soft]}>
                 <Avatar
                   uri={user?.avatar_url}
@@ -325,7 +322,7 @@ export default function ProfileScreen(): React.ReactElement {
                 <Text style={styles.avatarHint}>Tap photo to update</Text>
               </View>
 
-              {/* ── Form fields ─────────────────────────────── */}
+              {}
               <View style={styles.editForm}>
                 <Input
                   label="Full Name"
@@ -361,7 +358,7 @@ export default function ProfileScreen(): React.ReactElement {
                   disabled={isSaving}
                 />
 
-                {/* ── Action buttons ────────────────────────── */}
+                {}
                 <View style={styles.editActions}>
                   <Button
                     label="Save Changes"

@@ -1,16 +1,4 @@
-﻿/**
- * @file app/_layout.tsx
- * @description Root layout — bootstraps Supabase auth listener, TanStack Query,
- * and routes the vendor to the correct screen based on their role.
- *
- * Auth flow:
- * 1. resolveInitialSession() reads the persisted Supabase session on cold start.
- * 2. If a session exists, the user's role is verified against company_owner.
- *    Non-vendor sessions are immediately signed out and redirected to login.
- * 3. onAuthStateChange handles SIGNED_IN / SIGNED_OUT events during the session.
- * 4. The auth gate effect prevents cross-role access when the user's role
- *    or the current route group changes.
- */
+
 
 import React, { useEffect } from 'react';
 import { AppState, type AppStateStatus } from 'react-native';

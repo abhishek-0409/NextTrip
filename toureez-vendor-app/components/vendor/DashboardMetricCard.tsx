@@ -1,10 +1,4 @@
-/**
- * @file components/vendor/DashboardMetricCard.tsx
- * @description Metric card used on the vendor dashboard screen.
- *
- * Displays a single KPI (label + value + optional trend) with a coloured
- * icon background. Supports an optional onPress to navigate to the detail screen.
- */
+
 
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';

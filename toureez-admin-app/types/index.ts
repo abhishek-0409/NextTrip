@@ -1,7 +1,4 @@
-/**
- * @file types/index.ts
- * Shared domain types used across hooks, API layer, and screens.
- */
+
 import type { Session } from '@supabase/supabase-js';
 
 export type UserRole = 'traveler' | 'company_owner' | 'admin';

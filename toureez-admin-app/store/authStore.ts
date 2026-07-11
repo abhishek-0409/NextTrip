@@ -1,7 +1,4 @@
-/**
- * @file store/authStore.ts
- * Zustand auth store — identical shape to the user app for hook compatibility.
- */
+
 import { create } from 'zustand';
 import type { AuthState, UserRole } from '../types';
 

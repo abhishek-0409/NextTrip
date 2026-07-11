@@ -1,12 +1,4 @@
-/**
- * @file components/package/StickyActionBar.tsx
- * @description Fixed bottom action bar showing selected price,
- * "Add to Compare" button, and "Enquire Now" button.
- *
- * Animates in (slides up) when the user scrolls past the pricing section.
- * Uses Animated.Value driven by a boolean prop — the screen passes
- * `pricingVisible` which is false once the pricing section scrolls off screen.
- */
+
 
 import React, { useEffect, useRef } from 'react';
 import {
@@ -40,13 +32,13 @@ function fmt(amount: number): string {
 // ── Props ─────────────────────────────────────────────────────────────────────
 
 export interface StickyActionBarProps {
-  /** The currently selected pricing tier, or null if none selected */
+
   selectedTier: PackageDetail['pricing'][number] | null;
-  /** True while the pricing section is still visible on screen */
+
   pricingVisible: boolean;
-  /** Whether the compare tray is already full (4 items) */
+
   isTrayFull: boolean;
-  /** Whether this package is already in the compare tray */
+
   isInCompare: boolean;
   onComparePress: () => void;
   onEnquirePress: () => void;
@@ -92,7 +84,7 @@ export function StickyActionBar({
       accessibilityRole="toolbar"
       accessibilityLabel="Package actions"
     >
-      {/* Price display */}
+      {}
       <View style={styles.priceBlock}>
         {effectivePrice !== null ? (
           <>
@@ -110,9 +102,9 @@ export function StickyActionBar({
         )}
       </View>
 
-      {/* Action buttons */}
+      {}
       <View style={styles.buttons}>
-        {/* Add to Compare */}
+        {}
         <Pressable
           style={[
             styles.compareButton,
@@ -154,7 +146,7 @@ export function StickyActionBar({
           </Text>
         </Pressable>
 
-        {/* Book Now */}
+        {}
         <Pressable
           style={styles.enquireButton}
           onPress={onEnquirePress}

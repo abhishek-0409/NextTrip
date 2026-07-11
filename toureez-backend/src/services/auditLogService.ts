@@ -1,14 +1,4 @@
-/**
- * @file services/auditLogService.ts
- * @description Immutable audit trail for all admin mutations.
- *
- * Every admin action that changes data must call logAdminAction().
- * Logs are never hard-deleted; they are append-only.
- *
- * Entity types (by convention):
- *  'user', 'vendor', 'package', 'booking', 'review',
- *  'category', 'location', 'payout', 'payout_account'
- */
+
 
 import { AppError } from '../constants/errors';
 import { supabaseAdmin } from '../lib/supabase';
@@ -66,14 +56,10 @@ const mapAuditLog = (row: Record<string, unknown>): AuditLog => {
 
 // ── Service functions ─────────────────────────────────────────────────────────
 
-/** Waits for `ms` milliseconds (non-blocking). */
+
 const delay = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
-/**
- * Appends one audit log record, with up to MAX_RETRIES attempts using
- * exponential back-off.  Errors are logged but never thrown so they
- * cannot break the calling mutation.
- */
+
 export async function logAdminAction(input: LogAdminActionInput): Promise<void> {
   const MAX_RETRIES = 3;
   const payload = {
@@ -104,10 +90,7 @@ export async function logAdminAction(input: LogAdminActionInput): Promise<void> 
   logger.error({ payload }, 'logAdminAction all retries exhausted — audit record lost');
 }
 
-/**
- * Returns paginated audit logs with admin user info, newest first.
- * Supports filtering by admin, entity type/id, action prefix, and date range.
- */
+
 export async function getAuditLogs(params: {
   page: number;
   limit: number;

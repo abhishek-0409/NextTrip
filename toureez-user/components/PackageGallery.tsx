@@ -1,10 +1,4 @@
-/**
- * @file components/PackageGallery.tsx
- * @description Full-screen swipeable image gallery modal.
- *
- * Usage:
- *   <PackageGallery images={pkg.images} visible={open} initialIndex={0} onClose={() => setOpen(false)} />
- */
+
 
 import React, { useRef, useState } from 'react';
 import {
@@ -52,7 +46,7 @@ export function PackageGallery({ images, visible, initialIndex = 0, onClose }: P
       onRequestClose={onClose}
     >
       <View style={styles.root}>
-        {/* Close button */}
+        {}
         <Pressable
           style={[styles.closeBtn, { top: insets.top + 12 }]}
           onPress={onClose}
@@ -63,14 +57,14 @@ export function PackageGallery({ images, visible, initialIndex = 0, onClose }: P
           <Ionicons name="close" size={28} color="#fff" />
         </Pressable>
 
-        {/* Counter */}
+        {}
         <View style={[styles.counter, { top: insets.top + 18 }]}>
           <Text style={styles.counterText}>
             {currentIndex + 1} / {images.length}
           </Text>
         </View>
 
-        {/* Images */}
+        {}
         <FlatList
           ref={listRef}
           data={images}
@@ -94,7 +88,7 @@ export function PackageGallery({ images, visible, initialIndex = 0, onClose }: P
           )}
         />
 
-        {/* Dot indicators */}
+        {}
         {images.length > 1 && (
           <View style={[styles.dots, { bottom: insets.bottom + 24 }]}>
             {images.map((_, i) => (

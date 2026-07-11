@@ -1,14 +1,4 @@
-/**
- * @file components/ui/EmptyState.tsx
- * @description Centered placeholder shown when a list/section has no data.
- *
- *   <EmptyState
- *     icon="📋"
- *     title="No bookings yet"
- *     subtitle="Bookings will appear here once travellers start booking."
- *     action={{ label: 'Refresh', onPress: refetch }}
- *   />
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, View, ViewStyle } from 'react-native';

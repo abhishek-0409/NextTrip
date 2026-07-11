@@ -1,17 +1,4 @@
-/**
- * @file components/ui/Card.tsx
- * @description Reusable surface container.
- *
- * Variants:
- *   - default  → white surface, hairline border, subtle shadow
- *   - elevated → white surface, no border, medium shadow
- *   - flat     → white surface with border only (no shadow)
- *   - ghost    → fully transparent / no border / no shadow
- *
- * Padding options: none | sm | md | lg
- *
- * If `onPress` is provided the Card renders as a TouchableOpacity.
- */
+
 
 import React from 'react';
 import {

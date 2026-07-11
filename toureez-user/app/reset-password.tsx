@@ -1,21 +1,4 @@
-﻿/**
- * @file app/reset-password.tsx
- * @description Handles the deep-link redirect from Supabase password-reset emails.
- *
- * Flow:
- *  1. User taps "Reset Password" in email
- *  2. Supabase redirects to  toureez://reset-password?code=...
- *     (or  toureez://reset-password#access_token=...&type=recovery)
- *  3. Expo Router opens this screen
- *  4. User enters + confirms new password
- *  5. supabase.auth.updateUser({ password }) sets the new password
- *  6. Navigate to login
- *
- * The screen works whether the URL carries a PKCE code (?code=) or
- * legacy implicit tokens (#access_token=).  Supabase's session
- * listener in _layout.tsx automatically exchanges the code/tokens when
- * the app is opened via the deep-link before this screen renders.
- */
+
 
 import React, { useState } from 'react';
 import {
@@ -220,7 +203,7 @@ export default function ResetPasswordScreen(): React.ReactElement {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* Back */}
+        {}
         <TouchableOpacity
           style={styles.backBtn}
           onPress={() => router.replace('/(auth)/login')}
@@ -230,7 +213,7 @@ export default function ResetPasswordScreen(): React.ReactElement {
           <Text style={styles.backText}>Back to login</Text>
         </TouchableOpacity>
 
-        {/* Header */}
+        {}
         <View style={styles.header}>
           <Text style={styles.title}>Set new password</Text>
           <Text style={styles.subtitle}>
@@ -238,7 +221,7 @@ export default function ResetPasswordScreen(): React.ReactElement {
           </Text>
         </View>
 
-        {/* Form */}
+        {}
         <Input
           label="New Password"
           required

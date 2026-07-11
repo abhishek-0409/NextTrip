@@ -1,20 +1,4 @@
-/**
- * @file components/search/FilterBottomSheet.tsx
- * @description Full filter panel implemented as a custom bottom sheet.
- *
- * Built entirely with React Native primitives — no @gorhom/bottom-sheet
- * or @react-native-community/slider required. Uses:
- * - Modal (transparent) for the overlay
- * - Animated + PanResponder for the drag-to-dismiss gesture
- * - A custom two-thumb range slider built with PanResponder
- *
- * Sections:
- *   1. Budget — custom two-thumb range slider
- *   2. Duration — pill selector (buckets)
- *   3. Category — multi-select grid from useCategories
- *   4. Min Rating — star selector
- *   5. Sort by — option list
- */
+
 
 import React, {
   useCallback,
@@ -190,7 +174,7 @@ function RangeSlider({
           trackWidth.current = e.nativeEvent.layout.width;
         }}
       >
-        {/* Inactive track left */}
+        {}
         <Animated.View
           style={[
             sliderStyles.trackInactive,
@@ -202,7 +186,7 @@ function RangeSlider({
             },
           ]}
         />
-        {/* Active track between thumbs */}
+        {}
         <Animated.View
           style={[
             sliderStyles.trackActive,
@@ -218,7 +202,7 @@ function RangeSlider({
             },
           ]}
         />
-        {/* Inactive track right */}
+        {}
         <Animated.View
           style={[
             sliderStyles.trackInactive,
@@ -231,7 +215,7 @@ function RangeSlider({
           ]}
         />
 
-        {/* Left thumb */}
+        {}
         <Animated.View
           {...leftPanResponder.panHandlers}
           style={[
@@ -248,7 +232,7 @@ function RangeSlider({
           accessibilityValue={{ min, max, now: valueMin }}
         />
 
-        {/* Right thumb */}
+        {}
         <Animated.View
           {...rightPanResponder.panHandlers}
           style={[
@@ -493,7 +477,7 @@ export function FilterBottomSheet({
             },
           ]}
         >
-          {/* Drag handle */}
+          {}
           <View
             style={styles.handleArea}
             {...panResponder.panHandlers}
@@ -502,7 +486,7 @@ export function FilterBottomSheet({
             <View style={styles.handle} />
           </View>
 
-          {/* Header */}
+          {}
           <View style={styles.header}>
             <Text style={styles.headerTitle} numberOfLines={1}>
               Filters
@@ -523,14 +507,14 @@ export function FilterBottomSheet({
             </Pressable>
           </View>
 
-          {/* Scrollable content */}
+          {}
           <ScrollView
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
-            {/* ── 1. Budget ── */}
+            {}
             <SectionLabel label="Budget" />
             <View style={styles.priceLabels}>
               <Text style={styles.priceValue} numberOfLines={1}>
@@ -553,7 +537,7 @@ export function FilterBottomSheet({
               onChangeMax={setMaxPrice}
             />
 
-            {/* ── 2. Duration ── */}
+            {}
             <SectionLabel label="Duration" />
             <View style={styles.pillRow}>
               {DURATION_BUCKETS.map((bucket) => {
@@ -581,7 +565,7 @@ export function FilterBottomSheet({
               })}
             </View>
 
-            {/* ── 3. Trip Type ── */}
+            {}
             <SectionLabel label="Trip Type" />
             <View style={styles.tripTypeRow}>
               {([
@@ -600,7 +584,7 @@ export function FilterBottomSheet({
               ))}
             </View>
 
-            {/* ── 4. Category ── */}
+            {}
             <SectionLabel label="Category" />
             {categories && categories.length > 0 ? (
               <View style={styles.categoryGrid}>
@@ -640,7 +624,7 @@ export function FilterBottomSheet({
               </Text>
             )}
 
-            {/* ── 4. Min Rating ── */}
+            {}
             <SectionLabel label="Minimum Rating" />
             <View style={styles.pillRow}>
               {RATING_OPTIONS.map((opt) => {
@@ -673,7 +657,7 @@ export function FilterBottomSheet({
               })}
             </View>
 
-            {/* ── 5. Sort by ── */}
+            {}
             <SectionLabel label="Sort by" />
             {SORT_OPTIONS.map((opt) => {
               const isSelected = (draft.sort ?? 'best_match') === opt.value;
@@ -708,11 +692,11 @@ export function FilterBottomSheet({
               );
             })}
 
-            {/* Bottom padding so Apply button doesn't overlap last item */}
+            {}
             <View style={styles.scrollPadding} />
           </ScrollView>
 
-          {/* Apply button — fixed at bottom */}
+          {}
           <View style={styles.footer}>
             <Pressable
               style={styles.applyButton}

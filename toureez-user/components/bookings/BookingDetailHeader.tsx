@@ -1,7 +1,4 @@
-/**
- * @file components/bookings/BookingDetailHeader.tsx
- * @description Booking detail app bar with back and share actions.
- */
+
 
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';

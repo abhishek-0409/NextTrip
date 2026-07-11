@@ -1,7 +1,4 @@
-﻿/**
- * @file components/home/PackageCard.tsx
- * @description Toureez trending package card.
- */
+
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -90,14 +87,7 @@ export function PackageCard({
       : null;
   const finalPrice = discountedPrice ?? basePrice;
 
-  /**
-   * Image priority order — guarantees the correct destination photo is shown:
-   *   [0] Keyword-matched destination image  → always the right location
-   *   [1] Cloudinary cover_image from DB     → only if no keyword match
-   *   [2] PACKAGE_DEFAULT_IMAGE             → last resort, never blank
-   *
-   * On each onError we advance to the next source so no card ever shows gray.
-   */
+
   const imageSources = useMemo((): string[] => {
     const sources: string[] = [];
     const keywordImage = getPackageKeywordImage(item);

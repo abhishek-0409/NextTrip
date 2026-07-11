@@ -1,9 +1,4 @@
-/**
- * @file components/ui/LoadingSpinner.tsx
- * @description Full-screen and inline loading spinner — Glassmorphism Dark theme.
- *
- * ✅ All existing props preserved — zero logic changes.
- */
+
 
 import React from 'react';
 import {

@@ -1,7 +1,4 @@
-/**
- * @file app/(vendor)/enquiries/_layout.tsx
- * @description Stack navigator for the vendor enquiry inbox.
- */
+
 
 import { Stack } from 'expo-router';
 import React from 'react';

@@ -1,9 +1,4 @@
-/**
- * @file app/booking/_layout.tsx
- * @description Stack layout for the booking flow.
- * All screens in this group share the same stack navigator.
- * Headers are hidden — each screen renders its own custom header.
- */
+
 
 import React from 'react';
 import { Stack } from 'expo-router';

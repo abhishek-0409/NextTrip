@@ -1,10 +1,4 @@
-﻿/**
- * @file app/(admin)/account.tsx
- * @description Admin profile and account screen.
- *
- * Shows the authenticated admin's profile card and provides quick links
- * to Audit Logs, Notifications, and sign-out.
- */
+
 
 import { router } from 'expo-router';
 import React from 'react';
@@ -133,7 +127,7 @@ export default function AdminAccountScreen(): React.ReactElement {
 
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={styles.safe}>
-      {/* ── Header ── */}
+      {}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Text style={styles.backText}>‹ Back</Text>
@@ -147,7 +141,7 @@ export default function AdminAccountScreen(): React.ReactElement {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* ── Profile card ── */}
+        {}
         <View style={styles.profileCard}>
           <View style={styles.avatar}>
             <Text style={styles.avatarInitials}>{initials}</Text>
@@ -161,7 +155,7 @@ export default function AdminAccountScreen(): React.ReactElement {
           </View>
         </View>
 
-        {/* ── Admin tools ── */}
+        {}
         <MenuSection title="Admin Tools">
           <MenuRow
             icon="bell-outline"
@@ -179,7 +173,7 @@ export default function AdminAccountScreen(): React.ReactElement {
           />
         </MenuSection>
 
-        {/* ── Quick links ── */}
+        {}
         <MenuSection title="Manage">
           <MenuRow
             icon="account-group"
@@ -200,7 +194,7 @@ export default function AdminAccountScreen(): React.ReactElement {
           />
         </MenuSection>
 
-        {/* ── Sign out ── */}
+        {}
         <MenuSection title="Session">
           <MenuRow
             icon="logout"

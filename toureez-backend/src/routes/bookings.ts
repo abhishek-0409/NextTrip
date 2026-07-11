@@ -1,14 +1,4 @@
-/**
- * @file routes/bookings.ts
- * @description Booking flow API routes (all protected).
- *
- * POST /api/v1/bookings/create                 — Create a pending booking
- * POST /api/v1/bookings/create-razorpay-order  — Create Razorpay order (before checkout)
- * POST /api/v1/bookings/verify-razorpay-payment — Verify payment + confirm booking
- * POST /api/v1/bookings/confirm-mock           — Mock payment (dev/soft-launch only)
- * GET  /api/v1/bookings                        — List user's bookings
- * GET  /api/v1/bookings/:id                    — Get single booking detail
- */
+
 
 import { Router } from 'express';
 import { z } from 'zod';
@@ -133,13 +123,7 @@ const ConfirmMockPaymentSchema = z
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 
-/**
- * POST /api/v1/bookings/create
- * Creates a pending booking with full price calculation.
- *
- * Body: CreateBookingInput + primary_contact
- * Returns: { booking, price_calculation }
- */
+
 bookingsRouter.post('/create', async (req, res, next) => {
   try {
     const parsed = CreateBookingSchema.safeParse(req.body);
@@ -156,7 +140,6 @@ bookingsRouter.post('/create', async (req, res, next) => {
       special_requests: parsed.data.special_requests,
       traveler_details: parsed.data.traveler_details,
       payment_type: parsed.data.payment_type,
-      // FIXED: 3 - Preserve the validated booking payload shape expected by CreateBookingInput.
       primary_contact: parsed.data.primary_contact,
     });
 
@@ -166,19 +149,7 @@ bookingsRouter.post('/create', async (req, res, next) => {
   }
 });
 
-/**
- * POST /api/v1/bookings/confirm-mock
- * Confirms a booking with a mock payment (no real gateway).
- * DISABLED in production — replace with Razorpay verify-payment before launch.
- *
- * TODO: Razorpay Integration
- * 1. Call POST /api/v1/bookings/create-order to get razorpay_order_id
- * 2. Open Razorpay checkout with order_id
- * 3. On success: call POST /api/v1/bookings/verify-payment with razorpay signature
- * 4. On failure: show error and allow retry
- *
- * NOTE: Replace this endpoint with Razorpay signature verification before launch.
- */
+
 bookingsRouter.post('/confirm-mock', async (req, res, next) => {
   if (IS_PRODUCTION && !mockPaymentEnabled) {
     return errorResponse(res, 'Mock payment is not available in production', 410);
@@ -203,14 +174,7 @@ bookingsRouter.post('/confirm-mock', async (req, res, next) => {
   }
 });
 
-/**
- * POST /api/v1/bookings/create-razorpay-order
- * Creates a Razorpay order for a pending booking.
- * Call this before opening the Razorpay checkout UI.
- *
- * Body: { booking_id }
- * Returns: { order_id, amount, currency, key_id, booking_id }
- */
+
 bookingsRouter.post('/create-razorpay-order', strictLimiter, async (req, res, next) => {
   try {
     const schema = z.object({ booking_id: z.string().uuid() }).strict();
@@ -224,14 +188,7 @@ bookingsRouter.post('/create-razorpay-order', strictLimiter, async (req, res, ne
   }
 });
 
-/**
- * POST /api/v1/bookings/verify-razorpay-payment
- * Verifies Razorpay HMAC signature and confirms the booking as paid.
- * Call this after the Razorpay checkout succeeds.
- *
- * Body: { booking_id, razorpay_order_id, razorpay_payment_id, razorpay_signature }
- * Returns: { booking_id, payment_id, status }
- */
+
 bookingsRouter.post('/verify-razorpay-payment', strictLimiter, async (req, res, next) => {
   try {
     const schema = z.object({
@@ -251,12 +208,7 @@ bookingsRouter.post('/verify-razorpay-payment', strictLimiter, async (req, res, 
   }
 });
 
-/**
- * POST /api/v1/bookings/:id/create-balance-order
- * Creates a Razorpay order for the remaining balance of a confirmed advance booking.
- *
- * Returns: { order_id, amount, currency, key_id, booking_id }
- */
+
 bookingsRouter.post('/:id/create-balance-order', strictLimiter, async (req, res, next) => {
   try {
     const { id } = UuidParamSchema.parse(req.params);
@@ -267,13 +219,7 @@ bookingsRouter.post('/:id/create-balance-order', strictLimiter, async (req, res,
   }
 });
 
-/**
- * POST /api/v1/bookings/:id/verify-balance-payment
- * Verifies Razorpay HMAC signature and settles the remaining balance.
- *
- * Body: { razorpay_order_id, razorpay_payment_id, razorpay_signature }
- * Returns: { booking_id, payment_id, status }
- */
+
 bookingsRouter.post('/:id/verify-balance-payment', strictLimiter, async (req, res, next) => {
   try {
     const { id } = UuidParamSchema.parse(req.params);
@@ -294,11 +240,7 @@ bookingsRouter.post('/:id/verify-balance-payment', strictLimiter, async (req, re
   }
 });
 
-/**
- * GET /api/v1/bookings
- * Returns all bookings for the authenticated user, newest first.
- * Includes package title, cover image, company name.
- */
+
 bookingsRouter.get('/', async (req, res, next) => {
   try {
     const bookings = await getMyBookings(req.user!.id);
@@ -308,11 +250,7 @@ bookingsRouter.get('/', async (req, res, next) => {
   }
 });
 
-/**
- * PATCH /api/v1/bookings/:id/cancel
- * Cancels a confirmed or pending booking owned by the authenticated user.
- * Returns the updated booking and calculated refund amount.
- */
+
 bookingsRouter.patch('/:id/cancel', async (req, res, next) => {
   try {
     const { id } = UuidParamSchema.parse(req.params);
@@ -323,11 +261,7 @@ bookingsRouter.patch('/:id/cancel', async (req, res, next) => {
   }
 });
 
-/**
- * GET /api/v1/bookings/:id
- * Returns full booking detail.
- * Only returns the booking if it belongs to the authenticated user.
- */
+
 bookingsRouter.get('/:id', async (req, res, next) => {
   try {
     const { id } = UuidParamSchema.parse(req.params);
@@ -338,11 +272,7 @@ bookingsRouter.get('/:id', async (req, res, next) => {
   }
 });
 
-/**
- * GET /api/v1/bookings/:id/invoice
- * Returns a GST-compliant tax invoice PDF for a confirmed/completed booking
- * owned by the authenticated user.
- */
+
 bookingsRouter.get('/:id/invoice', async (req, res, next) => {
   try {
     const { id } = UuidParamSchema.parse(req.params);

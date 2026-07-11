@@ -1,7 +1,4 @@
-/**
- * @file app/notifications.tsx
- * @description Authenticated grouped notifications inbox.
- */
+
 
 import React, { useCallback, useMemo } from 'react';
 import {

@@ -1,16 +1,10 @@
-/**
- * @file lib/api/users.ts
- * @description All Supabase queries related to user profiles.
- * RLS policies ensure users can only read/update their own profile row.
- */
+
 
 import * as Linking from 'expo-linking';
 import { supabase } from '../supabase';
 import { apiClient } from './client';
 import { friendlyError, friendlyThrown } from '../errors';
 import type { ApiResponse, User } from '../../types';
-
-// FIXED: 7 - Role changes must go through PATCH /api/v1/admin/users/:id/role, never frontend profile writes.
 const PROFILE_SELECT = 'id, full_name, avatar_url, phone, city, state, role, created_at';
 
 type ActiveSession = NonNullable<
@@ -28,11 +22,7 @@ export interface OAuthCallbackParams {
 // ── Internal helpers ──────────────────────────────────────────────────────────
 
 
-/**
- * Normalizes auth metadata into the shape expected by public.users.
- * This lets the app self-heal older accounts that were created before
- * the profile trigger existed or before the schema was fully applied.
- */
+
 function buildProfilePayload(session: ActiveSession): {
   id: string;
   full_name: string | null;
@@ -59,20 +49,16 @@ function buildProfilePayload(session: ActiveSession): {
     phone: null,
     city: null,
     state: null,
-    // FIXED: 7 - Missing client-created profiles are always restored as travelers.
     role: 'traveler',
   };
 }
 
-/**
- * Ensures the currently authenticated user has a corresponding public.users row.
- */
+
 async function fetchOrCreateProfile(
   session: ActiveSession
 ): Promise<ApiResponse<User>> {
   const profileResponse = await supabase
     .from('users')
-    // FIXED: 7 - Profile reads explicitly include role for auth routing.
     .select(PROFILE_SELECT)
     .eq('id', session.user.id)
     .maybeSingle();
@@ -92,7 +78,6 @@ async function fetchOrCreateProfile(
 
   const createProfileResponse = await supabase
     .from('users')
-    // FIXED: 7 - Fallback profile upsert preserves the safe default traveler role.
     .upsert(buildProfilePayload(session), { onConflict: 'id' })
     .select(PROFILE_SELECT)
     .single();
@@ -109,15 +94,7 @@ async function fetchOrCreateProfile(
 
 // ── Public API ────────────────────────────────────────────────────────────────
 
-/**
- * Fetches the profile of the currently authenticated user.
- *
- * Reads the user ID from the active Supabase session rather than
- * accepting it as a parameter — this prevents any possibility of
- * a caller accidentally fetching another user's profile.
- *
- * @returns Typed ApiResponse containing the User profile, or null.
- */
+
 export async function getProfile(): Promise<ApiResponse<User>> {
   try {
     const {
@@ -138,24 +115,12 @@ export async function getProfile(): Promise<ApiResponse<User>> {
   }
 }
 
-/**
- * Partial update type for user profile fields.
- * Only the fields provided will be updated — all are optional.
- */
+
 export type UpdateProfilePayload = Partial<
   Pick<User, 'full_name' | 'avatar_url' | 'phone' | 'city' | 'state'>
 >;
 
-/**
- * Updates the authenticated user's profile with the provided fields.
- *
- * Uses the session user ID to scope the update — the RLS policy
- * `using (auth.uid() = id)` provides a second layer of protection
- * at the database level.
- *
- * @param payload - The profile fields to update.
- * @returns Typed ApiResponse containing the updated User profile.
- */
+
 export async function updateProfile(
   payload: UpdateProfilePayload
 ): Promise<ApiResponse<User>> {
@@ -177,7 +142,6 @@ export async function updateProfile(
       .from('users')
       .update(payload)
       .eq('id', session.user.id)
-      // FIXED: 7 - Updated profile responses include role for store hydration.
       .select(PROFILE_SELECT)
       .single();
 
@@ -197,12 +161,7 @@ export async function updateProfile(
   }
 }
 
-/**
- * Signs the current user out and clears the Supabase session.
- * The auth store should call `clearUser()` after this resolves.
- *
- * @returns Typed ApiResponse with null data on success.
- */
+
 export async function signOut(): Promise<ApiResponse<null>> {
   try {
     const { error } = await supabase.auth.signOut();
@@ -223,15 +182,7 @@ export async function signOut(): Promise<ApiResponse<null>> {
   }
 }
 
-/**
- * Signs in a user with email and password.
- * On success, the Supabase client automatically persists the session
- * to AsyncStorage via the configuration in lib/supabase.ts.
- *
- * @param email - User's email address.
- * @param password - User's password.
- * @returns Typed ApiResponse containing the User profile on success.
- */
+
 export async function signIn(
   email: string,
   password: string
@@ -283,7 +234,6 @@ export async function signIn(
       phone: null,
       city: null,
       state: null,
-      // FIXED: 1 - A missing profile cannot grant elevated access.
       role: 'traveler',
       created_at: authUser.created_at,
     };
@@ -299,19 +249,7 @@ export async function signIn(
 
 export const signInWithEmail = signIn;
 
-/**
- * Registers a new user with email, password, and display name.
- * The `handle_new_user` database trigger automatically creates the
- * public.users profile row from the auth metadata.
- *
- * @param email - New user's email address.
- * @param password - New user's password (min 6 chars enforced by Supabase).
- * @param fullName - New user's display name.
- * @param phone - Optional Indian mobile number.
- * @param city - Optional city.
- * @param state - Optional state.
- * @returns Typed ApiResponse containing the new User profile on success.
- */
+
 export async function signUp(
   email: string,
   password: string,
@@ -353,8 +291,6 @@ export async function signUp(
     if (!authData.user) {
       return { data: null, error: 'Sign up failed. Please try again.' };
     }
-
-    // FIXED: 7 - The DB trigger creates the profile row; this fallback upsert self-heals if a session exists.
     const newUser: User = {
       id: authData.user.id,
       full_name: fullName,
@@ -365,8 +301,6 @@ export async function signUp(
       role: 'traveler',
       created_at: authData.user.created_at,
     };
-
-    // FIXED: 7 - The public client can only upsert the signed-in user's own traveler profile via RLS.
     const upsertProfileResponse = await supabase
       .from('users')
       .upsert(
@@ -399,15 +333,7 @@ export async function signUp(
 
 export const signUpWithEmail = signUp;
 
-/**
- * Creates a Supabase Google OAuth URL for the app to open with WebBrowser.
- *
- * @param redirectTo - Deep link that Supabase should redirect back to.
- *                     Must match an allowed redirect URL in your Supabase dashboard.
- * @param state - Optional CSRF state. Omitted when empty — Supabase handles
- *                CSRF internally via the PKCE flow.
- * @returns Typed ApiResponse containing the URL to open.
- */
+
 export async function getGoogleOAuthUrl(
   redirectTo: string,
   state?: string
@@ -446,9 +372,7 @@ export async function getGoogleOAuthUrl(
   }
 }
 
-/**
- * Completes Supabase OAuth after AuthSession redirects back into the app.
- */
+
 export async function completeOAuthSignIn(
   params: OAuthCallbackParams
 ): Promise<ApiResponse<User>> {
@@ -497,12 +421,7 @@ export async function completeOAuthSignIn(
   }
 }
 
-/**
- * Sends a password reset email to the provided address.
- *
- * @param email - The email address to send the reset link to.
- * @returns Typed ApiResponse with null data on success.
- */
+
 export async function resetPassword(
   email: string
 ): Promise<ApiResponse<null>> {
@@ -535,10 +454,7 @@ export const sendPasswordResetEmail = resetPassword;
 
 // ── Device token (push notifications) ────────────────────────────────────────
 
-/**
- * Registers an Expo push token with the backend so the server can send
- * push notifications to this device.
- */
+
 export async function registerDeviceToken(
   token: string,
   platform: 'ios' | 'android',
@@ -548,9 +464,7 @@ export async function registerDeviceToken(
   return { data: res.data, error: null };
 }
 
-/**
- * Removes the push token on logout.
- */
+
 export async function unregisterDeviceToken(
   token: string,
   platform: 'ios' | 'android',
@@ -562,10 +476,7 @@ export async function unregisterDeviceToken(
 
 // ── Account deletion ──────────────────────────────────────────────────────────
 
-/**
- * Permanently deletes the authenticated user's account.
- * Requires the user to type "DELETE" to confirm.
- */
+
 export async function deleteUserAccount(): Promise<ApiResponse<{ deleted: boolean }>> {
   const res = await apiClient.delete<{ deleted: boolean }>('/users/account');
   if (res.error || !res.data) return { data: null, error: res.error ?? 'Failed to delete account.' };

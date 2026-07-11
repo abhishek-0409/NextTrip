@@ -1,7 +1,4 @@
-/**
- * @file lib/api/packages.ts
- * @description Package API wrappers backed by the Express backend.
- */
+
 
 import { apiClient } from './client';
 import type { QueryParams } from './client';
@@ -176,11 +173,6 @@ function mapSearchFilters(filters: SearchFilters, page: number): QueryParams {
     page: page + 1,
   };
 }
-
-/**
- * Fetches a paginated, filtered list of active travel packages.
- */
-// FIXED: 6 - Package discovery now goes through GET /api/v1/packages.
 export async function searchPackages(
   filters: SearchFilters = {},
   page: number = 0
@@ -200,11 +192,6 @@ export async function searchPackages(
     error: null,
   };
 }
-
-/**
- * Fetches a single active package by ID, including images.
- */
-// FIXED: 6 - Package detail now goes through GET /api/v1/packages/:id.
 export async function getPackageById(
   packageId: string
 ): Promise<ApiResponse<Package & { images: PackageImage[] }>> {
@@ -228,10 +215,7 @@ export async function getPackageById(
   };
 }
 
-/**
- * Fetches the raw PackageDetail for a single package by ID (no field mapping).
- * Use this when the caller needs the full backend shape, not the mapped Package type.
- */
+
 export async function getPackageDetail(
   packageId: string
 ): Promise<ApiResponse<PackageDetail>> {
@@ -251,11 +235,6 @@ export async function getPackageDetail(
 
   return { data: response.data, error: null };
 }
-
-/**
- * Fetches featured/promoted packages for the home screen.
- */
-// FIXED: 6 - Featured packages now use the backend API.
 export async function getFeaturedPackages(tripType?: 'domestic' | 'international'): Promise<ApiResponse<Package[]>> {
   const params = tripType ? { trip_type: tripType } : undefined;
   const response = await apiClient.get<PackageListItem[]>(
@@ -273,11 +252,6 @@ export async function getFeaturedPackages(tripType?: 'domestic' | 'international
     error: null,
   };
 }
-
-/**
- * Fetches packages belonging to a specific category.
- */
-// FIXED: 6 - Category package lists now use GET /api/v1/packages filters.
 export async function getPackagesByCategory(
   category: PackageCategory,
   limit: number = 10

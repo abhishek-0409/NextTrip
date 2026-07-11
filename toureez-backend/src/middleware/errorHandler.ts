@@ -19,12 +19,7 @@ const logError = (err: unknown): void => {
   logger.error({ err }, 'Unhandled error');
 };
 
-/**
- * Reports an error to Sentry. Skips client-error AppErrors (4xx) — those are
- * expected control flow (validation failures, not-found, forbidden, etc.)
- * and would just add noise. Genuine 5xx/unexpected errors are always sent.
- * No-ops silently if SENTRY_DSN isn't configured (Sentry.init was never called).
- */
+
 const reportToSentry = (err: unknown): void => {
   if (err instanceof AppError && err.statusCode < 500) {
     return;
@@ -32,9 +27,7 @@ const reportToSentry = (err: unknown): void => {
   Sentry.captureException(err);
 };
 
-/**
- * Converts thrown errors into standardized client-safe API responses.
- */
+
 export const errorHandler: ErrorRequestHandler = (err, _req, res, next) => {
   if (res.headersSent) {
     return next(err);

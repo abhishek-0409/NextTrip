@@ -2,9 +2,7 @@ import type { Response } from 'express';
 import type { ApiResponse } from '../types';
 import { ERROR_MESSAGES } from '../constants/errors';
 
-/**
- * Sends a successful API response using the shared response envelope.
- */
+
 export const success = <T>(
   res: Response,
   data: T,
@@ -21,9 +19,7 @@ export const success = <T>(
   return res.status(statusCode).json(body);
 };
 
-/**
- * Sends a failed API response using a client-safe message.
- */
+
 export const error = (
   res: Response,
   message: string = ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
@@ -40,16 +36,12 @@ export const error = (
   return res.status(statusCode).json(body);
 };
 
-/**
- * Sends a standardized not-found response for a missing entity.
- */
+
 export const notFound = (res: Response, entity = 'Resource'): Response<ApiResponse<null>> => {
   return error(res, `${entity} not found`, 404);
 };
 
-/**
- * Sends a standardized validation failure response with structured validation details.
- */
+
 export const validationError = (
   res: Response,
   details: unknown,

@@ -1,7 +1,4 @@
-﻿/**
- * @file hooks/useHomeData.ts
- * @description TanStack Query hooks for the Toureez home screen.
- */
+
 
 import { useQuery } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';

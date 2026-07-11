@@ -1,7 +1,4 @@
-﻿/**
- * @file constants/typography.ts
- * @description Toureez type scale.
- */
+
 
 import { Platform } from 'react-native';
 

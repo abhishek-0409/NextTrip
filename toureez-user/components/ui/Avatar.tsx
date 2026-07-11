@@ -1,15 +1,4 @@
-/**
- * @file components/ui/Avatar.tsx
- * @description Premium avatar with navy ring for Light 3D design.
- *
- * - Navy ring border with subtle shadow
- * - Light fallback bg + navy initials
- * - Sizes: sm (32), md (44), lg (60), xl (88)
- * - Online indicator: green dot bottom-right
- * - Camera overlay when onPress provided
- *
- * ✅ All existing props preserved — zero logic changes.
- */
+
 
 import React, { useEffect, useRef } from 'react';
 import {
@@ -88,7 +77,7 @@ export const Avatar: React.FC<AvatarProps> = ({
 
   const inner = (
     <View style={{ width: ringSize, height: ringSize, position: 'relative' }}>
-      {/* Navy ring */}
+      {}
       <View
         style={[
           styles.ring,
@@ -99,7 +88,7 @@ export const Avatar: React.FC<AvatarProps> = ({
           },
         ]}
       />
-      {/* Avatar circle */}
+      {}
       <View
         style={[
           styles.circle,

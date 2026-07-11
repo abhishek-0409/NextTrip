@@ -1,10 +1,4 @@
-/**
- * @file components/booking/BookingProgressBar.tsx
- * @description Step indicator for the 4-step booking flow.
- *
- * Renders numbered circles connected by lines.
- * Completed steps show a checkmark; the active step is highlighted in primary.
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -44,7 +38,7 @@ export function BookingProgressBar({
 
         return (
           <React.Fragment key={step.number}>
-            {/* Step node */}
+            {}
             <View style={styles.stepWrapper}>
               <View
                 style={[
@@ -78,7 +72,7 @@ export function BookingProgressBar({
               </Text>
             </View>
 
-            {/* Connector line between steps */}
+            {}
             {!isLast && (
               <View
                 style={[

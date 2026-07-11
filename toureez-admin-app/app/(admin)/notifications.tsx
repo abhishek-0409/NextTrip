@@ -1,7 +1,4 @@
-/**
- * @file app/(admin)/notifications.tsx
- * @description Admin notifications inbox with mark-read and mark-all-read actions.
- */
+
 
 import { router } from 'expo-router';
 import React, { useCallback } from 'react';

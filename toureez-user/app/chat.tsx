@@ -1,7 +1,4 @@
-/**
- * @file app/chat.tsx
- * @description AI travel assistant chat screen, powered by Gemini.
- */
+
 
 import React, { useCallback, useRef, useState } from 'react';
 import {

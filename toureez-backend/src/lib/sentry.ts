@@ -1,10 +1,4 @@
-/**
- * @file lib/sentry.ts
- * @description Sentry error monitoring for the Node.js backend.
- *
- * Set SENTRY_DSN in your .env / deployment environment to enable.
- * Call initialiseSentry() BEFORE importing app.ts so all errors are captured.
- */
+
 
 import * as Sentry from '@sentry/node';
 

@@ -1,7 +1,4 @@
-/**
- * @file app/enquiry/index.tsx
- * @description Traveler's list of enquiry threads with vendors.
- */
+
 
 import React, { useCallback } from 'react';
 import {

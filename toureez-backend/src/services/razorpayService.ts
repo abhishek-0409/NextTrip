@@ -1,12 +1,4 @@
-/**
- * @file services/razorpayService.ts
- * Razorpay payment gateway integration.
- *
- * Flow:
- *  1. createRazorpayOrder()  — called before checkout opens, returns order_id
- *  2. verifyRazorpayPayment() — called after checkout completes, verifies signature
- *     and updates the booking + payment record to paid.
- */
+
 
 import crypto from 'crypto';
 import Razorpay from 'razorpay';
@@ -41,10 +33,6 @@ export interface RazorpayOrderResult {
 
 // ── Create order ─────────────────────────────────────────────────────────────
 
-/**
- * Creates a Razorpay order for a pending booking.
- * Amount is determined by the booking's payment_type (full or advance).
- */
 export async function createRazorpayOrder(
   bookingId: string,
   userId: string,
@@ -111,11 +99,6 @@ export async function createRazorpayOrder(
 
 // ── Verify payment ────────────────────────────────────────────────────────────
 
-/**
- * Verifies the Razorpay payment signature and marks the booking as paid.
- *
- * Razorpay signature = HMAC-SHA256(razorpay_order_id + "|" + razorpay_payment_id, key_secret)
- */
 export async function verifyRazorpayPayment(params: {
   booking_id:          string;
   razorpay_order_id:   string;

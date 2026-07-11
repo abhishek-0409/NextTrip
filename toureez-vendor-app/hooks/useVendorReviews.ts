@@ -1,7 +1,4 @@
-/**
- * @file hooks/useVendorReviews.ts
- * @description Fetches published reviews for the vendor's packages.
- */
+
 
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { listReviews } from '../lib/api/vendor';
@@ -15,9 +12,7 @@ export const vendorReviewQueryKeys = {
   list: (page: number) => ['vendor', 'reviews', 'list', page] as const,
 } as const;
 
-/**
- * Returns paginated published reviews for the vendor's packages.
- */
+
 export function useVendorReviews(page = 1): UseQueryResult<PaginatedResponse<VendorReview>, Error> {
   const isVendor = useAuthStore((s) => s.user?.role === VENDOR_ROLE);
 

@@ -1,10 +1,4 @@
-/**
- * @file components/home/CategoryRow.tsx
- * @description Horizontal category chips — Premium Light 3D design.
- * Active: navy filled chip with white text. Inactive: white chip with border.
- *
- * ✅ All hooks and navigation preserved — zero logic changes.
- */
+
 
 import React, { useCallback, useEffect, useRef } from 'react';
 import {

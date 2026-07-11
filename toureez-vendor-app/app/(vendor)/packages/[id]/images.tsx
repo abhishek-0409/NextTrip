@@ -1,14 +1,4 @@
-/**
- * @file app/(vendor)/packages/[id]/images.tsx
- * @description Package gallery image manager.
- *
- * Displays all uploaded images in a grid. Vendors can:
- *  - Upload new images via Cloudinary (up to maxPackageImages limit)
- *  - Set any image as the cover photo
- *  - Delete images from the gallery
- *
- * The cover image is shown with a star overlay.
- */
+
 
 import React, { useState } from 'react';
 import {
@@ -52,7 +42,7 @@ function ImageTile({ image, onSetCover, onDelete, isSettingCover, isDeleting }: 
     <View style={[tileStyles.tile, Shadows.sm]}>
       <Image source={{ uri: image.url }} style={tileStyles.image} resizeMode="cover" />
 
-      {/* Cover badge */}
+      {}
       {image.is_cover && (
         <View style={tileStyles.coverBadge}>
           <Ionicons name="star" size={10} color={Colors.textWhite} />
@@ -60,7 +50,7 @@ function ImageTile({ image, onSetCover, onDelete, isSettingCover, isDeleting }: 
         </View>
       )}
 
-      {/* Action overlay */}
+      {}
       <View style={tileStyles.overlay}>
         {!image.is_cover && (
           <Pressable
@@ -288,7 +278,7 @@ export default function ImagesScreen(): React.ReactElement {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* Tips */}
+        {}
         <View style={styles.tipsCard}>
           <Text style={styles.tipsTitle}>Gallery Tips</Text>
           <Text style={styles.tipsBody}>
@@ -298,7 +288,7 @@ export default function ImagesScreen(): React.ReactElement {
           </Text>
         </View>
 
-        {/* Image grid */}
+        {}
         <View style={styles.grid}>
           {images.map((image) => (
             <ImageTile

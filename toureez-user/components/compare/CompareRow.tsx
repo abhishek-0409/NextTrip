@@ -1,15 +1,4 @@
-/**
- * @file components/compare/CompareRow.tsx
- * @description A single comparison row.
- *
- * IMPORTANT ARCHITECTURE NOTE:
- * This component does NOT render the label or the horizontal scroll itself.
- * The screen renders a fixed left label column and a single shared horizontal
- * ScrollView for all rows. This component only renders the CELLS for one row —
- * the screen places them inside the shared horizontal scroll.
- *
- * This is the correct pattern for a sticky-label comparison table in React Native.
- */
+
 
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -24,10 +13,7 @@ export interface CompareRowCellsProps {
   minHeight?: number;
 }
 
-/**
- * Renders the data cells for one comparison row.
- * Must be placed inside the shared horizontal ScrollView in the screen.
- */
+
 export function CompareRowCells({
   cells,
   highlightIndex = null,

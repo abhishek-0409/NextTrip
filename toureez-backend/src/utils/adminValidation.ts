@@ -1,11 +1,4 @@
-/**
- * @file utils/adminValidation.ts
- * @description Zod validation schemas for all admin and vendor API payloads.
- *
- * Naming convention:
- *  - *Schema  — the Zod schema object
- *  - *Input   — the TypeScript type inferred from the schema (z.infer<typeof ...Schema>)
- */
+
 
 import { z } from 'zod';
 
@@ -26,7 +19,6 @@ export const paginationSchema = z.object({
     .default(20),
 });
 
-/** Same shape as paginationSchema but with a higher max limit, for admin list endpoints that intentionally allow larger pages (e.g. categories). */
 export const wideLimitPaginationSchema = z.object({
   page: z
     .preprocess((v) => (v === undefined || v === '' ? 1 : v), z.coerce.number().int().min(1))
@@ -117,7 +109,6 @@ export const AdminFeaturePackageSchema = z
   })
   .strict();
 
-/** Dedicated schema for the /bestseller endpoint — only accepts is_bestseller. */
 export const AdminBestsellerPackageSchema = z
   .object({
     is_bestseller: z.boolean(),
@@ -272,10 +263,6 @@ export const AdminListAuditLogsQuerySchema = paginationSchema.extend({
 
 // ── Admin: Earnings query ─────────────────────────────────────────────────────
 
-/**
- * Validates the query for GET /api/v1/admin/earnings.
- * `month` must be in YYYY-MM format (e.g. "2026-06").
- */
 export const AdminEarningsQuerySchema = z.object({
   month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'month must be in YYYY-MM format'),
 });

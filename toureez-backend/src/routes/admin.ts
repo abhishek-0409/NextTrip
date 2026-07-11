@@ -1,21 +1,4 @@
-/**
- * @file routes/admin.ts
- * @description Admin portal API — all routes require auth + admin role.
- *
- * Mounted at /api/v1/admin in routes/index.ts.
- *
- * Route groups:
- *  GET  /dashboard
- *  GET/PATCH  /users, /users/:id/role
- *  GET/PATCH  /vendors, /vendors/:id/{approve,reject,verify}
- *  GET/PATCH  /packages, /packages/:id/{approve,reject,feature,bestseller}
- *  GET/PATCH  /bookings, /bookings/:id/status
- *  GET/PATCH  /reviews, /reviews/:id/{publish,unpublish,verify}
- *  GET/POST/PATCH/DELETE  /categories, /categories/:id
- *  GET/POST/PATCH/DELETE  /locations, /locations/:id
- *  GET/PATCH  /payouts, /payouts/:id/status
- *  GET  /audit-logs
- */
+
 
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth';
@@ -104,10 +87,7 @@ adminRouter.use((req, res, next) => {
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
-/**
- * GET /api/v1/admin/dashboard
- * Returns platform-wide analytics metrics.
- */
+
 adminRouter.get('/dashboard', async (req, res, next) => {
   try {
     const metrics = await getAdminDashboard();
@@ -117,11 +97,7 @@ adminRouter.get('/dashboard', async (req, res, next) => {
   }
 });
 
-/**
- * GET /api/v1/admin/earnings?month=YYYY-MM
- * Returns total paid-payment revenue for a single calendar month, used by
- * the Revenue Overview month picker on the admin dashboard.
- */
+
 adminRouter.get('/earnings', async (req, res, next) => {
   try {
     const parsed = AdminEarningsQuerySchema.safeParse(req.query);
@@ -135,10 +111,7 @@ adminRouter.get('/earnings', async (req, res, next) => {
   }
 });
 
-/**
- * GET /api/v1/admin/analytics
- * Returns time-series data for revenue charts, user growth, and booking funnel.
- */
+
 adminRouter.get('/analytics', async (_req, res, next) => {
   try {
     const analytics = await getAdminAnalytics();
@@ -150,10 +123,7 @@ adminRouter.get('/analytics', async (_req, res, next) => {
 
 // ── Users ─────────────────────────────────────────────────────────────────────
 
-/**
- * GET /api/v1/admin/users
- * Paginated list of all users. Supports search and role filter.
- */
+
 adminRouter.get('/users', async (req, res, next) => {
   try {
     const parsed = AdminListUsersQuerySchema.safeParse(req.query);
@@ -171,10 +141,7 @@ adminRouter.get('/users', async (req, res, next) => {
   }
 });
 
-/**
- * GET /api/v1/admin/users/:id
- * Returns a single user with email and booking count.
- */
+
 adminRouter.get('/users/:id', async (req, res, next) => {
   try {
     const { id } = AdminUuidParamSchema.parse(req.params);
@@ -186,10 +153,7 @@ adminRouter.get('/users/:id', async (req, res, next) => {
   }
 });
 
-/**
- * DELETE /api/v1/admin/users/:id
- * Permanently deletes a user account (admin cannot delete themselves).
- */
+
 adminRouter.delete('/users/:id', strictLimiter, async (req, res, next) => {
   try {
     const adminUser = req.user;
@@ -220,10 +184,7 @@ adminRouter.delete('/users/:id', strictLimiter, async (req, res, next) => {
   }
 });
 
-/**
- * PATCH /api/v1/admin/users/:id/role
- * Updates a user's role. Admin cannot downgrade their own account.
- */
+
 adminRouter.patch('/users/:id/role', strictLimiter, async (req, res, next) => {
   try {
     const adminUser = req.user;
@@ -259,10 +220,7 @@ adminRouter.patch('/users/:id/role', strictLimiter, async (req, res, next) => {
 
 // ── Vendors ───────────────────────────────────────────────────────────────────
 
-/**
- * GET /api/v1/admin/vendors
- * Paginated vendor list with owner info. Supports search, status, is_verified filters.
- */
+
 adminRouter.get('/vendors', async (req, res, next) => {
   try {
     const parsed = AdminListVendorsQuerySchema.safeParse(req.query);
@@ -281,9 +239,7 @@ adminRouter.get('/vendors', async (req, res, next) => {
   }
 });
 
-/**
- * GET /api/v1/admin/vendors/:id
- */
+
 adminRouter.get('/vendors/:id', async (req, res, next) => {
   try {
     const { id } = AdminUuidParamSchema.parse(req.params);
@@ -295,9 +251,7 @@ adminRouter.get('/vendors/:id', async (req, res, next) => {
   }
 });
 
-/**
- * PATCH /api/v1/admin/vendors/:id/approve
- */
+
 adminRouter.patch('/vendors/:id/approve', strictLimiter, async (req, res, next) => {
   try {
     const adminUser = req.user;
@@ -332,9 +286,7 @@ adminRouter.patch('/vendors/:id/approve', strictLimiter, async (req, res, next) 
   }
 });
 
-/**
- * PATCH /api/v1/admin/vendors/:id/reject
- */
+
 adminRouter.patch('/vendors/:id/reject', strictLimiter, async (req, res, next) => {
   try {
     const adminUser = req.user;
@@ -369,9 +321,7 @@ adminRouter.patch('/vendors/:id/reject', strictLimiter, async (req, res, next) =
   }
 });
 
-/**
- * PATCH /api/v1/admin/vendors/:id/verify
- */
+
 adminRouter.patch('/vendors/:id/verify', strictLimiter, async (req, res, next) => {
   try {
     const adminUser = req.user;
@@ -396,10 +346,7 @@ adminRouter.patch('/vendors/:id/verify', strictLimiter, async (req, res, next) =
 
 // ── Packages ──────────────────────────────────────────────────────────────────
 
-/**
- * GET /api/v1/admin/packages
- * Paginated package list with company, location, category info.
- */
+
 adminRouter.get('/packages', async (req, res, next) => {
   try {
     const parsed = AdminListPackagesQuerySchema.safeParse(req.query);
@@ -419,9 +366,7 @@ adminRouter.get('/packages', async (req, res, next) => {
   }
 });
 
-/**
- * GET /api/v1/admin/packages/:id
- */
+
 adminRouter.get('/packages/:id', async (req, res, next) => {
   try {
     const { id } = AdminUuidParamSchema.parse(req.params);
@@ -433,9 +378,7 @@ adminRouter.get('/packages/:id', async (req, res, next) => {
   }
 });
 
-/**
- * PATCH /api/v1/admin/packages/:id/approve
- */
+
 adminRouter.patch('/packages/:id/approve', strictLimiter, async (req, res, next) => {
   try {
     const adminUser = req.user;
@@ -476,9 +419,7 @@ adminRouter.patch('/packages/:id/approve', strictLimiter, async (req, res, next)
   }
 });
 
-/**
- * PATCH /api/v1/admin/packages/:id/reject
- */
+
 adminRouter.patch('/packages/:id/reject', strictLimiter, async (req, res, next) => {
   try {
     const adminUser = req.user;
@@ -519,9 +460,7 @@ adminRouter.patch('/packages/:id/reject', strictLimiter, async (req, res, next) 
   }
 });
 
-/**
- * PATCH /api/v1/admin/packages/:id/feature
- */
+
 adminRouter.patch('/packages/:id/feature', strictLimiter, async (req, res, next) => {
   try {
     const adminUser = req.user;
@@ -547,9 +486,7 @@ adminRouter.patch('/packages/:id/feature', strictLimiter, async (req, res, next)
   }
 });
 
-/**
- * PATCH /api/v1/admin/packages/:id/bestseller
- */
+
 adminRouter.patch('/packages/:id/bestseller', strictLimiter, async (req, res, next) => {
   try {
     const adminUser = req.user;
@@ -575,11 +512,7 @@ adminRouter.patch('/packages/:id/bestseller', strictLimiter, async (req, res, ne
   }
 });
 
-/**
- * DELETE /api/v1/admin/packages/:id
- * Hard-deletes a draft or rejected package with no bookings.
- * Admin bypasses ownership checks entirely.
- */
+
 adminRouter.delete('/packages/:id', strictLimiter, async (req, res, next) => {
   try {
     const adminUser = req.user;
@@ -634,9 +567,7 @@ adminRouter.delete('/packages/:id', strictLimiter, async (req, res, next) => {
 
 // ── Bookings ──────────────────────────────────────────────────────────────────
 
-/**
- * GET /api/v1/admin/bookings
- */
+
 adminRouter.get('/bookings', async (req, res, next) => {
   try {
     const parsed = AdminListBookingsQuerySchema.safeParse(req.query);
@@ -658,9 +589,7 @@ adminRouter.get('/bookings', async (req, res, next) => {
   }
 });
 
-/**
- * GET /api/v1/admin/bookings/:id
- */
+
 adminRouter.get('/bookings/:id', async (req, res, next) => {
   try {
     const { id } = AdminUuidParamSchema.parse(req.params);
@@ -672,9 +601,7 @@ adminRouter.get('/bookings/:id', async (req, res, next) => {
   }
 });
 
-/**
- * PATCH /api/v1/admin/bookings/:id/status
- */
+
 adminRouter.patch('/bookings/:id/status', strictLimiter, async (req, res, next) => {
   try {
     const adminUser = req.user;
@@ -703,9 +630,7 @@ adminRouter.patch('/bookings/:id/status', strictLimiter, async (req, res, next) 
 
 // ── Reviews ───────────────────────────────────────────────────────────────────
 
-/**
- * GET /api/v1/admin/reviews
- */
+
 adminRouter.get('/reviews', async (req, res, next) => {
   try {
     const parsed = AdminListReviewsQuerySchema.safeParse(req.query);
@@ -726,9 +651,7 @@ adminRouter.get('/reviews', async (req, res, next) => {
   }
 });
 
-/**
- * PATCH /api/v1/admin/reviews/:id/publish
- */
+
 adminRouter.patch('/reviews/:id/publish', strictLimiter, async (req, res, next) => {
   try {
     const adminUser = req.user;
@@ -751,9 +674,7 @@ adminRouter.patch('/reviews/:id/publish', strictLimiter, async (req, res, next) 
   }
 });
 
-/**
- * PATCH /api/v1/admin/reviews/:id/unpublish
- */
+
 adminRouter.patch('/reviews/:id/unpublish', strictLimiter, async (req, res, next) => {
   try {
     const adminUser = req.user;
@@ -776,9 +697,7 @@ adminRouter.patch('/reviews/:id/unpublish', strictLimiter, async (req, res, next
   }
 });
 
-/**
- * PATCH /api/v1/admin/reviews/:id/verify
- */
+
 adminRouter.patch('/reviews/:id/verify', strictLimiter, async (req, res, next) => {
   try {
     const adminUser = req.user;
@@ -803,10 +722,7 @@ adminRouter.patch('/reviews/:id/verify', strictLimiter, async (req, res, next) =
 
 // ── Categories ────────────────────────────────────────────────────────────────
 
-/**
- * GET /api/v1/admin/categories
- * Supports optional ?page and ?limit query params (default: page=1, limit=100, max limit=200).
- */
+
 adminRouter.get('/categories', async (req, res, next) => {
   try {
     const parsed = wideLimitPaginationSchema.safeParse(req.query);
@@ -818,9 +734,7 @@ adminRouter.get('/categories', async (req, res, next) => {
   }
 });
 
-/**
- * POST /api/v1/admin/categories
- */
+
 adminRouter.post('/categories', strictLimiter, async (req, res, next) => {
   try {
     const adminUser = req.user;
@@ -848,9 +762,7 @@ adminRouter.post('/categories', strictLimiter, async (req, res, next) => {
   }
 });
 
-/**
- * PATCH /api/v1/admin/categories/:id
- */
+
 adminRouter.patch('/categories/:id', strictLimiter, async (req, res, next) => {
   try {
     const adminUser = req.user;
@@ -876,9 +788,7 @@ adminRouter.patch('/categories/:id', strictLimiter, async (req, res, next) => {
   }
 });
 
-/**
- * DELETE /api/v1/admin/categories/:id
- */
+
 adminRouter.delete('/categories/:id', strictLimiter, async (req, res, next) => {
   try {
     const adminUser = req.user;
@@ -906,9 +816,7 @@ adminRouter.delete('/categories/:id', strictLimiter, async (req, res, next) => {
 
 // ── Locations ─────────────────────────────────────────────────────────────────
 
-/**
- * GET /api/v1/admin/locations
- */
+
 adminRouter.get('/locations', async (req, res, next) => {
   try {
     const parsed = AdminListLocationsQuerySchema.safeParse(req.query);
@@ -925,9 +833,7 @@ adminRouter.get('/locations', async (req, res, next) => {
   }
 });
 
-/**
- * POST /api/v1/admin/locations
- */
+
 adminRouter.post('/locations', strictLimiter, async (req, res, next) => {
   try {
     const adminUser = req.user;
@@ -952,9 +858,7 @@ adminRouter.post('/locations', strictLimiter, async (req, res, next) => {
   }
 });
 
-/**
- * PATCH /api/v1/admin/locations/:id
- */
+
 adminRouter.patch('/locations/:id', strictLimiter, async (req, res, next) => {
   try {
     const adminUser = req.user;
@@ -980,9 +884,7 @@ adminRouter.patch('/locations/:id', strictLimiter, async (req, res, next) => {
   }
 });
 
-/**
- * DELETE /api/v1/admin/locations/:id
- */
+
 adminRouter.delete('/locations/:id', strictLimiter, async (req, res, next) => {
   try {
     const adminUser = req.user;
@@ -1010,9 +912,7 @@ adminRouter.delete('/locations/:id', strictLimiter, async (req, res, next) => {
 
 // ── Payouts ───────────────────────────────────────────────────────────────────
 
-/**
- * GET /api/v1/admin/payouts
- */
+
 adminRouter.get('/payouts', async (req, res, next) => {
   try {
     const parsed = AdminListPayoutsQuerySchema.safeParse(req.query);
@@ -1032,9 +932,7 @@ adminRouter.get('/payouts', async (req, res, next) => {
   }
 });
 
-/**
- * PATCH /api/v1/admin/payouts/:id/status
- */
+
 adminRouter.patch('/payouts/:id/status', strictLimiter, async (req, res, next) => {
   try {
     const adminUser = req.user;
@@ -1063,10 +961,7 @@ adminRouter.patch('/payouts/:id/status', strictLimiter, async (req, res, next) =
 
 // ── Audit logs ────────────────────────────────────────────────────────────────
 
-/**
- * GET /api/v1/admin/audit-logs
- * Read-only. Supports filtering by admin, entity, action, and date range.
- */
+
 adminRouter.get('/audit-logs', async (req, res, next) => {
   try {
     const parsed = AdminListAuditLogsQuerySchema.safeParse(req.query);

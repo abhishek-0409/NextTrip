@@ -1,7 +1,4 @@
-﻿/**
- * @file components/common/Header.tsx
- * @description Toureez light header.
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, type ViewStyle } from 'react-native';

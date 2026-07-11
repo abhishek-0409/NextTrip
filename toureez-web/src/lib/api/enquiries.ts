@@ -20,7 +20,6 @@ export interface EnquiryMessage {
   created_at: string;
 }
 
-/** Backend nests the package under `enquiry.package`. */
 export function enquiryPackageTitle(enquiry: Enquiry): string {
   return enquiry.package?.title ?? enquiry.package?.id ?? '';
 }

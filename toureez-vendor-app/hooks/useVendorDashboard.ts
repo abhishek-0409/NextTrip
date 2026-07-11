@@ -1,10 +1,4 @@
-/**
- * @file hooks/useVendorDashboard.ts
- * @description Fetches and caches vendor dashboard metrics.
- *
- * Uses TanStack Query to cache dashboard data for the configured stale time.
- * Only fetches when the user has the company_owner role.
- */
+
 
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { getVendorDashboard, getVendorEarningsForMonth, type VendorMonthlyEarnings } from '../lib/api/vendor';
@@ -17,10 +11,7 @@ export const vendorDashboardQueryKeys = {
   earnings: (month: string) => ['vendor', 'earnings', month] as const,
 } as const;
 
-/**
- * Returns the vendor's dashboard metrics, including packages, bookings,
- * revenue, reviews, and pending payouts.
- */
+
 export function useVendorDashboard(): UseQueryResult<VendorDashboardMetrics, Error> {
   const isVendor = useAuthStore((s) => s.user?.role === VENDOR_ROLE);
 
@@ -38,10 +29,7 @@ export function useVendorDashboard(): UseQueryResult<VendorDashboardMetrics, Err
   });
 }
 
-/**
- * Returns confirmed/completed booking revenue for a single calendar month
- * (format: "YYYY-MM"), used by the Earnings Overview month picker.
- */
+
 export function useVendorEarningsForMonth(month: string): UseQueryResult<VendorMonthlyEarnings, Error> {
   const isVendor = useAuthStore((s) => s.user?.role === VENDOR_ROLE);
   const isValidMonth = /^\d{4}-\d{2}$/.test(month);

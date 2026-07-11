@@ -1,9 +1,4 @@
-/**
- * @file services/analyticsService.ts
- * @description Analytics aggregation for vendor and admin dashboards.
- *
- * Returns time-series and summary data used by chart components.
- */
+
 
 import { supabaseAdmin } from '../lib/supabase';
 import { AppError, ERROR_MESSAGES } from '../constants/errors';

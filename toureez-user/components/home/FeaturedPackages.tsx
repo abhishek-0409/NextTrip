@@ -1,9 +1,4 @@
-/**
- * @file components/home/FeaturedPackages.tsx
- * @description Horizontal carousel of featured packages — Glassmorphism Dark.
- *
- * ✅ All hooks and navigation preserved — zero logic changes.
- */
+
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {

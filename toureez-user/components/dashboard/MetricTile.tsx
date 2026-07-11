@@ -1,10 +1,4 @@
-/**
- * @file components/dashboard/MetricTile.tsx
- * @description Reusable KPI tile for admin and vendor dashboards.
- *
- * Displays a metric value, label, optional delta (MoM change), and
- * an accent colour. Renders a skeleton placeholder while loading.
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -13,15 +7,15 @@ import { Colors } from '../../constants/colors';
 export interface MetricTileProps {
   label: string;
   value: number | string;
-  /** Optional sub-label or period description */
+
   sublabel?: string;
-  /** Positive = green, negative = red, undefined = no delta */
+
   delta?: number;
-  /** Colour accent on the left border */
+
   accent?: string;
-  /** Show skeleton loading state */
+
   loading?: boolean;
-  /** Format function for the value */
+
   format?: (v: number | string) => string;
 }
 

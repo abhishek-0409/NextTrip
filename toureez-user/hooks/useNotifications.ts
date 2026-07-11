@@ -1,7 +1,4 @@
-/**
- * @file hooks/useNotifications.ts
- * @description Query and mutation hooks for the authenticated notifications inbox.
- */
+
 
 import { useMemo } from 'react';
 import {
@@ -147,9 +144,7 @@ function markEveryNotificationRead(
   );
 }
 
-/**
- * Loads the current user's notifications and groups them for the inbox UI.
- */
+
 export function useNotifications(): UseQueryResult<
   NotificationSection[],
   Error
@@ -167,9 +162,7 @@ export function useNotifications(): UseQueryResult<
   });
 }
 
-/**
- * Derives the badge count from the same notifications query used by the inbox.
- */
+
 export function useUnreadCount(): number {
   const notificationsQuery = useNotifications();
 
@@ -186,9 +179,7 @@ export function useUnreadCount(): number {
   );
 }
 
-/**
- * Marks one notification as read with immediate optimistic UI feedback.
- */
+
 export function useMarkAsRead(): UseMutationResult<
   AppNotification,
   Error,
@@ -234,9 +225,7 @@ export function useMarkAsRead(): UseMutationResult<
   });
 }
 
-/**
- * Marks the entire inbox as read with a single optimistic cache update.
- */
+
 export function useMarkAllRead(): UseMutationResult<
   MarkAllReadResult,
   Error,

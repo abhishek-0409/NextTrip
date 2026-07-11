@@ -2,12 +2,7 @@ import { z } from 'zod';
 
 const indianMobileRegex = /^(?:\+91|91)?[6-9]\d{9}$/;
 
-/**
- * Validates that a URL is actually served from Cloudinary's CDN, not an
- * arbitrary external host. Use for every field that stores a Cloudinary
- * asset URL (avatar, logo, document, package image) — without this check
- * a user/vendor could submit any URL and have it trusted as vetted media.
- */
+
 // Extensions that must never be trusted as "vetted media" even if Cloudinary
 // served them — SVG/HTML can carry executable script, and Cloudinary's
 // unsigned upload preset doesn't stop a client from uploading them with an
@@ -93,9 +88,7 @@ const amenitiesFromQuery = z
   }, z.array(z.string().min(1)).min(1))
   .optional();
 
-/**
- * Validates and normalizes public package search query parameters.
- */
+
 export const SearchFiltersSchema = z
   .object({
     destination: optionalTrimmedString(1, 120),
@@ -128,9 +121,7 @@ export const SearchFiltersSchema = z
     },
   );
 
-/**
- * Validates comma-separated package UUIDs for comparison.
- */
+
 export const CompareIdsSchema = z.object({
   ids: z
     .string()
@@ -143,9 +134,7 @@ export const CompareIdsSchema = z.object({
     .pipe(z.array(z.string().uuid()).min(2).max(4)),
 });
 
-/**
- * Validates profile fields accepted by the profile update endpoint.
- */
+
 export const UpdateProfileSchema = z
   .object({
     full_name: z.string().trim().min(2).max(100).optional(),
@@ -156,45 +145,30 @@ export const UpdateProfileSchema = z
   })
   .strict();
 
-/**
- * Validates wishlist toggle request bodies.
- */
+
 export const ToggleWishlistSchema = z
   .object({
     package_id: z.string().uuid(),
   })
   .strict();
 
-/**
- * Validates a UUID route parameter named id.
- */
+
 export const UuidParamSchema = z.object({
   id: z.string().uuid(),
 });
 
-/**
- * Validates query parameters for the locations endpoint.
- */
+
 export const LocationsQuerySchema = z.object({
   popular: optionalBooleanFromQuery,
 });
 
-/**
- * Validates both :id and :imageId UUID route parameters for image endpoints.
- */
+
 export const ImageParamsSchema = z.object({
   id: z.string().uuid(),
   imageId: z.string().uuid(),
 });
 
-/**
- * Validates the body when a vendor saves a Cloudinary-uploaded image.
- * The file is uploaded directly from the client to Cloudinary; only the
- * resulting metadata (URL + public_id) is sent to our backend.
- *
- * Security: we validate that the URL is served from Cloudinary's CDN
- * to prevent vendors from injecting arbitrary external URLs as "images".
- */
+
 export const PackageImageSaveSchema = z
   .object({
     url: z
@@ -220,14 +194,10 @@ export const PackageImageSaveSchema = z
 
 export type PackageImageSaveInput = z.infer<typeof PackageImageSaveSchema>;
 
-/**
- * Profile update input after validation and normalization.
- */
+
 export type UpdateProfileInput = z.infer<typeof UpdateProfileSchema>;
 
-/**
- * Validates the body for POST /api/v1/enquiries.
- */
+
 export const CreateEnquirySchema = z
   .object({
     package_id: z.string().uuid(),
@@ -235,21 +205,14 @@ export const CreateEnquirySchema = z
   })
   .strict();
 
-/**
- * Validates the body for posting a follow-up message to an enquiry thread,
- * from either the traveler or vendor side.
- */
+
 export const EnquiryMessageSchema = z
   .object({
     message: z.string().trim().min(1).max(2000),
   })
   .strict();
 
-/**
- * Validates the body for POST /api/v1/chat.
- * `history` is capped at 20 turns — enough for multi-turn context without
- * letting a client blow past the Gemini free-tier token budget.
- */
+
 export const ChatRequestSchema = z
   .object({
     message: z.string().trim().min(1, 'Message cannot be empty').max(2000),

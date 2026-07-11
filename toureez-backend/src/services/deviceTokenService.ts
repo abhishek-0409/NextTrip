@@ -1,10 +1,4 @@
-/**
- * @file services/deviceTokenService.ts
- * @description Push notification device token management.
- *
- * Saves Expo push tokens per device so notifications can be sent
- * to specific users via the Expo Push API.
- */
+
 
 import { supabaseAdmin } from '../lib/supabase';
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
@@ -15,11 +9,6 @@ const throwDb = (op: string, err: unknown): never => {
   throw new AppError(ERROR_MESSAGES.DATABASE_ERROR, 500);
 };
 
-/**
- * Upserts a device push token for the given user.
- * If the same token already exists it is refreshed; old tokens for the
- * same device are replaced.
- */
 export async function saveDeviceToken(
   userId: string,
   token: string,
@@ -40,9 +29,6 @@ export async function saveDeviceToken(
   if (error !== null) throwDb('saveDeviceToken', error);
 }
 
-/**
- * Removes a device token on logout so the user no longer receives push notifications.
- */
 export async function removeDeviceToken(userId: string, token: string): Promise<void> {
   const { error } = await supabaseAdmin
     .from('device_tokens')
@@ -53,9 +39,6 @@ export async function removeDeviceToken(userId: string, token: string): Promise<
   if (error !== null) throwDb('removeDeviceToken', error);
 }
 
-/**
- * Returns all active push tokens for a user (across their devices).
- */
 export async function getTokensForUser(userId: string): Promise<string[]> {
   const { data, error } = await supabaseAdmin
     .from('device_tokens')

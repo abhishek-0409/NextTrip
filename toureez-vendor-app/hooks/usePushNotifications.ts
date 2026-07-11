@@ -1,11 +1,4 @@
-/**
- * @file hooks/usePushNotifications.ts
- * Registers for Expo push notifications in standalone/dev-client builds.
- *
- * Uses a dynamic import so expo-notifications is never loaded in Expo Go
- * (the package auto-registers a push token listener at module-init time,
- * which throws in Expo Go SDK 53+).
- */
+
 
 import { useEffect } from 'react';
 import { Platform } from 'react-native';

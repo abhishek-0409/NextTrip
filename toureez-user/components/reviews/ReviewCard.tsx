@@ -1,16 +1,4 @@
-/**
- * @file components/reviews/ReviewCard.tsx
- * @description Displays a single review with user info, ratings, and body text.
- *
- * Features:
- *   - User avatar (initials fallback)
- *   - Overall star rating
- *   - VerifiedBadge
- *   - Formatted date ("March 2025")
- *   - Bold title
- *   - Body text (3 lines, expandable via "Read more")
- *   - Collapsible sub-category ratings
- */
+
 
 import React, { useCallback, useState } from 'react';
 import {
@@ -122,7 +110,7 @@ export function ReviewCard({ review }: ReviewCardProps): React.ReactElement {
 
   return (
     <View style={styles.card}>
-      {/* Header row: avatar + name + date */}
+      {}
       <View style={styles.header}>
         <UserAvatar name={review.user.display_name} />
         <View style={styles.headerText}>
@@ -135,7 +123,7 @@ export function ReviewCard({ review }: ReviewCardProps): React.ReactElement {
         </View>
       </View>
 
-      {/* Overall rating + verified badge */}
+      {}
       <View style={styles.ratingRow}>
         <StarRating
           rating={review.overall_rating}
@@ -148,14 +136,14 @@ export function ReviewCard({ review }: ReviewCardProps): React.ReactElement {
         <VerifiedBadge is_verified={review.is_verified} />
       </View>
 
-      {/* Title */}
+      {}
       {review.title ? (
         <Text style={styles.title} numberOfLines={2}>
           {review.title}
         </Text>
       ) : null}
 
-      {/* Body */}
+      {}
       {review.body ? (
         <>
           <Text
@@ -179,7 +167,7 @@ export function ReviewCard({ review }: ReviewCardProps): React.ReactElement {
         </>
       ) : null}
 
-      {/* Photos */}
+      {}
       {review.images.length > 0 ? (
         <ScrollView
           horizontal
@@ -193,7 +181,7 @@ export function ReviewCard({ review }: ReviewCardProps): React.ReactElement {
         </ScrollView>
       ) : null}
 
-      {/* Sub-ratings toggle */}
+      {}
       {hasSubRatings ? (
         <>
           <Pressable

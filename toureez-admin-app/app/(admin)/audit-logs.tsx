@@ -1,7 +1,4 @@
-/**
- * @file app/(admin)/audit-logs.tsx
- * Read-only admin audit log viewer with entity filtering and pagination.
- */
+
 
 import { router } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';

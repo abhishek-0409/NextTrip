@@ -1,14 +1,4 @@
-/**
- * @file lib/api/admin.ts
- * @description Typed API client wrappers for all /api/v1/admin/* endpoints.
- *
- * All functions use apiClient (Bearer-token injected, never throws).
- * Callers check response.error before using response.data.
- *
- * Admin-only — every call is authenticated and requires the 'admin' role.
- * Role enforcement happens on the backend; the frontend additionally guards
- * at the layout level.
- */
+
 
 import { apiClient } from './client';
 import type { BackendApiResponse } from '../../types';
@@ -42,17 +32,14 @@ export interface AdminMonthlyEarnings {
   revenue: number;
 }
 
-/**
- * Fetches total paid-payment revenue for a single calendar month
- * (format: "YYYY-MM"), used by the Revenue Overview month picker.
- */
+
 export async function getAdminEarningsForMonth(month: string): Promise<BackendApiResponse<AdminMonthlyEarnings>> {
   return apiClient.get<AdminMonthlyEarnings>(`/admin/earnings?month=${month}`);
 }
 
 // ── System health ─────────────────────────────────────────────────────────────
 
-/** Pings the backend's /health endpoint (service uptime + database connectivity). */
+
 export async function getSystemHealth(): Promise<BackendApiResponse<SystemHealth>> {
   return apiClient.get<SystemHealth>('/health');
 }

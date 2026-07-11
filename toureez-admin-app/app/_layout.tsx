@@ -1,8 +1,4 @@
-/**
- * @file app/_layout.tsx
- * Root layout — bootstraps Supabase auth listener, TanStack Query, and routes
- * the user to the correct screen based on their role.
- */
+
 
 import { QueryClient, QueryClientProvider, focusManager } from '@tanstack/react-query';
 import { router, SplashScreen, Stack } from 'expo-router';
@@ -24,7 +20,7 @@ const queryClient = new QueryClient({
   },
 });
 
-/** Resolves with the value, or rejects after `ms` milliseconds. */
+
 function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   return Promise.race([
     promise,
@@ -74,7 +70,7 @@ function AuthBootstrap(): null {
         // error — sign out to clear any stale stored session so it doesn't keep
         // attempting (and failing) on every subsequent cold start.
         console.warn('[AuthBootstrap] session restore failed, redirecting to login:', err);
-        try { await supabase.auth.signOut(); } catch { /* already signed out */ }
+        try { await supabase.auth.signOut(); } catch {  }
         clearUser();
         router.replace('/(auth)/login');
       } finally {
@@ -109,8 +105,7 @@ function AuthBootstrap(): null {
 export default function RootLayout(): React.ReactElement {
   return (
     <QueryClientProvider client={queryClient}>
-      {/* ErrorBoundary catches any render-time exception from screens/components.
-          Without it, a single bad render leaves the whole app as a blank screen. */}
+      {}
       <ErrorBoundary>
         <AuthBootstrap />
         <StatusBar style="light" backgroundColor="#0B1426" />

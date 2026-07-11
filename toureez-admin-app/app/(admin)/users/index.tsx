@@ -1,7 +1,4 @@
-/**
- * @file app/(admin)/users/index.tsx
- * Admin user management list.
- */
+
 
 import { router } from 'expo-router';
 import React, { useState } from 'react';

@@ -1,7 +1,4 @@
-/**
- * @file hooks/useBookings.ts
- * @description Query and mutation hooks for booking history and detail screens.
- */
+
 
 import { useCallback, useState } from 'react';
 import * as React from 'react';
@@ -94,9 +91,7 @@ async function fetchMyBookings(): Promise<BookingSummary[]> {
   return data;
 }
 
-/**
- * Loads bookings once per filter key and filters status/date on the client.
- */
+
 export function useMyBookings(
   filter?: MyBookingsFilter
 ): UseQueryResult<BookingSummary[], Error> {
@@ -112,9 +107,7 @@ export function useMyBookings(
   });
 }
 
-/**
- * Loads the full authenticated booking detail payload.
- */
+
 export function useBookingDetail(
   id: string
 ): UseQueryResult<Booking, Error> {
@@ -139,9 +132,7 @@ export function useBookingDetail(
   });
 }
 
-/**
- * Cancels an eligible booking and exposes the success toast for the caller.
- */
+
 export function useCancelBooking(): UseCancelBookingReturn {
   const queryClient = useQueryClient();
   const [toast, setToast] = useState<CancelBookingToastState>({
@@ -182,9 +173,7 @@ export function useCancelBooking(): UseCancelBookingReturn {
   };
 }
 
-/**
- * Downloads the GST invoice PDF for a booking and opens the system share sheet.
- */
+
 export function useDownloadInvoice(): {
   downloadInvoice: (bookingId: string, bookingRef: string) => Promise<void>;
   isDownloading: boolean;

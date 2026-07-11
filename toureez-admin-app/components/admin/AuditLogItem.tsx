@@ -1,10 +1,4 @@
-/**
- * @file components/admin/AuditLogItem.tsx
- * Human-readable audit log row.
- *
- * Converts raw DB action strings and metadata into plain-English sentences
- * so administrators can understand the activity trail at a glance.
- */
+
 
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -188,17 +182,17 @@ export function AuditLogItem({ log }: AuditLogItemProps): React.ReactElement {
       accessibilityLabel={`${actionLabel}, ${entityMeta.label}, by ${adminName}`}
     >
       <View style={styles.row}>
-        {/* Colour rail */}
+        {}
         <View style={[styles.rail, { backgroundColor: actionColor }]} />
 
-        {/* Entity icon bubble */}
+        {}
         <View style={[styles.iconBubble, { backgroundColor: `${actionColor}14` }]}>
           <MaterialCommunityIcons name={entityMeta.icon} size={18} color={actionColor} />
         </View>
 
-        {/* Main content */}
+        {}
         <View style={styles.body}>
-          {/* Line 1: action label + timestamp */}
+          {}
           <View style={styles.headline}>
             <Text style={[styles.actionLabel, { color: actionColor }]} numberOfLines={1}>
               {actionLabel}
@@ -206,17 +200,17 @@ export function AuditLogItem({ log }: AuditLogItemProps): React.ReactElement {
             <Text style={styles.timestamp}>{formatTimestamp(log.created_at)}</Text>
           </View>
 
-          {/* Line 2: entity type */}
+          {}
           <Text style={styles.entityLine} numberOfLines={1}>
             {entityMeta.label}
           </Text>
 
-          {/* Line 3: who did it */}
+          {}
           <Text style={styles.actorLine} numberOfLines={1}>
             By {adminName}
           </Text>
 
-          {/* Expanded: detail lines + full timestamp */}
+          {}
           {expanded && detailLines.length > 0 && (
             <View style={styles.details}>
               {detailLines.map((line) => (
@@ -232,7 +226,7 @@ export function AuditLogItem({ log }: AuditLogItemProps): React.ReactElement {
           )}
         </View>
 
-        {/* Expand chevron — only when there are details */}
+        {}
         {detailLines.length > 0 && (
           <MaterialCommunityIcons
             name={expanded ? 'chevron-up' : 'chevron-down'}

@@ -4,14 +4,12 @@ import { signOut } from '../../lib/api/auth';
 import { useAuthStore } from '../../store/authStore';
 
 const links = [
-  { to: '/app', label: 'Home', end: true },
-  { to: '/app/search', label: 'Search' },
-  { to: '/app/bookings', label: 'Bookings' },
-  { to: '/app/wishlist', label: 'Wishlist' },
-  { to: '/app/compare', label: 'Compare' },
-  { to: '/app/enquiries', label: 'Enquiries' },
-  { to: '/app/chat', label: 'Chat' },
-  { to: '/app/notifications', label: 'Notifications' },
+  { to: '/app/search', label: 'Destinations' },
+  { to: '/app/search', label: 'Experiences' },
+  { to: '/app/search', label: 'Deals' },
+  { to: '/app/enquiries', label: 'Guides' },
+  { to: '/app/enquiries', label: 'About' },
+  { to: '/app/enquiries', label: 'Contact' },
 ];
 
 export default function TravelerLayout() {
@@ -33,12 +31,12 @@ export default function TravelerLayout() {
     <div className="site">
       <header className="site-header">
         <div className="site-header-inner">
-          <NavLink to="/app" className="site-logo">
-            <span className="app-logo-dot" /> Toureez
+          <NavLink to="/app" className="site-logo" end>
+            <span className="site-logo-mark">N</span>
           </NavLink>
           <nav className="site-nav-links">
             {links.map((l) => (
-              <NavLink key={l.to} to={l.to} end={l.end} className={({ isActive }) => (isActive ? 'active' : '')}>
+              <NavLink key={l.label} to={l.to} className={({ isActive }) => (isActive ? 'active' : '')}>
                 {l.label}
               </NavLink>
             ))}
@@ -46,15 +44,13 @@ export default function TravelerLayout() {
           <div className="site-actions">
             {user ? (
               <>
-                <NavLink to="/app/profile" className="btn btn-outline btn-pill site-actions-profile">{user.fullName ?? 'Profile'}</NavLink>
-                <button className="btn btn-primary btn-pill" onClick={handleLogout}>Log out</button>
+                <NavLink to="/app/profile" className="site-actions-profile">{user.fullName ?? 'Profile'}</NavLink>
+                <button className="site-actions-login" onClick={handleLogout}>Log out</button>
               </>
             ) : (
               <>
-                <NavLink to={loginHref} className="btn btn-outline btn-pill">Log In</NavLink>
-                <NavLink to={`/auth/signup?redirect=${encodeURIComponent(location.pathname + location.search)}`} className="btn btn-primary btn-pill">
-                  Sign Up
-                </NavLink>
+                <NavLink to="/app/profile" className="site-actions-profile">Profile</NavLink>
+                <NavLink to={loginHref} className="site-actions-login">Login</NavLink>
               </>
             )}
             <button className="hamburger-btn" aria-label="Menu" onClick={() => setMenuOpen((v) => !v)}>☰</button>
@@ -63,7 +59,7 @@ export default function TravelerLayout() {
         {menuOpen && (
           <nav className="mobile-nav">
             {links.map((l) => (
-              <NavLink key={l.to} to={l.to} end={l.end} onClick={() => setMenuOpen(false)} className={({ isActive }) => (isActive ? 'active' : '')}>
+              <NavLink key={l.label} to={l.to} onClick={() => setMenuOpen(false)} className={({ isActive }) => (isActive ? 'active' : '')}>
                 {l.label}
               </NavLink>
             ))}

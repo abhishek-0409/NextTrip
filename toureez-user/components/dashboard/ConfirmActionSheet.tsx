@@ -1,22 +1,4 @@
-/**
- * @file components/dashboard/ConfirmActionSheet.tsx
- * @description Bottom-sheet confirmation modal for destructive/irreversible admin actions.
- *
- * Shows title, description, an optional text input (for rejection reasons),
- * a primary action button, and a cancel button.
- *
- * Usage:
- *   <ConfirmActionSheet
- *     visible={showSheet}
- *     title="Reject Vendor"
- *     description="This will notify the vendor. Reason is required."
- *     confirmLabel="Reject"
- *     confirmVariant="danger"
- *     requireReason
- *     onConfirm={(reason) => rejectVendor({ vendorId, reason: reason! })}
- *     onCancel={() => setShowSheet(false)}
- *   />
- */
+
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -116,7 +98,7 @@ export function ConfirmActionSheet({
         <Animated.View
           style={[styles.sheet, { transform: [{ translateY: slideAnim }] }]}
         >
-          {/* Handle */}
+          {}
           <View style={styles.handle} />
 
           <ScrollView

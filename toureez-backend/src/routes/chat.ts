@@ -1,9 +1,4 @@
-/**
- * @file routes/chat.ts
- * @description AI travel assistant chat endpoint, powered by Google Gemini.
- *
- * POST /api/v1/chat — Send a message (with optional history) and get a reply.
- */
+
 
 import { Router } from 'express';
 import { optionalAuth } from '../middleware/auth';

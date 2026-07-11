@@ -1,10 +1,4 @@
-/**
- * @file components/ui/ScreenWrapper.tsx
- * @description Base screen wrapper providing safe area insets and scroll support.
- *
- * Use ScreenWrapper for all vendor portal screens to ensure consistent
- * padding, background color, and safe area handling across iOS and Android.
- */
+
 
 import React from 'react';
 import {
@@ -21,21 +15,21 @@ import { Colors } from '../../constants/colors';
 
 interface ScreenWrapperProps {
   children: React.ReactNode;
-  /** Whether to render content in a scrollable container */
+
   scrollable?: boolean;
-  /** Pull-to-refresh callback (requires scrollable=true) */
+
   onRefresh?: () => void;
-  /** Whether a refresh is currently in progress */
+
   refreshing?: boolean;
-  /** Additional styles applied to the outermost container */
+
   style?: ViewStyle;
-  /** Additional styles applied to the content container */
+
   contentStyle?: ViewStyle;
-  /** Whether to apply keyboard-avoiding behavior (useful for forms) */
+
   keyboardAvoiding?: boolean;
-  /** Background colour override */
+
   backgroundColor?: string;
-  /** Whether to disable bottom safe area padding (e.g. for tab screens) */
+
   disableBottomInset?: boolean;
 }
 

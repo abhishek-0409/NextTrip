@@ -1,7 +1,4 @@
-﻿/**
- * @file app/(tabs)/index.tsx
- * @description Toureez home screen.
- */
+
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -404,7 +401,7 @@ export default function HomeScreen(): React.ReactElement {
             />
           )}
 
-          {/* ── Domestic / International toggle ── */}
+          {}
           <View style={styles.tripTypeToggle}>
             {(['domestic', 'international'] as const).map((type) => (
               <Pressable

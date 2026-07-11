@@ -1,7 +1,4 @@
-/**
- * @file hooks/useVendorAnalytics.ts
- * @description Fetches vendor analytics data for charts and KPI tiles.
- */
+
 
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { apiClient } from '../lib/api/client';

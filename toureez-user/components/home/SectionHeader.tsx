@@ -1,9 +1,4 @@
-/**
- * @file components/home/SectionHeader.tsx
- * @description Section title + optional "See all" action — Premium Light 3D.
- *
- * ✅ All existing props preserved — zero logic changes.
- */
+
 
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';

@@ -1,5 +1,4 @@
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
-// FIXED: 4 - Wishlist business logic runs through the trusted backend client.
 import { supabaseAdmin } from '../lib/supabase';
 import { logger } from '../utils/logger';
 import type { PackageListItem } from '../types';
@@ -38,9 +37,7 @@ const ensureActivePackageExists = async (packageId: string): Promise<void> => {
   }
 };
 
-/**
- * Fetches the authenticated user's active wishlisted packages.
- */
+
 export const getUserWishlist = async (userId: string): Promise<PackageListItem[]> => {
   const { data, error } = await supabaseAdmin
     .from('wishlists')
@@ -59,11 +56,6 @@ export const getUserWishlist = async (userId: string): Promise<PackageListItem[]
 
   return getPackageListItemsByIds(packageIds, 'min');
 };
-
-/**
- * Adds an active package to the authenticated user's wishlist.
- */
-// FIXED: 6 - Wishlist writes are exposed through backend API functions, not frontend Supabase writes.
 export const addPackageToWishlist = async (
   userId: string,
   packageId: string,
@@ -89,11 +81,6 @@ export const addPackageToWishlist = async (
     package_id: packageId,
   };
 };
-
-/**
- * Removes a package from the authenticated user's wishlist.
- */
-// FIXED: 6 - Frontend delete behavior is now mediated by the backend API.
 export const removePackageFromWishlist = async (
   userId: string,
   packageId: string,
@@ -114,9 +101,7 @@ export const removePackageFromWishlist = async (
   };
 };
 
-/**
- * Toggles a package in the authenticated user's wishlist and returns the new state.
- */
+
 export const toggleWishlist = async (
   userId: string,
   packageId: string,
@@ -133,10 +118,7 @@ export const toggleWishlist = async (
   }
 
   if (existing !== null) {
-    // FIXED: 6 - Reuse the backend delete path used by the frontend API wrapper.
     return removePackageFromWishlist(userId, packageId);
   }
-
-  // FIXED: 6 - Reuse the backend insert/upsert path used by the frontend API wrapper.
   return addPackageToWishlist(userId, packageId);
 };

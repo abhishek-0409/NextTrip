@@ -1,8 +1,4 @@
-﻿/**
- * @file app/enquiry/new.tsx
- * @description Composer for starting a new enquiry with a vendor about a package.
- * Messages are relayed through the backend — no personal contact details are shared.
- */
+
 
 import React, { useCallback, useState } from 'react';
 import {

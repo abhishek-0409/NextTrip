@@ -1,10 +1,4 @@
-﻿/**
- * @file app/(vendor)/payouts.tsx
- * @description Vendor payouts screen.
- *
- * Shows payout disbursement history and registered payout accounts (bank/UPI).
- * Vendors can add a new payout account via useCreatePayoutAccount().
- */
+
 
 import React, { useState } from 'react';
 import {
@@ -468,7 +462,7 @@ export default function PayoutsScreen(): React.ReactElement {
         showsVerticalScrollIndicator={false}
         refreshControl={undefined}
       >
-        {/* Payout accounts */}
+        {}
         <View style={[styles.section, Shadows.sm]}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Payout Accounts</Text>
@@ -491,7 +485,7 @@ export default function PayoutsScreen(): React.ReactElement {
           )}
         </View>
 
-        {/* Payout history */}
+        {}
         <View style={[styles.section, Shadows.sm]}>
           <Text style={styles.sectionTitle}>Payout History</Text>
           {payoutsLoading ? (
@@ -511,7 +505,7 @@ export default function PayoutsScreen(): React.ReactElement {
           )}
         </View>
 
-        {/* Info note */}
+        {}
         <View style={styles.infoNote}>
           <Ionicons name="information-circle-outline" size={16} color={Colors.textSecondary} />
           <Text style={styles.infoText}>

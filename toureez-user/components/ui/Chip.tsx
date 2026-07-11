@@ -1,7 +1,4 @@
-﻿/**
- * @file components/ui/Chip.tsx
- * @description Toureez filter chip.
- */
+
 
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';

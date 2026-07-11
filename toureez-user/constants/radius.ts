@@ -1,7 +1,4 @@
-﻿/**
- * @file constants/radius.ts
- * @description Toureez radius scale.
- */
+
 
 export const Radius = {
   xs: 6,

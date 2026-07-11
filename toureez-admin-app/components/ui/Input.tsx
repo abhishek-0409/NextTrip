@@ -1,12 +1,4 @@
-/**
- * @file components/ui/Input.tsx
- * @description Form text input with label, help, error, prefix and suffix slots.
- *
- * - Consistent 48px height (multiline grows past that)
- * - Focus ring driven by component state
- * - Error state takes precedence over focus styles
- * - Accepts the full TextInput prop surface
- */
+
 
 import React, { forwardRef, useState } from 'react';
 import {

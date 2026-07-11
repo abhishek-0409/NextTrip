@@ -1,10 +1,4 @@
-/**
- * @file components/common/Avatar.tsx
- * @description Circular avatar with teal glow ring — Glassmorphism Dark theme.
- * Numeric size prop (default: 80). Used by profile screen.
- *
- * ✅ All existing props preserved — zero logic changes.
- */
+
 
 import React from 'react';
 import {
@@ -54,7 +48,7 @@ export const Avatar: React.FC<AvatarProps> = ({
 
   const inner = (
     <View style={{ width: ringSize, height: ringSize, position: 'relative' }}>
-      {/* Teal glow ring */}
+      {}
       <View
         style={[
           styles.ring,
@@ -65,7 +59,7 @@ export const Avatar: React.FC<AvatarProps> = ({
           },
         ]}
       />
-      {/* Avatar circle */}
+      {}
       <View
         style={[
           styles.circle,

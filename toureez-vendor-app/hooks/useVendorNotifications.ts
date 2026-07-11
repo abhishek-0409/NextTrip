@@ -1,7 +1,4 @@
-/**
- * @file hooks/useVendorNotifications.ts
- * @description Fetches vendor notifications and provides mark-read mutations.
- */
+
 
 import {
   useMutation,
@@ -21,9 +18,7 @@ export const vendorNotificationQueryKeys = {
   list: (page: number) => ['vendor', 'notifications', 'list', page] as const,
 } as const;
 
-/**
- * Returns paginated notifications for the vendor user.
- */
+
 export function useVendorNotifications(page = 1): UseQueryResult<PaginatedResponse<VendorNotification>, Error> {
   const isVendor = useAuthStore((s) => s.user?.role === VENDOR_ROLE);
 
@@ -41,18 +36,14 @@ export function useVendorNotifications(page = 1): UseQueryResult<PaginatedRespon
   });
 }
 
-/**
- * Returns the count of unread notifications (only queries page 1).
- */
+
 export function useUnreadNotificationCount(): number {
   const query = useVendorNotifications(1);
   if (query.data == null) return 0;
   return query.data.items.filter((n) => !n.is_read).length;
 }
 
-/**
- * Mutation to mark a single notification as read.
- */
+
 export function useMarkNotificationRead(): UseMutationResult<{ marked_read: boolean }, Error, string> {
   const queryClient = useQueryClient();
 
@@ -68,9 +59,7 @@ export function useMarkNotificationRead(): UseMutationResult<{ marked_read: bool
   });
 }
 
-/**
- * Mutation to mark all notifications as read.
- */
+
 export function useMarkAllNotificationsRead(): UseMutationResult<{ marked_read: boolean }, Error, void> {
   const queryClient = useQueryClient();
 

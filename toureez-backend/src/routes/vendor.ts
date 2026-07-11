@@ -1,43 +1,4 @@
-/**
- * @file routes/vendor.ts
- * @description Vendor portal API — all routes require auth + company_owner role.
- *
- * Mounted at /api/v1/vendor in routes/index.ts.
- *
- * Route groups:
- *  GET  /me
- *  GET  /dashboard
- *  GET  /earnings
- *
- *  POST               /locations
- *
- *  GET/POST/PATCH     /company
- *  POST               /company/documents
- *
- *  GET/POST           /packages
- *  GET/PATCH          /packages/:id
- *  PATCH              /packages/:id/submit
- *  PATCH              /packages/:id/pricing
- *  PATCH              /packages/:id/itinerary
- *  POST               /packages/:id/images
- *  DELETE             /packages/:id/images/:imageId
- *  PATCH              /packages/:id/images/:imageId/cover
- *
- *  GET                /bookings
- *  GET                /bookings/:id
- *  PATCH              /bookings/:id/status
- *
- *  GET                /reviews
- *  GET                /enquiries
- *  GET                /enquiries/:id
- *  POST               /enquiries/:id/messages
- *  PATCH              /enquiries/:id/status
- *  GET                /payouts
- *  GET/POST           /payout-accounts
- *  GET                /notifications
- *  PATCH              /notifications/:id/read
- *  PATCH              /notifications/read-all
- */
+
 
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth';
@@ -119,10 +80,7 @@ vendorRouter.use(defaultLimiter);
 
 // ── Vendor profile ────────────────────────────────────────────────────────────
 
-/**
- * GET /api/v1/vendor/me
- * Returns the authenticated vendor's user profile and company summary.
- */
+
 vendorRouter.get('/me', async (req, res, next) => {
   try {
     const profile = await getVendorProfile(req.user!.id);
@@ -134,10 +92,7 @@ vendorRouter.get('/me', async (req, res, next) => {
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
-/**
- * GET /api/v1/vendor/dashboard
- * Returns aggregated metrics: packages, bookings, revenue, reviews, payouts.
- */
+
 vendorRouter.get('/dashboard', async (req, res, next) => {
   try {
     const metrics = await getVendorDashboard(req.user!.id);
@@ -150,11 +105,7 @@ vendorRouter.get('/dashboard', async (req, res, next) => {
   }
 });
 
-/**
- * GET /api/v1/vendor/earnings?month=YYYY-MM
- * Returns confirmed/completed booking revenue for a single calendar month,
- * used by the Earnings Overview month picker on the vendor dashboard.
- */
+
 vendorRouter.get('/earnings', async (req, res, next) => {
   try {
     const parsed = VendorEarningsQuerySchema.safeParse(req.query);
@@ -173,11 +124,7 @@ vendorRouter.get('/earnings', async (req, res, next) => {
 
 // ── Locations ─────────────────────────────────────────────────────────────────
 
-/**
- * POST /api/v1/vendor/locations
- * Lets a vendor add a destination that isn't yet in the saved locations list.
- * Returns the existing location if the same city/state already exists.
- */
+
 vendorRouter.post('/locations', async (req, res, next) => {
   try {
     const parsed = CreateLocationSchema.safeParse(req.body);
@@ -193,10 +140,7 @@ vendorRouter.post('/locations', async (req, res, next) => {
 
 // ── Company ───────────────────────────────────────────────────────────────────
 
-/**
- * GET /api/v1/vendor/company
- * Returns the vendor's company profile, or null if not yet created.
- */
+
 vendorRouter.get('/company', async (req, res, next) => {
   try {
     const company = await getVendorCompany(req.user!.id);
@@ -206,11 +150,7 @@ vendorRouter.get('/company', async (req, res, next) => {
   }
 });
 
-/**
- * POST /api/v1/vendor/company
- * Creates the vendor's company profile (first-time onboarding).
- * Responds 409 if a company already exists.
- */
+
 vendorRouter.post('/company', strictLimiter, async (req, res, next) => {
   try {
     const parsed = CreateCompanySchema.safeParse(req.body);
@@ -226,10 +166,7 @@ vendorRouter.post('/company', strictLimiter, async (req, res, next) => {
   }
 });
 
-/**
- * PATCH /api/v1/vendor/company
- * Updates the vendor's existing company profile. Partial update supported.
- */
+
 vendorRouter.patch('/company', strictLimiter, async (req, res, next) => {
   try {
     const parsed = UpdateCompanySchema.safeParse(req.body);
@@ -243,10 +180,7 @@ vendorRouter.patch('/company', strictLimiter, async (req, res, next) => {
   }
 });
 
-/**
- * POST /api/v1/vendor/company/documents
- * Saves a company document (Cloudinary URL) after client-side upload.
- */
+
 vendorRouter.post('/company/documents', strictLimiter, async (req, res, next) => {
   try {
     const parsed = UploadCompanyDocumentSchema.safeParse(req.body);
@@ -262,10 +196,7 @@ vendorRouter.post('/company/documents', strictLimiter, async (req, res, next) =>
 
 // ── Packages ──────────────────────────────────────────────────────────────────
 
-/**
- * GET /api/v1/vendor/packages
- * Paginated list of the vendor's packages. Supports status filter and search.
- */
+
 vendorRouter.get('/packages', async (req, res, next) => {
   try {
     const parsed = VendorListPackagesQuerySchema.safeParse(req.query);
@@ -279,10 +210,7 @@ vendorRouter.get('/packages', async (req, res, next) => {
   }
 });
 
-/**
- * POST /api/v1/vendor/packages
- * Creates a new draft package for the vendor.
- */
+
 vendorRouter.post('/packages', strictLimiter, async (req, res, next) => {
   try {
     const parsed = CreatePackageSchema.safeParse(req.body);
@@ -296,10 +224,7 @@ vendorRouter.post('/packages', strictLimiter, async (req, res, next) => {
   }
 });
 
-/**
- * GET /api/v1/vendor/packages/:id
- * Returns full package detail including pricing, itinerary, and images.
- */
+
 vendorRouter.get('/packages/:id', async (req, res, next) => {
   try {
     const { id } = VendorUuidParamSchema.parse(req.params);
@@ -314,10 +239,7 @@ vendorRouter.get('/packages/:id', async (req, res, next) => {
   }
 });
 
-/**
- * PATCH /api/v1/vendor/packages/:id
- * Updates core package fields (title, description, duration, etc.).
- */
+
 vendorRouter.patch('/packages/:id', strictLimiter, async (req, res, next) => {
   try {
     const { id } = VendorUuidParamSchema.parse(req.params);
@@ -335,10 +257,7 @@ vendorRouter.patch('/packages/:id', strictLimiter, async (req, res, next) => {
   }
 });
 
-/**
- * DELETE /api/v1/vendor/packages/:id
- * Permanently deletes a draft or rejected package that has no bookings.
- */
+
 vendorRouter.delete('/packages/:id', strictLimiter, async (req, res, next) => {
   try {
     const { id } = VendorUuidParamSchema.parse(req.params);
@@ -356,10 +275,7 @@ vendorRouter.delete('/packages/:id', strictLimiter, async (req, res, next) => {
   }
 });
 
-/**
- * POST /api/v1/vendor/packages/:id/duplicate
- * Creates a draft copy of the package with "(Copy)" suffix.
- */
+
 vendorRouter.post('/packages/:id/duplicate', strictLimiter, async (req, res, next) => {
   try {
     const { id } = VendorUuidParamSchema.parse(req.params);
@@ -371,10 +287,7 @@ vendorRouter.post('/packages/:id/duplicate', strictLimiter, async (req, res, nex
   }
 });
 
-/**
- * GET /api/v1/vendor/analytics
- * Returns revenue charts and performance metrics for the authenticated vendor.
- */
+
 vendorRouter.get('/analytics', async (req, res, next) => {
   try {
     const companyId = await requireCompanyId(req.user!.id);
@@ -385,10 +298,7 @@ vendorRouter.get('/analytics', async (req, res, next) => {
   }
 });
 
-/**
- * PATCH /api/v1/vendor/packages/:id/submit
- * Transitions the package from draft to pending (submitted for admin review).
- */
+
 vendorRouter.patch('/packages/:id/submit', strictLimiter, async (req, res, next) => {
   try {
     const { id } = VendorUuidParamSchema.parse(req.params);
@@ -409,10 +319,7 @@ vendorRouter.patch('/packages/:id/submit', strictLimiter, async (req, res, next)
   }
 });
 
-/**
- * PATCH /api/v1/vendor/packages/:id/pricing
- * Replaces all pricing tiers for a package. Full replacement strategy.
- */
+
 vendorRouter.patch('/packages/:id/pricing', strictLimiter, async (req, res, next) => {
   try {
     const { id } = VendorUuidParamSchema.parse(req.params);
@@ -430,10 +337,7 @@ vendorRouter.patch('/packages/:id/pricing', strictLimiter, async (req, res, next
   }
 });
 
-/**
- * PATCH /api/v1/vendor/packages/:id/itinerary
- * Replaces all itinerary days for a package. Full replacement strategy.
- */
+
 vendorRouter.patch('/packages/:id/itinerary', strictLimiter, async (req, res, next) => {
   try {
     const { id } = VendorUuidParamSchema.parse(req.params);
@@ -451,10 +355,7 @@ vendorRouter.patch('/packages/:id/itinerary', strictLimiter, async (req, res, ne
   }
 });
 
-/**
- * POST /api/v1/vendor/packages/:id/images
- * Saves a Cloudinary-uploaded image for the package gallery.
- */
+
 vendorRouter.post('/packages/:id/images', strictLimiter, async (req, res, next) => {
   try {
     const { id } = VendorUuidParamSchema.parse(req.params);
@@ -472,10 +373,7 @@ vendorRouter.post('/packages/:id/images', strictLimiter, async (req, res, next) 
   }
 });
 
-/**
- * DELETE /api/v1/vendor/packages/:id/images/:imageId
- * Deletes a package image. Promotes next image to cover if deleted was cover.
- */
+
 vendorRouter.delete('/packages/:id/images/:imageId', strictLimiter, async (req, res, next) => {
   try {
     const { id, imageId } = VendorImageParamsSchema.parse(req.params);
@@ -490,10 +388,7 @@ vendorRouter.delete('/packages/:id/images/:imageId', strictLimiter, async (req, 
   }
 });
 
-/**
- * PATCH /api/v1/vendor/packages/:id/images/:imageId/cover
- * Sets the specified image as the package cover image.
- */
+
 vendorRouter.patch('/packages/:id/images/:imageId/cover', strictLimiter, async (req, res, next) => {
   try {
     const { id, imageId } = VendorImageParamsSchema.parse(req.params);
@@ -510,10 +405,7 @@ vendorRouter.patch('/packages/:id/images/:imageId/cover', strictLimiter, async (
 
 // ── Bookings ──────────────────────────────────────────────────────────────────
 
-/**
- * GET /api/v1/vendor/bookings
- * Paginated list of bookings for the vendor's company.
- */
+
 vendorRouter.get('/bookings', async (req, res, next) => {
   try {
     const parsed = VendorListBookingsQuerySchema.safeParse(req.query);
@@ -535,10 +427,7 @@ vendorRouter.get('/bookings', async (req, res, next) => {
   }
 });
 
-/**
- * GET /api/v1/vendor/bookings/:id
- * Returns full booking detail with traveler info and payment summary.
- */
+
 vendorRouter.get('/bookings/:id', async (req, res, next) => {
   try {
     const { id } = VendorUuidParamSchema.parse(req.params);
@@ -550,10 +439,7 @@ vendorRouter.get('/bookings/:id', async (req, res, next) => {
   }
 });
 
-/**
- * PATCH /api/v1/vendor/bookings/:id/status
- * Updates booking status. Vendors may confirm or cancel pending bookings.
- */
+
 vendorRouter.patch('/bookings/:id/status', strictLimiter, async (req, res, next) => {
   try {
     const { id } = VendorUuidParamSchema.parse(req.params);
@@ -578,10 +464,7 @@ vendorRouter.patch('/bookings/:id/status', strictLimiter, async (req, res, next)
 
 // ── Reviews ───────────────────────────────────────────────────────────────────
 
-/**
- * GET /api/v1/vendor/reviews
- * Returns published reviews for the vendor's packages.
- */
+
 vendorRouter.get('/reviews', async (req, res, next) => {
   try {
     const parsed = narrowPaginationSchema.safeParse(req.query);
@@ -599,10 +482,7 @@ vendorRouter.get('/reviews', async (req, res, next) => {
 
 const VendorEnquiryStatusSchema = z.object({ status: z.enum(['open', 'closed']) }).strict();
 
-/**
- * GET /api/v1/vendor/enquiries
- * Returns enquiry threads addressed to the vendor's company.
- */
+
 vendorRouter.get('/enquiries', async (req, res, next) => {
   try {
     const enquiries = await getVendorEnquiries(req.user!.id);
@@ -613,10 +493,7 @@ vendorRouter.get('/enquiries', async (req, res, next) => {
   }
 });
 
-/**
- * GET /api/v1/vendor/enquiries/:id
- * Returns a single enquiry thread with all messages.
- */
+
 vendorRouter.get('/enquiries/:id', async (req, res, next) => {
   try {
     const { id } = VendorUuidParamSchema.parse(req.params);
@@ -628,10 +505,7 @@ vendorRouter.get('/enquiries/:id', async (req, res, next) => {
   }
 });
 
-/**
- * POST /api/v1/vendor/enquiries/:id/messages
- * Posts a reply to an enquiry thread.
- */
+
 vendorRouter.post('/enquiries/:id/messages', strictLimiter, async (req, res, next) => {
   try {
     const { id } = VendorUuidParamSchema.parse(req.params);
@@ -646,10 +520,7 @@ vendorRouter.post('/enquiries/:id/messages', strictLimiter, async (req, res, nex
   }
 });
 
-/**
- * PATCH /api/v1/vendor/enquiries/:id/status
- * Marks an enquiry thread as open or closed.
- */
+
 vendorRouter.patch('/enquiries/:id/status', strictLimiter, async (req, res, next) => {
   try {
     const { id } = VendorUuidParamSchema.parse(req.params);
@@ -666,10 +537,7 @@ vendorRouter.patch('/enquiries/:id/status', strictLimiter, async (req, res, next
 
 // ── Payouts ───────────────────────────────────────────────────────────────────
 
-/**
- * GET /api/v1/vendor/payouts
- * Returns payout disbursement history for the vendor's company.
- */
+
 vendorRouter.get('/payouts', async (req, res, next) => {
   try {
     const parsed = narrowPaginationSchema.safeParse(req.query);
@@ -683,10 +551,7 @@ vendorRouter.get('/payouts', async (req, res, next) => {
   }
 });
 
-/**
- * GET /api/v1/vendor/payout-accounts
- * Returns payout bank/UPI accounts for the vendor's company.
- */
+
 vendorRouter.get('/payout-accounts', async (req, res, next) => {
   try {
     const accounts = await getPayoutAccounts(req.user!.id);
@@ -697,10 +562,7 @@ vendorRouter.get('/payout-accounts', async (req, res, next) => {
   }
 });
 
-/**
- * POST /api/v1/vendor/payout-accounts
- * Adds a new payout bank/UPI account for the vendor's company.
- */
+
 vendorRouter.post('/payout-accounts', strictLimiter, async (req, res, next) => {
   try {
     const parsed = CreatePayoutAccountSchema.safeParse(req.body);
@@ -716,10 +578,7 @@ vendorRouter.post('/payout-accounts', strictLimiter, async (req, res, next) => {
 
 // ── Notifications ─────────────────────────────────────────────────────────────
 
-/**
- * GET /api/v1/vendor/notifications
- * Returns paginated notifications for the authenticated vendor user.
- */
+
 vendorRouter.get('/notifications', async (req, res, next) => {
   try {
     const parsed = VendorListNotificationsQuerySchema.safeParse(req.query);
@@ -732,10 +591,7 @@ vendorRouter.get('/notifications', async (req, res, next) => {
   }
 });
 
-/**
- * PATCH /api/v1/vendor/notifications/:id/read
- * Marks a specific notification as read.
- */
+
 vendorRouter.patch('/notifications/:id/read', async (req, res, next) => {
   try {
     const { id } = VendorUuidParamSchema.parse(req.params);
@@ -746,10 +602,7 @@ vendorRouter.patch('/notifications/:id/read', async (req, res, next) => {
   }
 });
 
-/**
- * PATCH /api/v1/vendor/notifications/read-all
- * Marks all notifications for the vendor user as read.
- */
+
 vendorRouter.patch('/notifications/read-all', async (req, res, next) => {
   try {
     await markAllNotificationsRead(req.user!.id);

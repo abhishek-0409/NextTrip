@@ -1,7 +1,4 @@
-/**
- * @file app/reset-password.tsx
- * @description Handles Supabase password-recovery deep links for vendors.
- */
+
 
 import React, { useState } from 'react';
 import {

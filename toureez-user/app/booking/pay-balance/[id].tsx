@@ -1,9 +1,4 @@
-﻿/**
- * @file app/booking/pay-balance/[id].tsx
- * @description Pay the outstanding balance for a confirmed booking.
- * Mirrors app/booking/payment.tsx — same header, amount card, and
- * sticky pay button patterns, adapted for a single Razorpay balance order.
- */
+
 
 import React, { useCallback, useState } from 'react';
 import {
@@ -147,7 +142,7 @@ export default function PayBalanceScreen(): React.ReactElement {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-      {/* Header */}
+      {}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back" hitSlop={8}>
           <Ionicons name="chevron-back" size={22} color={Colors.textPrimary} />
@@ -160,7 +155,7 @@ export default function PayBalanceScreen(): React.ReactElement {
       </View>
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Amount card */}
+        {}
         <View style={styles.amountCard}>
           <Text style={styles.amountLabel}>Balance Due</Text>
           <Text style={styles.amountValue}>{formatINR(booking.balance_amount)}</Text>
@@ -172,7 +167,7 @@ export default function PayBalanceScreen(): React.ReactElement {
           <Text style={styles.balanceNote}>Already paid: {formatINR(booking.advance_amount)}</Text>
         </View>
 
-        {/* Package summary card */}
+        {}
         <View style={styles.section}>
           <Text style={styles.packageTitle}>{booking.package?.title ?? 'Travel package'}</Text>
           <View style={styles.summaryRow}>
@@ -193,7 +188,7 @@ export default function PayBalanceScreen(): React.ReactElement {
           </View>
         </View>
 
-        {/* Info banner */}
+        {}
         <View style={styles.infoBanner}>
           <Ionicons name="information-circle-outline" size={14} color={Colors.primary} />
           <Text style={styles.infoBannerText}>
@@ -204,7 +199,7 @@ export default function PayBalanceScreen(): React.ReactElement {
         <View style={styles.bottomSpacer} />
       </ScrollView>
 
-      {/* Pay button */}
+      {}
       <View style={styles.stickyBar}>
         <TouchableOpacity
           style={[styles.payButton, isPaying && styles.payButtonLoading]}

@@ -1,7 +1,4 @@
-﻿/**
- * @file components/ui/Button.tsx
- * @description Toureez button component.
- */
+
 
 import React, { useCallback, useRef } from 'react';
 import {

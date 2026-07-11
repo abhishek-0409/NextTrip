@@ -1,7 +1,4 @@
-/**
- * @file hooks/admin/useAdminPackages.ts
- * @description TanStack Query hooks for admin package moderation.
- */
+
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query';

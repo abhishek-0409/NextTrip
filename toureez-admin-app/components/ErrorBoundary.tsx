@@ -1,15 +1,4 @@
-/**
- * @file components/ErrorBoundary.tsx
- * @description Root error boundary for the admin app.
- *
- * Catches any render-time exception that propagates up from a screen or
- * component and shows a friendly recovery UI instead of a blank white screen.
- *
- * Usage — wrap the root Stack in app/_layout.tsx:
- *   <ErrorBoundary>
- *     <Stack ... />
- *   </ErrorBoundary>
- */
+
 
 import React from 'react';
 import {
@@ -90,18 +79,18 @@ export class ErrorBoundary extends React.Component<Props, State> {
           contentContainerStyle={styles.container}
           showsVerticalScrollIndicator={false}
         >
-          {/* Icon */}
+          {}
           <View style={styles.iconWrap}>
             <Text style={styles.iconText}>⚠️</Text>
           </View>
 
-          {/* Heading */}
+          {}
           <Text style={styles.heading}>Something went wrong</Text>
           <Text style={styles.subheading}>
             The app ran into an unexpected problem. Your data is safe.
           </Text>
 
-          {/* Error message */}
+          {}
           <View style={styles.messageBox}>
             <Text style={styles.messageLabel}>Error details</Text>
             <Text style={styles.messageText} selectable>
@@ -109,7 +98,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
             </Text>
           </View>
 
-          {/* Stack trace (dev only) */}
+          {}
           {showStack && (
             <View style={styles.stackBox}>
               <Text style={styles.stackText} selectable>
@@ -118,7 +107,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
             </View>
           )}
 
-          {/* Recovery actions */}
+          {}
           <View style={styles.actions}>
             <TouchableOpacity
               style={styles.primaryBtn}

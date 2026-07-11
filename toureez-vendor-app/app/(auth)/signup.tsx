@@ -1,16 +1,4 @@
-﻿/**
- * @file app/(auth)/signup.tsx
- * @description Vendor portal sign-up screen.
- *
- * Collects name, email, and password, then calls signUpAsVendor().
- * If Supabase email confirmation is enabled the vendor sees a
- * "Check your inbox" success state and can return to login.
- * If email confirmation is disabled the vendor is signed in immediately
- * and the root auth listener in _layout.tsx will redirect to (vendor).
- *
- * The company_owner role is passed as user metadata so the database
- * trigger (handle_new_user) can set it when creating the public.users row.
- */
+
 
 import React, { useState } from 'react';
 import {
@@ -238,7 +226,7 @@ export default function SignUpScreen(): React.ReactElement {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* Brand */}
+        {}
         <View style={styles.brand}>
           <View style={styles.logoContainer}>
             <Ionicons name="briefcase" size={36} color={Colors.textWhite} />
@@ -247,7 +235,7 @@ export default function SignUpScreen(): React.ReactElement {
           <Text style={styles.brandTagline}>Vendor Portal</Text>
         </View>
 
-        {/* Card */}
+        {}
         <View style={[styles.card, Shadows.md]}>
           <Text style={styles.heading}>Create Vendor Account</Text>
           <Text style={styles.subheading}>
@@ -329,7 +317,7 @@ export default function SignUpScreen(): React.ReactElement {
             variant="primary"
           />
 
-          {/* Terms note */}
+          {}
           <View style={styles.termsNote}>
             <Ionicons name="shield-checkmark-outline" size={13} color={Colors.textLight} />
             <Text style={styles.termsText}>
@@ -340,7 +328,7 @@ export default function SignUpScreen(): React.ReactElement {
           </View>
         </View>
 
-        {/* Login link */}
+        {}
         <View style={styles.loginRow}>
           <Text style={styles.loginPrompt}>Already have an account?</Text>
           <Pressable

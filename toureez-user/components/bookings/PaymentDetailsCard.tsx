@@ -1,7 +1,4 @@
-/**
- * @file components/bookings/PaymentDetailsCard.tsx
- * @description Payment summary card for booking detail.
- */
+
 
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';

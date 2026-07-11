@@ -1,13 +1,4 @@
-/**
- * @file lib/api/vendor.ts
- * @description Typed API functions for all vendor portal endpoints.
- *
- * Every function returns ApiResponse<T> — never throws.
- * Callers always check `error` before using `data`.
- *
- * All requests are authenticated via the Bearer token in the Zustand
- * auth store session (injected automatically by apiClient).
- */
+
 
 import { apiClient } from './client';
 import type { ApiResponse, BackendApiResponse, PaginatedResponse } from '../../types';
@@ -33,19 +24,14 @@ import type {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-/**
- * Normalises a BackendApiResponse<T> into the simpler ApiResponse<T> shape
- * that callers and hooks expect.
- */
+
 function normalise<T>(res: BackendApiResponse<T>): ApiResponse<T> {
   return { data: res.data, error: res.error };
 }
 
 // ── Profile ───────────────────────────────────────────────────────────────────
 
-/**
- * Fetches the authenticated vendor's user profile and company summary.
- */
+
 export async function getVendorMe(): Promise<ApiResponse<{ user: User; company: VendorCompany | null }>> {
   const res = await apiClient.get<{ user: User; company: VendorCompany | null }>('/vendor/me');
   return normalise(res);
@@ -53,9 +39,7 @@ export async function getVendorMe(): Promise<ApiResponse<{ user: User; company: 
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
-/**
- * Fetches dashboard metrics: packages, bookings, revenue, reviews, payouts.
- */
+
 export async function getVendorDashboard(): Promise<ApiResponse<VendorDashboardMetrics>> {
   const res = await apiClient.get<VendorDashboardMetrics>('/vendor/dashboard');
   return normalise(res);
@@ -67,10 +51,7 @@ export interface VendorMonthlyEarnings {
   bookings: number;
 }
 
-/**
- * Fetches confirmed/completed booking revenue for a single calendar month
- * (format: "YYYY-MM"), used by the Earnings Overview month picker.
- */
+
 export async function getVendorEarningsForMonth(month: string): Promise<ApiResponse<VendorMonthlyEarnings>> {
   const res = await apiClient.get<VendorMonthlyEarnings>(`/vendor/earnings?month=${month}`);
   return normalise(res);
@@ -78,17 +59,13 @@ export async function getVendorEarningsForMonth(month: string): Promise<ApiRespo
 
 // ── Company ───────────────────────────────────────────────────────────────────
 
-/**
- * Fetches the vendor's company profile. Returns null data if not yet created.
- */
+
 export async function getCompany(): Promise<ApiResponse<VendorCompany | null>> {
   const res = await apiClient.get<VendorCompany | null>('/vendor/company');
   return normalise(res);
 }
 
-/**
- * Creates the vendor's company profile (first-time onboarding).
- */
+
 export async function createCompany(input: {
   name: string;
   about?: string;
@@ -100,9 +77,7 @@ export async function createCompany(input: {
   return normalise(res);
 }
 
-/**
- * Updates the vendor's company profile. Partial update supported.
- */
+
 export async function updateCompany(input: {
   name?: string;
   about?: string;
@@ -114,9 +89,7 @@ export async function updateCompany(input: {
   return normalise(res);
 }
 
-/**
- * Saves a company document after client-side Cloudinary upload.
- */
+
 export async function saveCompanyDocument(input: {
   document_type: 'trade_license' | 'gst_certificate' | 'pan_card' | 'other';
   url: string;
@@ -129,9 +102,7 @@ export async function saveCompanyDocument(input: {
 
 // ── Packages ──────────────────────────────────────────────────────────────────
 
-/**
- * Lists the vendor's packages with optional status filter, search, and pagination.
- */
+
 export async function listPackages(params?: {
   status?: 'draft' | 'pending' | 'active' | 'rejected';
   search?: string;
@@ -142,17 +113,13 @@ export async function listPackages(params?: {
   return normalise(res);
 }
 
-/**
- * Fetches full package detail including pricing, itinerary, and images.
- */
+
 export async function getPackage(packageId: string): Promise<ApiResponse<VendorPackageDetail>> {
   const res = await apiClient.get<VendorPackageDetail>(`/vendor/packages/${packageId}`);
   return normalise(res);
 }
 
-/**
- * Creates a new draft package.
- */
+
 export async function createPackage(input: {
   title: string;
   location_id: string;
@@ -171,9 +138,7 @@ export async function createPackage(input: {
   return normalise(res);
 }
 
-/**
- * Partially updates a package's core fields.
- */
+
 export async function updatePackage(
   packageId: string,
   input: {
@@ -195,33 +160,25 @@ export async function updatePackage(
   return normalise(res);
 }
 
-/**
- * Submits a draft package for admin review (draft → pending).
- */
+
 export async function submitPackage(packageId: string): Promise<ApiResponse<VendorPackageDetail>> {
   const res = await apiClient.patch<VendorPackageDetail>(`/vendor/packages/${packageId}/submit`);
   return normalise(res);
 }
 
-/**
- * Permanently deletes a draft or rejected package with no bookings.
- */
+
 export async function deletePackage(packageId: string): Promise<ApiResponse<{ deleted: boolean }>> {
   const res = await apiClient.delete<{ deleted: boolean }>(`/vendor/packages/${packageId}`);
   return normalise(res);
 }
 
-/**
- * Creates a draft copy of the package with "(Copy)" suffix.
- */
+
 export async function duplicatePackage(packageId: string): Promise<ApiResponse<VendorPackageDetail>> {
   const res = await apiClient.post<VendorPackageDetail>(`/vendor/packages/${packageId}/duplicate`);
   return normalise(res);
 }
 
-/**
- * Replaces all pricing tiers for a package. Full replacement strategy.
- */
+
 export async function upsertPricing(
   packageId: string,
   tiers: Array<{
@@ -242,9 +199,7 @@ export async function upsertPricing(
   return normalise(res);
 }
 
-/**
- * Replaces all itinerary days for a package. Full replacement strategy.
- */
+
 export async function upsertItinerary(
   packageId: string,
   days: Array<{
@@ -262,9 +217,7 @@ export async function upsertItinerary(
   return normalise(res);
 }
 
-/**
- * Saves a Cloudinary-uploaded image for the package gallery.
- */
+
 export async function savePackageImage(
   packageId: string,
   input: { url: string; public_id: string; alt_text?: string; is_cover?: boolean },
@@ -273,9 +226,7 @@ export async function savePackageImage(
   return normalise(res);
 }
 
-/**
- * Deletes a package image.
- */
+
 export async function deletePackageImage(
   packageId: string,
   imageId: string,
@@ -284,9 +235,7 @@ export async function deletePackageImage(
   return normalise(res);
 }
 
-/**
- * Sets a specific image as the package cover.
- */
+
 export async function setPackageCoverImage(
   packageId: string,
   imageId: string,
@@ -297,9 +246,7 @@ export async function setPackageCoverImage(
 
 // ── Bookings ──────────────────────────────────────────────────────────────────
 
-/**
- * Lists bookings for the vendor's company with optional filters.
- */
+
 export async function listBookings(params?: {
   status?: 'pending' | 'confirmed' | 'cancelled' | 'completed';
   payment_status?: 'pending' | 'paid' | 'refunded' | 'failed';
@@ -316,17 +263,13 @@ export async function listBookings(params?: {
   return normalise(res);
 }
 
-/**
- * Fetches full booking detail.
- */
+
 export async function getBooking(bookingId: string): Promise<ApiResponse<VendorBookingDetail>> {
   const res = await apiClient.get<VendorBookingDetail>(`/vendor/bookings/${bookingId}`);
   return normalise(res);
 }
 
-/**
- * Updates a booking's status (confirmed | cancelled | completed).
- */
+
 export async function updateBookingStatus(
   bookingId: string,
   status: 'confirmed' | 'cancelled' | 'completed',
@@ -341,9 +284,7 @@ export async function updateBookingStatus(
 
 // ── Reviews ───────────────────────────────────────────────────────────────────
 
-/**
- * Lists published reviews for the vendor's packages.
- */
+
 export async function listReviews(params?: {
   page?: number;
   limit?: number;
@@ -357,25 +298,19 @@ export async function listReviews(params?: {
 
 // ── Enquiries ─────────────────────────────────────────────────────────────────
 
-/**
- * Lists enquiry threads started by travelers about the vendor's company.
- */
+
 export async function listEnquiries(): Promise<ApiResponse<EnquirySummary[]>> {
   const res = await apiClient.get<EnquirySummary[]>('/vendor/enquiries');
   return normalise(res);
 }
 
-/**
- * Fetches a single enquiry thread with all messages.
- */
+
 export async function getEnquiry(enquiryId: string): Promise<ApiResponse<EnquiryDetail>> {
   const res = await apiClient.get<EnquiryDetail>(`/vendor/enquiries/${enquiryId}`);
   return normalise(res);
 }
 
-/**
- * Posts a reply to an enquiry thread.
- */
+
 export async function sendEnquiryMessage(
   enquiryId: string,
   message: string,
@@ -384,9 +319,7 @@ export async function sendEnquiryMessage(
   return normalise(res);
 }
 
-/**
- * Marks an enquiry thread as open or closed.
- */
+
 export async function setEnquiryStatus(
   enquiryId: string,
   status: 'open' | 'closed',
@@ -397,9 +330,7 @@ export async function setEnquiryStatus(
 
 // ── Payouts ───────────────────────────────────────────────────────────────────
 
-/**
- * Lists payout disbursement history.
- */
+
 export async function listPayouts(params?: {
   page?: number;
   limit?: number;
@@ -411,17 +342,13 @@ export async function listPayouts(params?: {
   return normalise(res);
 }
 
-/**
- * Lists payout bank/UPI accounts.
- */
+
 export async function listPayoutAccounts(): Promise<ApiResponse<VendorPayoutAccount[]>> {
   const res = await apiClient.get<VendorPayoutAccount[]>('/vendor/payout-accounts');
   return normalise(res);
 }
 
-/**
- * Adds a new payout account.
- */
+
 export async function createPayoutAccount(input: {
   account_holder_name: string;
   bank_name?: string;
@@ -434,10 +361,7 @@ export async function createPayoutAccount(input: {
   return normalise(res);
 }
 
-/**
- * Adds a destination that isn't yet in the saved locations list.
- * Returns the existing location instead if the same city/state already exists.
- */
+
 export const DOMESTIC_REGIONS = ['North India', 'South India', 'East India', 'West India', 'Central India'] as const;
 export const INTERNATIONAL_REGIONS = ['Southeast Asia', 'East Asia', 'South Asia', 'Middle East', 'Central Asia', 'Europe', 'Eastern Europe', 'Africa', 'North Africa', 'North America', 'South America', 'Central America', 'Oceania', 'Arctic / Antarctica'] as const;
 export type LocationRegion = typeof DOMESTIC_REGIONS[number] | typeof INTERNATIONAL_REGIONS[number];
@@ -457,9 +381,7 @@ export async function createLocation(input: {
 
 // ── Public lookups (no auth required) ────────────────────────────────────────
 
-/**
- * Fetches all active locations from the public endpoint.
- */
+
 export async function listLocations(): Promise<ApiResponse<Array<{
   id: string; city: string; state: string; is_popular: boolean;
 }>>> {
@@ -471,9 +393,7 @@ export async function listLocations(): Promise<ApiResponse<Array<{
   return normalise(res);
 }
 
-/**
- * Fetches all active categories from the public endpoint.
- */
+
 export async function listCategories(): Promise<ApiResponse<Array<{
   id: string; name: string; label: string; icon: string;
 }>>> {
@@ -487,9 +407,7 @@ export async function listCategories(): Promise<ApiResponse<Array<{
 
 // ── Notifications ─────────────────────────────────────────────────────────────
 
-/**
- * Lists notifications for the authenticated vendor user.
- */
+
 export async function listNotifications(params?: {
   is_read?: boolean;
   page?: number;
@@ -502,9 +420,7 @@ export async function listNotifications(params?: {
   return normalise(res);
 }
 
-/**
- * Marks a specific notification as read.
- */
+
 export async function markNotificationRead(
   notificationId: string,
 ): Promise<ApiResponse<{ marked_read: boolean }>> {
@@ -514,9 +430,7 @@ export async function markNotificationRead(
   return normalise(res);
 }
 
-/**
- * Marks all notifications as read.
- */
+
 export async function markAllNotificationsRead(): Promise<ApiResponse<{ marked_read: boolean }>> {
   const res = await apiClient.patch<{ marked_read: boolean }>('/vendor/notifications/read-all');
   return normalise(res);

@@ -1,7 +1,4 @@
-/**
- * @file hooks/admin/useAdminNotifications.ts
- * @description Query and mutation hooks for the admin notifications inbox.
- */
+
 
 import {
   useMutation,
@@ -24,9 +21,6 @@ export const adminNotificationQueryKeys = {
   all: ['admin', 'notifications'] as const,
 } as const;
 
-/**
- * Returns all notifications for the admin user as a plain array.
- */
 export function useAdminNotifications(): UseQueryResult<AdminNotification[], Error> {
   const isAdmin = useAuthStore((s) => s.user?.role === 'admin');
 
@@ -46,18 +40,12 @@ export function useAdminNotifications(): UseQueryResult<AdminNotification[], Err
   });
 }
 
-/**
- * Derives the unread badge count from the notifications list.
- */
 export function useAdminUnreadCount(): number {
   const query = useAdminNotifications();
   if (!Array.isArray(query.data)) return 0;
   return query.data.filter((n) => !n.is_read).length;
 }
 
-/**
- * Mutation to mark a single admin notification as read.
- */
 export function useMarkAdminNotificationRead(): UseMutationResult<
   { marked_read: boolean },
   Error,
@@ -79,9 +67,6 @@ export function useMarkAdminNotificationRead(): UseMutationResult<
   });
 }
 
-/**
- * Mutation to mark all admin notifications as read.
- */
 export function useMarkAllAdminNotificationsRead(): UseMutationResult<
   { marked_read: boolean },
   Error,

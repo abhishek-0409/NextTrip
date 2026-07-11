@@ -1,11 +1,4 @@
-/**
- * @file hooks/useSearch.ts
- * @description TanStack Query hooks for the search results screen.
- *
- * Calls the Node.js/Express backend via apiClient (not Supabase directly).
- * The backend's searchPackages endpoint returns PaginatedResponse<PackageListItem>
- * with { items, total, page, limit, has_more }.
- */
+
 
 import { useInfiniteQuery } from '@tanstack/react-query';
 import type {
@@ -49,7 +42,7 @@ export const DURATION_BUCKETS: { value: DurationBucket; label: string }[] = [
   { value: '10+', label: '10+ Nights' },
 ];
 
-/** Maps a DurationBucket to the min/max duration_days range for the API. */
+
 export function durationBucketToRange(bucket: DurationBucket): {
   min: number;
   max: number | null;
@@ -68,11 +61,7 @@ export function durationBucketToRange(bucket: DurationBucket): {
 
 // ── Filter types ──────────────────────────────────────────────────────────────
 
-/**
- * All filter + sort state managed by the search screen.
- * Mirrors the backend SearchFiltersSchema exactly so params can be
- * forwarded as-is to apiClient.get().
- */
+
 export type TripType = 'domestic' | 'international';
 
 export interface SearchScreenFilters {
@@ -82,20 +71,14 @@ export interface SearchScreenFilters {
   category?: string;
   min_price?: number;
   max_price?: number;
-  /** Duration bucket — translated to duration_days range before sending */
+
   duration_bucket?: DurationBucket;
   min_rating?: number;
   is_featured?: boolean;
   sort?: SortOption;
 }
 
-/**
- * Converts SearchScreenFilters to the flat query params the backend expects.
- * The backend does not have a sort param yet — sorting is done client-side
- * via the order the backend already applies (featured → rating → created_at).
- * We include sort in the query key so different sort orders get separate cache
- * entries and can be implemented server-side later without a cache-key change.
- */
+
 export function filtersToQueryParams(
   filters: SearchScreenFilters,
   page: number
@@ -159,20 +142,7 @@ export const searchQueryKeys = {
 
 export type SearchInfiniteData = InfiniteData<PaginatedResponse<PackageListItem>>;
 
-/**
- * Infinite scroll hook for the search results screen.
- *
- * Each page is a full PaginatedResponse<PackageListItem> so the screen
- * has access to `total` and `has_more` from the first page without
- * needing a separate count query.
- *
- * @example
- * const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
- *   useInfiniteSearch(filters);
- *
- * const allItems = data?.pages.flatMap((page) => page.items) ?? [];
- * const total = data?.pages[0]?.total ?? 0;
- */
+
 export function useInfiniteSearch(
   filters: SearchScreenFilters
 ): UseInfiniteQueryResult<SearchInfiniteData, Error> {
@@ -216,7 +186,7 @@ export function useInfiniteSearch(
 
 // ── Derived data helpers ──────────────────────────────────────────────────────
 
-/** Flattens all pages into a single array of PackageListItems. */
+
 export function flattenSearchPages(
   data: SearchInfiniteData | undefined
 ): PackageListItem[] {
@@ -224,17 +194,14 @@ export function flattenSearchPages(
   return data.pages.flatMap((page) => page.items);
 }
 
-/** Returns the total result count from the first page. */
+
 export function getSearchTotal(data: SearchInfiniteData | undefined): number {
   return data?.pages[0]?.total ?? 0;
 }
 
 // ── Active filter count helper ────────────────────────────────────────────────
 
-/**
- * Counts how many non-default filters are active.
- * Used to show the badge count on the filter button.
- */
+
 export function countActiveFilters(filters: SearchScreenFilters): number {
   let count = 0;
 

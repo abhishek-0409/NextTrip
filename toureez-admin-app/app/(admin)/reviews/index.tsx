@@ -1,7 +1,4 @@
-/**
- * @file app/(admin)/reviews/index.tsx
- * @description Admin review moderation screen.
- */
+
 
 import { router } from 'expo-router';
 import React, { useState } from 'react';

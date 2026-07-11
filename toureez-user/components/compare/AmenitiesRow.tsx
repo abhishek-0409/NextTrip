@@ -1,9 +1,4 @@
-/**
- * @file components/compare/AmenitiesRow.tsx
- * @description Amenities tick/cross grid cells.
- * Returns an array of row-cell arrays — one per amenity.
- * The screen renders each amenity as a separate row with its own label.
- */
+
 
 import React, { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -19,10 +14,7 @@ export interface AmenitiesData {
   mostInclusiveIndex: number | null;
 }
 
-/**
- * Computes all amenity rows data.
- * Returns one entry per unique amenity across all packages.
- */
+
 export function useAmenitiesData(packages: PackageListItem[]): AmenitiesData[] {
   return useMemo(() => {
     // Build union of unique amenities

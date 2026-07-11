@@ -1,25 +1,14 @@
-﻿/**
- * @file lib/cloudinary.ts
- * @description Cloudinary upload utility using the unsigned upload preset.
- *
- * We use the REST upload API directly (via fetch) rather than the
- * cloudinary-react-native SDK's upload widget, because the SDK's widget
- * requires a native module setup that conflicts with Expo managed workflow.
- * The unsigned preset is safe for client-side uploads — Cloudinary's
- * upload preset restricts allowed transformations and folder destinations.
- */
+
 
 import { Config } from '../constants/config';
 import type { ApiResponse, CloudinaryUploadResult } from '../types';
 
-/** Base URL for Cloudinary's unsigned upload endpoint */
+
 const CLOUDINARY_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${Config.cloudinaryCloudName}/image/upload`;
 
 // ── Internal helpers ──────────────────────────────────────────────────────────
 
-/**
- * Extracts a human-readable message from an unknown error value.
- */
+
 function extractErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
   if (typeof error === 'object' && error !== null && 'message' in error) {
@@ -28,10 +17,7 @@ function extractErrorMessage(error: unknown): string {
   return 'An unexpected error occurred during upload.';
 }
 
-/**
- * Validates that a file URI is a local file path (not a remote URL).
- * Cloudinary upload expects a local file URI from the image picker.
- */
+
 function isValidLocalUri(uri: string): boolean {
   return (
     uri.startsWith('file://') ||
@@ -99,22 +85,7 @@ function parseCloudinaryUploadResult(
 
 // ── Public API ────────────────────────────────────────────────────────────────
 
-/**
- * Uploads a local image file to Cloudinary using an unsigned upload preset.
- *
- * Accepts a local file URI (from expo-image-picker or expo-camera) and
- * uploads it to Cloudinary. Returns the public_id and secure_url needed
- * to store in the database and render the image.
- *
- * @param localUri - Local file URI from the device (file://, content://, ph://).
- * @param folder - Cloudinary folder to organise uploads (e.g. 'avatars', 'packages').
- * @returns Typed ApiResponse containing the Cloudinary upload result.
- *
- * @example
- * const { data, error } = await uploadImage(result.assets[0].uri, 'avatars');
- * if (error) { showToast(error); return; }
- * await updateProfile({ avatar_url: data.secure_url });
- */
+
 export async function uploadImage(
   localUri: string,
   folder: string = 'toureez'
@@ -212,20 +183,7 @@ export async function uploadImage(
   }
 }
 
-/**
- * Generates a Cloudinary transformation URL for an existing image.
- * Use this to generate thumbnails, resized versions, or cropped images
- * without storing multiple copies.
- *
- * @param publicId - The Cloudinary public_id of the image.
- * @param width - Desired output width in pixels.
- * @param height - Desired output height in pixels.
- * @param crop - Cloudinary crop mode (default: 'fill').
- * @returns The transformed image URL as a string.
- *
- * @example
- * const thumbUrl = getTransformedUrl(image.public_id, 400, 300);
- */
+
 export function getTransformedUrl(
   publicId: string,
   width: number,
@@ -235,13 +193,7 @@ export function getTransformedUrl(
   return `https://res.cloudinary.com/${Config.cloudinaryCloudName}/image/upload/c_${crop},w_${width},h_${height},f_auto,q_auto/${publicId}`;
 }
 
-/**
- * Generates a Cloudinary URL with automatic format and quality optimisation.
- * Use for full-size image display where dimensions are not constrained.
- *
- * @param publicId - The Cloudinary public_id of the image.
- * @returns The optimised image URL as a string.
- */
+
 export function getOptimisedUrl(publicId: string): string {
   return `https://res.cloudinary.com/${Config.cloudinaryCloudName}/image/upload/f_auto,q_auto/${publicId}`;
 }

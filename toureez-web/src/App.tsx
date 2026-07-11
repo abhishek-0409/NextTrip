@@ -118,13 +118,13 @@ export default function App() {
             <Route path="/auth/callback" element={<Callback />} />
 
             <Route path="/app" element={<TravelerLayout />}>
-              {/* Public — browsable without logging in */}
+              {}
               <Route index element={<Home />} />
               <Route path="search" element={<Search />} />
               <Route path="package/:id" element={<PackageDetail />} />
               <Route path="compare" element={<Compare />} />
 
-              {/* Requires login */}
+              {}
               <Route path="bookings" element={<RequireRole roles={['traveler']}><Bookings /></RequireRole>} />
               <Route path="bookings/:id" element={<RequireRole roles={['traveler']}><BookingDetail /></RequireRole>} />
               <Route path="booking/:packageId" element={<RequireRole roles={['traveler']}><BookingFlow /></RequireRole>} />

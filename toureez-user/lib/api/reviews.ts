@@ -1,11 +1,4 @@
-/**
- * @file lib/api/reviews.ts
- * @description Backend API calls for the Reviews & Ratings system.
- *
- * POST /api/v1/reviews                     — submit a new review (auth)
- * GET  /api/v1/reviews/package/:id         — paginated published reviews (public)
- * GET  /api/v1/reviews/eligible/:packageId — check review eligibility (auth)
- */
+
 
 import { apiClient } from './client';
 import type {
@@ -18,10 +11,6 @@ import type {
 
 // ── Functions ─────────────────────────────────────────────────────────────────
 
-/**
- * Submits a new review for a completed booking.
- * The backend validates booking ownership, completed status, and no-duplicate.
- */
 export async function submitReview(
   input: CreateReviewInput,
 ): Promise<ApiResponse<Review>> {
@@ -32,10 +21,6 @@ export async function submitReview(
   return { data: response.data, error: null };
 }
 
-/**
- * Returns a paginated list of published reviews for a package.
- * Public — no auth required.
- */
 export async function getPackageReviews(
   packageId: string,
   page = 1,
@@ -52,10 +37,6 @@ export async function getPackageReviews(
   return { data: response.data, error: null };
 }
 
-/**
- * Checks if the authenticated user can review a given package.
- * Returns { can_review: boolean, booking_id?: string }.
- */
 export async function checkReviewEligibility(
   packageId: string,
 ): Promise<ApiResponse<ReviewEligibility>> {

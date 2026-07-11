@@ -1,7 +1,4 @@
-/**
- * @file app/(admin)/vendors/index.tsx
- * @description Admin vendor list with status filtering and search.
- */
+
 
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';

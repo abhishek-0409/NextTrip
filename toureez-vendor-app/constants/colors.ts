@@ -1,8 +1,4 @@
-﻿/**
- * @file constants/colors.ts
- * Toureez Vendor Portal — luxury dark-mode palette.
- * Background: #0B1426 · Cards: #111827 · Accent: #E8631A
- */
+
 
 export const Colors = {
   // ── Primary Brand ──────────────────────────────────────────

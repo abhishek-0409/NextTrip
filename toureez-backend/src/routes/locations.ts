@@ -4,9 +4,7 @@ import { getLocations } from '../services/locationService';
 import { success } from '../utils/response';
 import { LocationsQuerySchema } from '../utils/validation';
 
-/**
- * Public location lookup routes.
- */
+
 export const locationsRouter = Router();
 
 locationsRouter.use(defaultLimiter);

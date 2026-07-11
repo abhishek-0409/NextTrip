@@ -1,9 +1,4 @@
-/**
- * @file components/package/AmenitiesSection.tsx
- * @description 3-column grid of amenity chips, each with an icon and label.
- * Icons are mapped from known amenity strings; unknown ones fall back to
- * a generic checkmark so the grid never shows a broken icon.
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';

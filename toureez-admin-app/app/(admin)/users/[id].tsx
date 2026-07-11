@@ -1,7 +1,4 @@
-/**
- * @file app/(admin)/users/[id].tsx
- * @description Admin user detail with role management.
- */
+
 
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
@@ -127,7 +124,7 @@ export default function AdminUserDetailScreen(): React.ReactElement {
           loading={updateRole.isPending}
         />
 
-        {/* Delete user — hidden for admins editing their own account */}
+        {}
         {!isOwnAccount && (
           <TouchableOpacity
             style={styles.deleteBtn}

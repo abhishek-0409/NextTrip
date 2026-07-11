@@ -1,11 +1,4 @@
-/**
- * @file app/(vendor)/packages/[id]/pricing.tsx
- * @description Pricing tiers editor for a vendor package.
- *
- * Allows vendors to add, edit, and remove pricing tiers (e.g. solo, couple,
- * group). Each tier defines a people range, base price, and optional
- * discounted price. Changes are saved via useUpsertPricing().
- */
+
 
 import React, { useCallback, useEffect, useState } from 'react';
 import {

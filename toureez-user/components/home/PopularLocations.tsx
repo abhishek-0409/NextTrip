@@ -1,10 +1,4 @@
-/**
- * @file components/home/PopularLocations.tsx
- * @description Popular destination cards — Premium Light 3D design.
- * White cards with image-like colored backgrounds, 3D shadows, navy text.
- *
- * ✅ All hooks and navigation preserved — zero logic changes.
- */
+
 
 import React, { useCallback, useEffect, useRef } from 'react';
 import {
@@ -100,14 +94,14 @@ function LocationCard({ item, index, onPress }: LocationCardProps): React.ReactE
       accessibilityRole="button"
       accessibilityLabel={`Explore packages for ${item.city}, ${item.state}`}
     >
-      {/* Icon circle */}
+      {}
       <View style={[styles.iconCircle, { backgroundColor: accentColor + '18' }]}>
         <Ionicons name={iconName} size={20} color={accentColor} />
       </View>
-      {/* Text */}
+      {}
       <Text style={[styles.city, { color: accentColor }]} numberOfLines={1}>{item.city}</Text>
       <Text style={styles.state} numberOfLines={1}>{item.state}</Text>
-      {/* Arrow */}
+      {}
       <View style={[styles.arrowWrap, { backgroundColor: accentColor + '15' }]}>
         <Ionicons name="arrow-forward" size={10} color={accentColor} />
       </View>

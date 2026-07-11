@@ -23,7 +23,6 @@ declare global {
 
 let scriptLoadPromise: Promise<void> | null = null;
 
-/** Loads the Razorpay Checkout script once and caches the promise for subsequent calls. */
 function loadRazorpayScript(): Promise<void> {
   if (window.Razorpay) return Promise.resolve();
   if (scriptLoadPromise) return scriptLoadPromise;

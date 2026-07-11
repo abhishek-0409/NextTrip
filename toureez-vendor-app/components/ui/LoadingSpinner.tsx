@@ -1,7 +1,4 @@
-/**
- * @file components/ui/LoadingSpinner.tsx
- * @description Loading state components for the Vendor Portal.
- */
+
 
 import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
@@ -11,10 +8,7 @@ interface FullScreenLoaderProps {
   message?: string;
 }
 
-/**
- * Full-screen loading overlay used during initial auth resolution
- * and between heavy screen transitions.
- */
+
 export const FullScreenLoader: React.FC<FullScreenLoaderProps> = ({
   message = 'Loading...',
 }) => (
@@ -24,9 +18,7 @@ export const FullScreenLoader: React.FC<FullScreenLoaderProps> = ({
   </View>
 );
 
-/**
- * Inline loading indicator for lists and content areas.
- */
+
 export const InlineLoader: React.FC<{ size?: 'small' | 'large'; message?: string }> = ({
   size = 'large',
   message,
@@ -37,9 +29,7 @@ export const InlineLoader: React.FC<{ size?: 'small' | 'large'; message?: string
   </View>
 );
 
-/**
- * Loading placeholder for empty list states.
- */
+
 export const ListLoader: React.FC = () => (
   <View style={styles.list}>
     <ActivityIndicator size="large" color={Colors.primary} />

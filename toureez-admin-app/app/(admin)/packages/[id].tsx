@@ -1,7 +1,4 @@
-/**
- * @file app/(admin)/packages/[id].tsx
- * @description Admin package detail — approve, reject, feature, bestseller.
- */
+
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
@@ -111,14 +108,14 @@ export default function AdminPackageDetailScreen(): React.ReactElement {
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-        {/* Cover */}
+        {}
         {pkg.cover_image ? (
           <Image source={{ uri: pkg.cover_image }} style={styles.cover} />
         ) : (
           <View style={styles.coverPlaceholder}><MaterialCommunityIcons name="image-off-outline" size={40} color={Colors.textLight} /></View>
         )}
 
-        {/* Status */}
+        {}
         <View style={styles.statusRow}>
           <View style={[styles.badge, { backgroundColor: `${statusColor}18` }]}>
             <Text style={[styles.badgeText, { color: statusColor }]}>{pkg.status.toUpperCase()}</Text>
@@ -127,7 +124,7 @@ export default function AdminPackageDetailScreen(): React.ReactElement {
           {pkg.is_bestseller && <View style={[styles.badge, { backgroundColor: Colors.accentLight }]}><Text style={[styles.badgeText, { color: Colors.accent }]}>✦ Bestseller</Text></View>}
         </View>
 
-        {/* Info */}
+        {}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Package Info</Text>
           <InfoRow label="Title" value={pkg.title} />
@@ -141,7 +138,7 @@ export default function AdminPackageDetailScreen(): React.ReactElement {
           <InfoRow label="Created" value={new Date(pkg.created_at).toLocaleDateString('en-IN')} />
         </View>
 
-        {/* Feature toggles */}
+        {}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Merchandising</Text>
           <View style={styles.toggleRow}>

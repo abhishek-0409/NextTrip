@@ -1,8 +1,4 @@
-/**
- * @file components/package/ItinerarySection.tsx
- * @description Day-by-day accordion itinerary. First day expanded by default.
- * Each day shows description, meals, accommodation, activities, and transport.
- */
+
 
 import React, { useCallback, useState } from 'react';
 import {
@@ -81,7 +77,7 @@ interface DayItemProps {
 function DayItem({ item, isExpanded, onToggle }: DayItemProps): React.ReactElement {
   return (
     <View style={dayStyles.container}>
-      {/* Header */}
+      {}
       <Pressable
         style={dayStyles.header}
         onPress={() => onToggle(item.id)}
@@ -104,15 +100,15 @@ function DayItem({ item, isExpanded, onToggle }: DayItemProps): React.ReactEleme
         />
       </Pressable>
 
-      {/* Expanded content */}
+      {}
       {isExpanded && (
         <View style={dayStyles.content}>
-          {/* Description */}
+          {}
           {item.description ? (
             <Text style={dayStyles.description}>{item.description}</Text>
           ) : null}
 
-          {/* Meals */}
+          {}
           {item.meals.length > 0 && (
             <View style={dayStyles.block}>
               <Text style={dayStyles.blockLabel} numberOfLines={1}>Meals</Text>
@@ -124,7 +120,7 @@ function DayItem({ item, isExpanded, onToggle }: DayItemProps): React.ReactEleme
             </View>
           )}
 
-          {/* Accommodation */}
+          {}
           {item.accommodation ? (
             <View style={dayStyles.inlineRow}>
               <Ionicons name="bed-outline" size={15} color={Colors.primary} />
@@ -134,7 +130,7 @@ function DayItem({ item, isExpanded, onToggle }: DayItemProps): React.ReactEleme
             </View>
           ) : null}
 
-          {/* Activities */}
+          {}
           {item.activities.length > 0 && (
             <View style={dayStyles.block}>
               <Text style={dayStyles.blockLabel} numberOfLines={1}>Activities</Text>
@@ -147,7 +143,7 @@ function DayItem({ item, isExpanded, onToggle }: DayItemProps): React.ReactEleme
             </View>
           )}
 
-          {/* Transport */}
+          {}
           {item.transport ? (
             <View style={dayStyles.inlineRow}>
               <Ionicons name="car-outline" size={15} color={Colors.primary} />
@@ -304,7 +300,7 @@ export function ItinerarySection({
 
   return (
     <View style={styles.container}>
-      {/* Header row */}
+      {}
       <View style={styles.headerRow}>
         <Text style={styles.sectionTitle} numberOfLines={1}>
           Day-by-Day Itinerary

@@ -1,15 +1,4 @@
-/**
- * @file __tests__/bookingService.test.ts
- * @description Unit tests for the price calculation logic in bookingService.
- *
- * calculatePrice is the authoritative computation used for all booking amounts.
- * These tests ensure correctness of:
- *  - Standard full payment
- *  - Advance payment (30% of total)
- *  - Group discount (5% off for 7+ travelers)
- *  - GST at 5% applied after group discount
- *  - Discounted price taking precedence over base price
- */
+
 
 // ── Environment stubs (must come before any module imports) ──────────────────
 process.env.SUPABASE_URL = 'https://test.supabase.co';

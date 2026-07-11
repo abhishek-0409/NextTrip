@@ -1,14 +1,4 @@
-/**
- * @file src/__tests__/admin.test.ts
- * @description Integration tests for the admin API routes.
- *
- * supabaseAdmin and supabasePublic are fully mocked — no real network calls.
- * The key design rule: mockAuthAsAdmin() adds ONE mockReturnValueOnce to the
- * supabaseAdmin.from() queue (for the auth-middleware role-lookup).  Each
- * test then appends its own mockReturnValueOnce calls for service-layer DB
- * calls.  The calls are consumed in order of registration, so the queues
- * compose cleanly.
- */
+
 
 // ── Environment stubs (must come before any module imports) ──────────────────
 process.env.SUPABASE_URL = 'https://test.supabase.co';
@@ -118,11 +108,7 @@ function qbInsert(error: unknown = null): Record<string, jest.Mock> {
 
 // ── Auth helpers ──────────────────────────────────────────────────────────────
 
-/**
- * Sets up the public-auth mock to return ADMIN_ID user,
- * and enqueues ONE from() response for the role lookup (returns 'admin').
- * Any subsequent from() calls must be enqueued by the test itself.
- */
+
 function mockAuthAsAdmin(): void {
   mockSupabasePublic.auth.getUser.mockResolvedValue({
     data: { user: { id: ADMIN_ID, email: 'admin@test.com' } },
@@ -133,10 +119,7 @@ function mockAuthAsAdmin(): void {
   mockSupabaseAdmin.from.mockReturnValueOnce(qbMaybe({ role: 'admin' }));
 }
 
-/**
- * Sets up the public-auth mock to return OTHER_USER_ID traveler user,
- * and enqueues ONE from() response for the role lookup (returns 'traveler').
- */
+
 function mockAuthAsTraveler(): void {
   mockSupabasePublic.auth.getUser.mockResolvedValue({
     data: { user: { id: OTHER_USER_ID, email: 'user@test.com' } },

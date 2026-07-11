@@ -1,10 +1,4 @@
-/**
- * @file components/search/SortModal.tsx
- * @description Bottom modal for selecting the sort order of search results.
- *
- * Implemented with React Native's built-in Modal — no third-party sheet
- * library required. Slides up from the bottom with a smooth animation.
- */
+
 
 import React, { useCallback, useEffect, useRef } from 'react';
 import {
@@ -81,7 +75,7 @@ export function SortModal({
         <Animated.View
           style={[styles.sheet, { transform: [{ translateY }] }]}
         >
-          {/* Drag handle */}
+          {}
           <View style={styles.handle} />
 
           <Text style={styles.title} numberOfLines={1}>

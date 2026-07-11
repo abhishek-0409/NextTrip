@@ -1,13 +1,4 @@
-/**
- * @file components/dashboard/StatusFilterTabs.tsx
- * @description Horizontal scrollable pill tabs for filtering lists.
- *
- *   <StatusFilterTabs
- *     tabs={[{ label: 'All', value: 'all' }, ...]}
- *     selected={status}
- *     onSelect={setStatus}
- *   />
- */
+
 
 import React from 'react';
 import {

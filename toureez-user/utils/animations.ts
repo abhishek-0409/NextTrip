@@ -1,7 +1,4 @@
-﻿/**
- * @file utils/animations.ts
- * @description Shared Toureez Animated API hooks.
- */
+
 
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Animated, Easing, type GestureResponderEvent } from 'react-native';

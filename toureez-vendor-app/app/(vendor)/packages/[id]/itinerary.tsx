@@ -1,11 +1,4 @@
-/**
- * @file app/(vendor)/packages/[id]/itinerary.tsx
- * @description Itinerary editor for a vendor package.
- *
- * Allows vendors to build a day-by-day itinerary. Each day has a title,
- * description, meals, accommodation, activities, and transport fields.
- * The full itinerary is replaced on save via useUpsertItinerary().
- */
+
 
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -121,7 +114,7 @@ function DayCard({
 
   return (
     <View style={[cardStyles.card, Shadows.sm]}>
-      {/* Day header */}
+      {}
       <Pressable style={cardStyles.header} onPress={onToggle}>
         <View style={cardStyles.dayBadge}>
           <Text style={cardStyles.dayNumber}>Day {day.day_number}</Text>
@@ -151,7 +144,7 @@ function DayCard({
         </View>
       </Pressable>
 
-      {/* Expanded content */}
+      {}
       {isExpanded && (
         <View style={cardStyles.body}>
           <Input
@@ -174,7 +167,7 @@ function DayCard({
             leftIcon={<Ionicons name="document-text-outline" size={18} color={Colors.textSecondary} />}
           />
 
-          {/* Meals */}
+          {}
           <Text style={cardStyles.fieldLabel}>Meals Included</Text>
           <View style={cardStyles.mealRow}>
             {MEAL_OPTIONS.map((meal) => (
@@ -198,7 +191,7 @@ function DayCard({
             leftIcon={<Ionicons name="bed-outline" size={18} color={Colors.textSecondary} />}
           />
 
-          {/* Activities */}
+          {}
           <Text style={cardStyles.fieldLabel}>Activities</Text>
           <View style={cardStyles.activityRow}>
             <TextInput

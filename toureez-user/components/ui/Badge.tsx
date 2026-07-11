@@ -1,7 +1,4 @@
-﻿/**
- * @file components/ui/Badge.tsx
- * @description Toureez badge.
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';

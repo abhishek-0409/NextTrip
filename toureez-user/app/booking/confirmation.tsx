@@ -1,8 +1,4 @@
-﻿/**
- * @file app/booking/confirmation.tsx
- * @description Step 4 of 4 — Booking Confirmed. Sage green design system.
- * Animated checkmark, booking reference, share, and navigation preserved.
- */
+
 
 import React, { useCallback, useEffect, useRef } from 'react';
 import {
@@ -132,7 +128,7 @@ export default function ConfirmationScreen(): React.ReactElement {
         message: `My trip is confirmed!\n\nBooking Reference: ${booking.booking_reference}\nTravel Date: ${travelDate}\nTravelers: ${booking.num_travelers}\nAmount: ${formatINR(booking.total_amount)}\n\nBooked via Toureez - Travel More, Spend Less`,
         title: 'My Toureez Booking',
       });
-    } catch { /* User cancelled */ }
+    } catch {  }
   }, [booking]);
 
   if (isLoading || !booking) {
@@ -154,7 +150,7 @@ export default function ConfirmationScreen(): React.ReactElement {
 
       <Animated.View style={[styles.flex, slideUp.animatedStyle]}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Hero */}
+        {}
         <View style={styles.heroSection}>
           <AnimatedCheckmark />
           <Text style={styles.heroTitle}>Booking Confirmed!</Text>
@@ -166,7 +162,7 @@ export default function ConfirmationScreen(): React.ReactElement {
         <WhatsNext email={email} />
         <View style={styles.spacer} />
 
-        {/* Share */}
+        {}
         <TouchableOpacity style={styles.shareButton} onPress={() => void handleShare()} activeOpacity={0.8} accessibilityRole="button" accessibilityLabel="Share booking details">
           <Ionicons name="share-social-outline" size={18} color={Colors.primary} />
           <Text style={styles.shareButtonText}>Share Booking Details</Text>
@@ -174,7 +170,7 @@ export default function ConfirmationScreen(): React.ReactElement {
 
         <View style={styles.spacer} />
 
-        {/* Go home */}
+        {}
         <TouchableOpacity style={styles.primaryButton} onPress={() => router.replace('/(tabs)')} activeOpacity={0.85} accessibilityRole="button" accessibilityLabel="Go to home">
           <Ionicons name="home-outline" size={18} color={Colors.white} />
           <Text style={styles.primaryButtonText}>Go to Home</Text>
@@ -182,7 +178,7 @@ export default function ConfirmationScreen(): React.ReactElement {
 
         <View style={styles.smallSpacer} />
 
-        {/* View bookings */}
+        {}
         <TouchableOpacity style={styles.secondaryButton} onPress={() => router.replace('/(tabs)')} activeOpacity={0.85} accessibilityRole="button" accessibilityLabel="View my bookings">
           <Ionicons name="list-outline" size={18} color={Colors.primary} />
           <Text style={styles.secondaryButtonText}>View My Bookings</Text>

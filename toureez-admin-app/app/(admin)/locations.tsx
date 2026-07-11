@@ -1,7 +1,4 @@
-/**
- * @file app/(admin)/locations.tsx
- * @description Admin location CRUD — create, edit, toggle popular/active, delete.
- */
+
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';

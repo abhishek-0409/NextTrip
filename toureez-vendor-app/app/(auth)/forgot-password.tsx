@@ -1,7 +1,4 @@
-/**
- * @file app/(auth)/forgot-password.tsx
- * @description Password reset request screen for the Vendor Portal.
- */
+
 
 import React, { useState } from 'react';
 import {

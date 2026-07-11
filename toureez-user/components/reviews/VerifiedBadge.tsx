@@ -1,8 +1,4 @@
-/**
- * @file components/reviews/VerifiedBadge.tsx
- * @description Small green "✓ Verified Purchase" badge.
- * Only renders when is_verified is true.
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';

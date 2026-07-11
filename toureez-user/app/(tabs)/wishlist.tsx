@@ -1,7 +1,4 @@
-/**
- * @file app/(tabs)/wishlist.tsx
- * @description Wishlist tab backed by the shared wishlist store and API query.
- */
+
 
 import React, { useCallback, useState } from 'react';
 import {

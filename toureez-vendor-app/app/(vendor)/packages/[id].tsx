@@ -1,14 +1,4 @@
-﻿/**
- * @file app/(vendor)/packages/[id].tsx
- * @description Package detail and edit screen.
- *
- * Displays all editable package fields (title, description, highlights,
- * inclusions, exclusions, group sizes) and provides navigation buttons to
- * the pricing, itinerary, and images sub-screens.
- *
- * Vendors can submit the package for review once all required fields are
- * completed. Shows the rejection reason if status is 'rejected'.
- */
+
 
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -366,7 +356,7 @@ export default function PackageDetailScreen(): React.ReactElement {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* Status row */}
+        {}
         <View style={styles.statusRow}>
           <PackageStatusBadge status={pkg.status} />
           {pkg.total_bookings > 0 && (
@@ -374,7 +364,7 @@ export default function PackageDetailScreen(): React.ReactElement {
           )}
         </View>
 
-        {/* Rejection reason */}
+        {}
         {pkg.status === 'rejected' && pkg.rejection_reason != null && (
           <View style={styles.rejectionBanner}>
             <Ionicons name="alert-circle-outline" size={16} color={Colors.error} />
@@ -385,7 +375,7 @@ export default function PackageDetailScreen(): React.ReactElement {
           </View>
         )}
 
-        {/* Basic info */}
+        {}
         <View style={[styles.section, Shadows.sm]}>
           <Text style={styles.sectionTitle}>Basic Information</Text>
           <Input
@@ -410,7 +400,7 @@ export default function PackageDetailScreen(): React.ReactElement {
           />
         </View>
 
-        {/* Duration & group */}
+        {}
         <View style={[styles.section, Shadows.sm]}>
           <Text style={styles.sectionTitle}>Duration & Group</Text>
           <View style={styles.twoCol}>
@@ -459,7 +449,7 @@ export default function PackageDetailScreen(): React.ReactElement {
           </View>
         </View>
 
-        {/* Highlights, inclusions, exclusions */}
+        {}
         {isEditable && (
           <View style={[styles.section, Shadows.sm]}>
             <Text style={styles.sectionTitle}>Highlights & Inclusions</Text>
@@ -484,7 +474,7 @@ export default function PackageDetailScreen(): React.ReactElement {
           </View>
         )}
 
-        {/* Navigation to sub-screens */}
+        {}
         <View style={[styles.section, Shadows.sm]}>
           <Text style={styles.sectionTitle}>Package Content</Text>
           <NavButton
@@ -510,7 +500,7 @@ export default function PackageDetailScreen(): React.ReactElement {
           />
         </View>
 
-        {/* Save / Submit actions */}
+        {}
         <View style={styles.actions}>
           {isDirty && (
             <Button
@@ -538,7 +528,7 @@ export default function PackageDetailScreen(): React.ReactElement {
                   This package is live on Toureez and accepting bookings.
                 </Text>
               </View>
-              {/* Allow vendor to move active package back to draft (hides it from travellers) */}
+              {}
               <Button
                 label="Hide Package (Move to Draft)"
                 onPress={() => {

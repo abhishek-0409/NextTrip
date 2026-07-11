@@ -1,13 +1,4 @@
-﻿/**
- * @file app/(vendor)/settings.tsx
- * @description Settings screen for the vendor portal.
- *
- * Allows vendors to update their profile (name, phone, city) and change
- * their Supabase password. Also provides sign-out and app metadata.
- *
- * Profile updates use updateProfile() from lib/api/auth.ts and refresh the
- * auth store session so the dashboard greeting stays in sync.
- */
+
 
 import React, { useEffect, useState } from 'react';
 import {
@@ -167,14 +158,14 @@ export default function SettingsScreen(): React.ReactElement {
         showsVerticalScrollIndicator={false}
       >
 
-        {/* ── Profile section ────────────────────────────────────────── */}
+        {}
         <View style={[styles.section, Shadows.sm]}>
           <Text style={styles.sectionTitle}>My Profile</Text>
           <Text style={styles.sectionSubtitle}>
             This information is shown to travelers who view your packages.
           </Text>
 
-          {/* Avatar placeholder */}
+          {}
           <View style={styles.avatarRow}>
             <View style={styles.avatar}>
               <Text style={styles.avatarInitials}>
@@ -229,7 +220,7 @@ export default function SettingsScreen(): React.ReactElement {
           )}
         </View>
 
-        {/* ── Email (read-only) ──────────────────────────────────────── */}
+        {}
         <View style={[styles.section, Shadows.sm]}>
           <Text style={styles.sectionTitle}>Account</Text>
           <View style={styles.readOnlyRow}>
@@ -249,7 +240,7 @@ export default function SettingsScreen(): React.ReactElement {
           </Text>
         </View>
 
-        {/* ── Change password ────────────────────────────────────────── */}
+        {}
         <View style={[styles.section, Shadows.sm]}>
           <Text style={styles.sectionTitle}>Change Password</Text>
           <Text style={styles.sectionSubtitle}>
@@ -301,7 +292,7 @@ export default function SettingsScreen(): React.ReactElement {
           />
         </View>
 
-        {/* ── App info ───────────────────────────────────────────────── */}
+        {}
         <View style={[styles.section, Shadows.sm]}>
           <Text style={styles.sectionTitle}>About</Text>
           <View style={styles.appInfoRow}>
@@ -342,7 +333,7 @@ export default function SettingsScreen(): React.ReactElement {
           </Pressable>
         </View>
 
-        {/* ── Danger zone ────────────────────────────────────────────── */}
+        {}
         <Pressable
           style={[styles.signOutBtn, Shadows.sm]}
           onPress={handleSignOut}

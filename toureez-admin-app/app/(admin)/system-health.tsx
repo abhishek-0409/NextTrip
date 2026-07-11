@@ -1,9 +1,4 @@
-﻿/**
- * @file app/(admin)/system-health.tsx
- * System health monitor — pings the backend's /health endpoint to surface
- * service uptime, database connectivity, and request latency. Auto-refreshes
- * every 30 seconds.
- */
+
 
 import { router } from 'expo-router';
 import React, { useCallback } from 'react';
@@ -93,7 +88,7 @@ export default function SystemHealthScreen(): React.ReactElement {
       refreshing={isFetching && !isLoading}
       onRefresh={refresh}
     >
-      {/* Overall status banner */}
+      {}
       <Card variant="flat" style={[styles.banner, { backgroundColor: overallBg }]}>
         <View style={[styles.statusDot, { backgroundColor: overallColor }]} />
         <View style={styles.bannerText}>
@@ -102,7 +97,7 @@ export default function SystemHealthScreen(): React.ReactElement {
         </View>
       </Card>
 
-      {/* Service checks */}
+      {}
       <Card variant="flat" style={styles.section}>
         <Label style={styles.sectionTitle}>Checks</Label>
         <CheckRow
@@ -118,7 +113,7 @@ export default function SystemHealthScreen(): React.ReactElement {
         />
       </Card>
 
-      {/* Stats */}
+      {}
       <Card variant="flat" style={styles.section}>
         <Label style={styles.sectionTitle}>Stats</Label>
         <View style={styles.statsGrid}>

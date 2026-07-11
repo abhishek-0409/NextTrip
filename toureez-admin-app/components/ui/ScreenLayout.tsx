@@ -1,8 +1,4 @@
-/**
- * @file components/ui/ScreenLayout.tsx
- * Top-level admin screen wrapper with safe-area handling, a consistent header,
- * loading/error states, optional scrolling, and optional fixed footer actions.
- */
+
 
 import React from 'react';
 import {

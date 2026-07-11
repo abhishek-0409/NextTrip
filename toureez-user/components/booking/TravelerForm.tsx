@@ -1,12 +1,4 @@
-/**
- * @file components/booking/TravelerForm.tsx
- * @description Complete traveler details form section.
- *
- * Renders:
- * - Traveler count stepper
- * - Dynamic list of TravelerCard components
- * - "Auto-fill from primary contact" toggle for Traveler 1
- */
+
 
 import React, { useCallback } from 'react';
 import {
@@ -62,10 +54,10 @@ export function TravelerForm({
 
   return (
     <View style={styles.container}>
-      {/* Section header */}
+      {}
       <Text style={styles.sectionTitle}>Traveler Details</Text>
 
-      {/* Traveler count stepper */}
+      {}
       <View style={styles.stepperRow}>
         <View style={styles.stepperLabelWrap}>
           <Text style={styles.stepperLabel}>How many travelers?</Text>
@@ -112,7 +104,7 @@ export function TravelerForm({
         </View>
       </View>
 
-      {/* Group discount hint */}
+      {}
       {numTravelers >= 7 && (
         <View style={styles.discountBanner}>
           <Ionicons name="pricetag" size={14} color={Colors.success} />
@@ -122,7 +114,7 @@ export function TravelerForm({
         </View>
       )}
 
-      {/* Auto-fill toggle */}
+      {}
       <View style={styles.autoFillRow}>
         <View style={styles.autoFillTextWrap}>
           <Text style={styles.autoFillLabel}>
@@ -144,7 +136,7 @@ export function TravelerForm({
         />
       </View>
 
-      {/* Traveler cards */}
+      {}
       <View style={styles.cardsContainer}>
         {travelers.map((traveler, index) => (
           <TravelerCard

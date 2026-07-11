@@ -1,7 +1,4 @@
-/**
- * @file constants/theme.ts
- * Shared spacing, typography, radius, shadow, and layout tokens.
- */
+
 
 import { Platform } from 'react-native';
 

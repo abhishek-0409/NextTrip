@@ -1,7 +1,4 @@
-/**
- * @file components/SimilarPackages.tsx
- * @description Horizontal scroll strip of similar packages shown on the package detail screen.
- */
+
 
 import React from 'react';
 import {

@@ -1,14 +1,4 @@
-/**
- * @file components/ui/Typography.tsx
- * @description Typography primitives — strict, themeable Text wrappers.
- *
- * Each primitive renders a React Native Text with the matching variant
- * from `theme.typography`. All primitives forward refs and accept the
- * full Text prop surface.
- *
- *   <H1>Dashboard</H1>
- *   <Body color={Colors.textSecondary}>Welcome back</Body>
- */
+
 
 import React, { forwardRef } from 'react';
 import { StyleSheet, Text, TextProps, TextStyle } from 'react-native';

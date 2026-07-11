@@ -1,7 +1,4 @@
-/**
- * @file components/vendor/BookingCard.tsx
- * @description Booking list item card for the vendor bookings screen.
- */
+
 
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -35,7 +32,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({ booking, onPress }) =>
       accessibilityRole="button"
       accessibilityLabel={`Booking ${booking.booking_reference}`}
     >
-      {/* Header row */}
+      {}
       <View style={styles.headerRow}>
         <View>
           <Text style={styles.reference}>{booking.booking_reference}</Text>
@@ -48,7 +45,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({ booking, onPress }) =>
 
       <View style={styles.divider} />
 
-      {/* Details row */}
+      {}
       <View style={styles.detailsRow}>
         <View style={styles.detailItem}>
           <Ionicons name="calendar-outline" size={14} color={Colors.textSecondary} />
@@ -64,7 +61,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({ booking, onPress }) =>
         </View>
       </View>
 
-      {/* Footer row */}
+      {}
       <View style={styles.footerRow}>
         <View>
           <Text style={styles.amount}>
@@ -79,7 +76,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({ booking, onPress }) =>
         <PaymentStatusBadge status={booking.payment_status} />
       </View>
 
-      {/* Guest name */}
+      {}
       {booking.user.full_name != null && (
         <View style={styles.guestRow}>
           <Ionicons name="person-outline" size={12} color={Colors.textLight} />

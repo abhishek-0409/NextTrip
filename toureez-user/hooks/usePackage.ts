@@ -1,11 +1,4 @@
-/**
- * @file hooks/usePackage.ts
- * @description TanStack Query hook for the package detail screen.
- *
- * Calls GET /api/v1/packages/:id on the Node.js backend.
- * Returns the full PackageDetail shape including images, itineraries,
- * pricing tiers, and enriched company/location/category objects.
- */
+
 
 import { useQuery } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';
@@ -23,17 +16,7 @@ export const packageQueryKeys = {
 
 // ── Hook ──────────────────────────────────────────────────────────────────────
 
-/**
- * Fetches a single package by ID from the Node.js backend.
- *
- * The query is disabled when id is empty so the screen can safely call
- * this hook before the param is resolved by Expo Router.
- *
- * @param id - The UUID of the package to fetch.
- *
- * @example
- * const { data, isLoading, isError, refetch } = usePackageDetail(id);
- */
+
 export function usePackageDetail(
   id: string
 ): UseQueryResult<PackageDetail, Error> {

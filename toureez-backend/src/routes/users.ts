@@ -15,15 +15,11 @@ const DeviceTokenSchema = z
   })
   .strict();
 
-/**
- * Authenticated user profile routes.
- */
 export const usersRouter = Router();
 
 usersRouter.use(defaultLimiter);
 usersRouter.use(requireAuth);
 
-/** GET /api/v1/users/profile */
 usersRouter.get('/profile', async (req, res, next) => {
   try {
     if (req.user === undefined) throw new AppError(ERROR_MESSAGES.AUTH_REQUIRED, 401);
@@ -34,7 +30,6 @@ usersRouter.get('/profile', async (req, res, next) => {
   }
 });
 
-/** PATCH /api/v1/users/profile */
 usersRouter.patch('/profile', strictLimiter, async (req, res, next) => {
   try {
     if (req.user === undefined) throw new AppError(ERROR_MESSAGES.AUTH_REQUIRED, 401);
@@ -46,10 +41,6 @@ usersRouter.patch('/profile', strictLimiter, async (req, res, next) => {
   }
 });
 
-/**
- * POST /api/v1/users/device-token
- * Saves or refreshes the Expo push token for the authenticated user's device.
- */
 usersRouter.post('/device-token', strictLimiter, async (req, res, next) => {
   try {
     if (req.user === undefined) throw new AppError(ERROR_MESSAGES.AUTH_REQUIRED, 401);
@@ -62,10 +53,6 @@ usersRouter.post('/device-token', strictLimiter, async (req, res, next) => {
   }
 });
 
-/**
- * DELETE /api/v1/users/device-token
- * Removes a push token on logout so the device stops receiving notifications.
- */
 usersRouter.delete('/device-token', strictLimiter, async (req, res, next) => {
   try {
     if (req.user === undefined) throw new AppError(ERROR_MESSAGES.AUTH_REQUIRED, 401);
@@ -78,11 +65,6 @@ usersRouter.delete('/device-token', strictLimiter, async (req, res, next) => {
   }
 });
 
-/**
- * DELETE /api/v1/users/account
- * Permanently deletes the authenticated user's account and all their data.
- * Requires confirmation in request body: { confirm: "DELETE" }
- */
 usersRouter.delete('/account', strictLimiter, async (req, res, next) => {
   try {
     if (req.user === undefined) throw new AppError(ERROR_MESSAGES.AUTH_REQUIRED, 401);

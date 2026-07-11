@@ -1,8 +1,4 @@
-﻿/**
- * @file app/(vendor)/enquiries/index.tsx
- * @description Vendor enquiry inbox — traveler questions about packages,
- * relayed through Toureez without sharing personal contact details.
- */
+
 
 import React, { useCallback } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';

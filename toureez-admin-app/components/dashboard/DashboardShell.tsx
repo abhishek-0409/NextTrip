@@ -1,14 +1,4 @@
-/**
- * @file components/dashboard/DashboardShell.tsx
- * @description Layout shell shared by admin and vendor dashboards.
- *
- * Provides:
- * - SafeAreaView wrapper
- * - Scrollable content area
- * - Sticky header with title and optional right action
- * - Pull-to-refresh
- * - Loading / error / empty states
- */
+
 
 import React from 'react';
 import {
@@ -26,14 +16,14 @@ import { Colors } from '../../constants/colors';
 export interface DashboardShellProps {
   title: string;
   subtitle?: string;
-  /** Optional element rendered to the right of the title (e.g. a settings icon) */
+
   headerRight?: React.ReactNode;
-  /** Page-level loading — shows a full-screen spinner */
+
   loading?: boolean;
-  /** Non-blocking refresh (pull-to-refresh in progress) */
+
   refreshing?: boolean;
   onRefresh?: () => void;
-  /** Error state message */
+
   error?: string | null;
   onRetry?: () => void;
   children: React.ReactNode;
@@ -52,7 +42,7 @@ export function DashboardShell({
 }: DashboardShellProps): React.ReactElement {
   return (
     <SafeAreaView style={styles.safe}>
-      {/* Sticky header */}
+      {}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <Text style={styles.headerTitle}>{title}</Text>
@@ -65,14 +55,14 @@ export function DashboardShell({
         )}
       </View>
 
-      {/* Full-screen loading */}
+      {}
       {loading && !refreshing ? (
         <View style={styles.center}>
           <ActivityIndicator size="large" color={Colors.primary} />
           <Text style={styles.loadingText}>Loading…</Text>
         </View>
       ) : error !== null && error !== undefined ? (
-        /* Error state */
+
         <View style={styles.center}>
           <Text style={styles.errorEmoji}>⚠️</Text>
           <Text style={styles.errorText}>{error}</Text>
@@ -83,7 +73,7 @@ export function DashboardShell({
           )}
         </View>
       ) : (
-        /* Main scrollable content */
+
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}

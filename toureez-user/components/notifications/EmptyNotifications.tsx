@@ -1,7 +1,4 @@
-/**
- * @file components/notifications/EmptyNotifications.tsx
- * @description Empty inbox state for the notifications screen.
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -9,9 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { Colors } from '../../constants/colors';
 
-/**
- * Shows the blank-slate message for users with no notifications yet.
- */
+
 export function EmptyNotifications(): React.ReactElement {
   return (
     <View style={styles.container}>

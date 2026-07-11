@@ -1,16 +1,4 @@
-/**
- * @file components/ui/Button.tsx
- * @description Primary action button with full variant + size matrix.
- *
- * Variants:
- *   primary | secondary | ghost | danger | success | outline
- *
- * Sizes:
- *   sm (32) | md (40) | lg (48)
- *
- * Loading state replaces the label with an ActivityIndicator while
- * preserving the button's width.
- */
+
 
 import React from 'react';
 import {

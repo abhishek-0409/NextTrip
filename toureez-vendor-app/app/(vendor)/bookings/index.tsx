@@ -1,10 +1,4 @@
-/**
- * @file app/(vendor)/bookings/index.tsx
- * @description Vendor bookings list screen.
- *
- * Shows all bookings with status filter chips and pull-to-refresh.
- * Tapping a booking navigates to the detail screen.
- */
+
 
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -74,7 +68,7 @@ export default function BookingsScreen(): React.ReactElement {
 
   return (
     <View style={[styles.flex, { paddingTop: insets.top }]}>
-      {/* Header — shows back button when opened from dashboard quick action */}
+      {}
       <View style={styles.header}>
         {from === 'dashboard' && (
           <Pressable onPress={() => router.navigate('/(vendor)')} hitSlop={8} style={styles.backBtn}>
@@ -85,7 +79,7 @@ export default function BookingsScreen(): React.ReactElement {
         <Text style={styles.count}>{data?.total ?? 0} total</Text>
       </View>
 
-      {/* Status filter chips */}
+      {}
       <FlatList
         data={STATUS_FILTERS}
         horizontal
@@ -104,7 +98,7 @@ export default function BookingsScreen(): React.ReactElement {
         )}
       />
 
-      {/* Booking list */}
+      {}
       {isLoading ? (
         <ListLoader />
       ) : isError ? (

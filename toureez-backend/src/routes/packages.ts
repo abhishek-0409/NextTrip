@@ -27,9 +27,7 @@ import {
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
 import type { SearchFilters } from '../types';
 
-/**
- * Public package discovery and detail routes.
- */
+
 export const packagesRouter = Router();
 
 packagesRouter.use(defaultLimiter);
@@ -79,11 +77,7 @@ packagesRouter.get('/:id', async (req, res, next) => {
   }
 });
 
-/**
- * GET /api/v1/packages/:id/similar
- * Returns up to 6 active packages in the same category/location.
- * Public — no auth required.
- */
+
 packagesRouter.get('/:id/similar', async (req, res, next) => {
   try {
     const { id } = UuidParamSchema.parse(req.params);

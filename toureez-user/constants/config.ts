@@ -1,9 +1,4 @@
-﻿/**
- * @file constants/config.ts
- * @description App-wide configuration constants.
- * All magic numbers, limits, and environment-driven values live here.
- * Components and hooks import from this file — never use raw literals.
- */
+
 
 import Constants from 'expo-constants';
 
@@ -18,11 +13,7 @@ const env = {
   EXPO_PUBLIC_API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL,
 } as const;
 
-/**
- * Reads a required environment variable.
- * Throws at startup if the variable is missing, preventing silent failures
- * in production builds.
- */
+
 function requireEnv(key: keyof typeof env): string {
   const value = env[key];
   if (!value) {
@@ -51,35 +42,29 @@ export const Config = {
   appVersion: Constants.expoConfig?.version ?? '1.0.0',
 
   // ── Pagination ────────────────────────────────────────────
-  /** Default number of packages to fetch per page */
+
   packagesPageSize: 20,
 
   // ── Comparison tray ───────────────────────────────────────
-  /**
-   * Maximum packages allowed in the comparison tray.
-   * Aliased as MAX_COMPARE_PACKAGES for spec compliance.
-   */
+
   maxCompareItems: 4,
-  /** Alias — use this name when referencing the spec */
+
   MAX_COMPARE_PACKAGES: 4,
 
   // ── Wishlist ──────────────────────────────────────────────
-  /**
-   * Maximum number of images shown per package on the wishlist card.
-   * Full gallery is shown on the package detail screen.
-   */
+
   MAX_WISHLIST_IMAGES: 3,
 
   // ── Image upload ──────────────────────────────────────────
-  /** Maximum image file size allowed for upload (5 MB) */
+
   maxImageSizeBytes: 5 * 1024 * 1024,
-  /** Accepted image MIME types */
+
   acceptedImageTypes: ['image/jpeg', 'image/png', 'image/webp'] as const,
 
   // ── TanStack Query ────────────────────────────────────────
-  /** How long fetched data is considered fresh (5 minutes) */
+
   queryStaleTimeMs: 5 * 60 * 1000,
-  /** How long inactive query data stays in cache (10 minutes) */
+
   queryCacheTimeMs: 10 * 60 * 1000,
 
   // ── Indian states list ────────────────────────────────────

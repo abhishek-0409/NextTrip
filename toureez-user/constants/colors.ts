@@ -1,7 +1,4 @@
-﻿/**
- * @file constants/colors.ts
- * @description Toureez light brand palette.
- */
+
 
 export const Colors = {
   // Primary Brand

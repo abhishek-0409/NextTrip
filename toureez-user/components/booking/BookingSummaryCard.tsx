@@ -1,10 +1,4 @@
-/**
- * @file components/booking/BookingSummaryCard.tsx
- * @description Package + company summary card shown on the review screen.
- *
- * Displays: cover image, title, company (with verified badge),
- * location, duration, category, and travel date.
- */
+
 
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
@@ -50,7 +44,7 @@ export function BookingSummaryCard({
     <View style={styles.card}>
       <Text style={styles.sectionTitle}>Package Details</Text>
 
-      {/* Cover image + title row */}
+      {}
       <View style={styles.packageRow}>
         {coverImage ? (
           <Image
@@ -70,7 +64,7 @@ export function BookingSummaryCard({
             {pkg.title}
           </Text>
 
-          {/* Company row */}
+          {}
           <View style={styles.companyRow}>
             <Text style={styles.companyName} numberOfLines={1}>
               {pkg.company.name}
@@ -85,7 +79,7 @@ export function BookingSummaryCard({
             )}
           </View>
 
-          {/* Location */}
+          {}
           <View style={styles.metaRow}>
             <Ionicons
               name="location-outline"
@@ -97,7 +91,7 @@ export function BookingSummaryCard({
             </Text>
           </View>
 
-          {/* Duration */}
+          {}
           <View style={styles.metaRow}>
             <Ionicons
               name="time-outline"
@@ -111,10 +105,10 @@ export function BookingSummaryCard({
         </View>
       </View>
 
-      {/* Divider */}
+      {}
       <View style={styles.divider} />
 
-      {/* Travel details */}
+      {}
       <View style={styles.detailsGrid}>
         <View style={styles.detailItem}>
           <Ionicons

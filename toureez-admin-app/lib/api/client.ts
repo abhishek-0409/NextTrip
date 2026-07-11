@@ -1,8 +1,4 @@
-/**
- * @file lib/api/client.ts
- * Typed HTTP client — auto-injects Bearer token, attempts token refresh on 401
- * before signing the user out.
- */
+
 import { Config } from '../../constants/config';
 import { useAuthStore } from '../../store/authStore';
 import { supabase } from '../supabase';
@@ -28,11 +24,7 @@ function getAuthHeader(): Record<string, string> {
   return session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
 }
 
-/**
- * Attempts to refresh the Supabase session and retry the original fetch once.
- * If refresh fails the user is signed out.
- * Returns null if the retry also fails or if refresh itself failed.
- */
+
 async function handleUnauthorized<T>(
   url: string,
   init: RequestInit,

@@ -1,16 +1,9 @@
-/**
- * @file lib/api/auth.ts
- * Admin auth — reads role directly from Supabase (no backend dependency at login).
- */
+
 import { supabase } from '../supabase';
 import { friendlyError } from '../errors';
 import type { User } from '../../types';
 
-/**
- * Sign in with email/password.
- * Reads the role from public.users via Supabase directly — no backend call needed.
- * Throws if credentials are wrong OR if the account is not an admin.
- */
+
 export async function signInWithEmail(
   email: string,
   password: string,
@@ -63,9 +56,7 @@ export async function signOut(): Promise<void> {
   await supabase.auth.signOut();
 }
 
-/**
- * Restore profile from an existing Supabase session (used in root _layout.tsx).
- */
+
 export async function getMyProfile(): Promise<User | null> {
   const { data: { user: authUser } } = await supabase.auth.getUser();
   if (!authUser) return null;

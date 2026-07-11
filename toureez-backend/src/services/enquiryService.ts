@@ -1,11 +1,4 @@
-/**
- * @file services/enquiryService.ts
- * @description Enquiry threads between travelers and vendors.
- *
- * An enquiry lets a traveler ask a vendor about a package without either
- * side seeing the other's email/phone — all messages are relayed through
- * the platform and tied to the authenticated user IDs only.
- */
+
 
 import { supabaseAdmin } from '../lib/supabase';
 import { AppError } from '../constants/errors';
@@ -72,9 +65,6 @@ async function fetchMessages(enquiryId: string): Promise<EnquiryMessage[]> {
 
 // ── Traveler-facing ──────────────────────────────────────────────────────────
 
-/**
- * Creates a new enquiry for a package and posts the traveler's opening message.
- */
 export async function createEnquiry(userId: string, input: CreateEnquiryInput): Promise<EnquiryDetail> {
   const { data: pkg, error: pkgErr } = await supabaseAdmin
     .from('packages')
@@ -118,9 +108,6 @@ export async function createEnquiry(userId: string, input: CreateEnquiryInput): 
   return getUserEnquiryDetail(userId, enquiryId);
 }
 
-/**
- * Returns all enquiry threads started by this traveler, newest activity first.
- */
 export async function getUserEnquiries(userId: string): Promise<EnquirySummary[]> {
   const { data, error } = await supabaseAdmin
     .from('enquiries')
@@ -136,9 +123,6 @@ export async function getUserEnquiries(userId: string): Promise<EnquirySummary[]
   });
 }
 
-/**
- * Returns a single enquiry thread with all messages, and marks it read for the traveler.
- */
 export async function getUserEnquiryDetail(userId: string, enquiryId: string): Promise<EnquiryDetail> {
   const { data, error } = await supabaseAdmin
     .from('enquiries')
@@ -164,9 +148,6 @@ export async function getUserEnquiryDetail(userId: string, enquiryId: string): P
   return { ...mapSummary(row, 0), messages };
 }
 
-/**
- * Posts a follow-up message from the traveler and notifies the vendor side.
- */
 export async function addUserMessage(userId: string, enquiryId: string, message: string): Promise<EnquiryDetail> {
   const { data, error } = await supabaseAdmin
     .from('enquiries')
@@ -205,9 +186,6 @@ export async function addUserMessage(userId: string, enquiryId: string, message:
 
 // ── Vendor-facing ────────────────────────────────────────────────────────────
 
-/**
- * Returns all enquiry threads addressed to this vendor's company, newest activity first.
- */
 export async function getVendorEnquiries(ownerId: string): Promise<EnquirySummary[]> {
   const companyId = await resolveCompanyId(ownerId);
 
@@ -225,9 +203,6 @@ export async function getVendorEnquiries(ownerId: string): Promise<EnquirySummar
   });
 }
 
-/**
- * Returns a single enquiry thread with all messages, and marks it read for the vendor.
- */
 export async function getVendorEnquiryDetail(ownerId: string, enquiryId: string): Promise<EnquiryDetail> {
   const companyId = await resolveCompanyId(ownerId);
 
@@ -255,9 +230,6 @@ export async function getVendorEnquiryDetail(ownerId: string, enquiryId: string)
   return { ...mapSummary(row, 0), messages };
 }
 
-/**
- * Posts a reply from the vendor and notifies the traveler side.
- */
 export async function addVendorMessage(ownerId: string, enquiryId: string, message: string): Promise<EnquiryDetail> {
   const companyId = await resolveCompanyId(ownerId);
 
@@ -296,9 +268,6 @@ export async function addVendorMessage(ownerId: string, enquiryId: string, messa
   return getVendorEnquiryDetail(ownerId, enquiryId);
 }
 
-/**
- * Closes an enquiry thread from the vendor side (e.g. once resolved).
- */
 export async function setVendorEnquiryStatus(
   ownerId: string,
   enquiryId: string,

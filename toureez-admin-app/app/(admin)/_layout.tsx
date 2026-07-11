@@ -1,8 +1,4 @@
-/**
- * @file app/(admin)/_layout.tsx
- * Admin stack navigator. The root _layout.tsx already guards this group —
- * only authenticated admins reach this point.
- */
+
 import { Stack } from 'expo-router';
 import React from 'react';
 

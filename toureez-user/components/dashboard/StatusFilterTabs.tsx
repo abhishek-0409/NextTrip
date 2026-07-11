@@ -1,10 +1,4 @@
-/**
- * @file components/dashboard/StatusFilterTabs.tsx
- * @description Horizontal scrollable pill-tabs for filtering by status.
- *
- * Used on vendor list, package list, booking list, review list, etc.
- * Fires onSelect(value) when a tab is pressed; 'all' clears the filter.
- */
+
 
 import React from 'react';
 import {

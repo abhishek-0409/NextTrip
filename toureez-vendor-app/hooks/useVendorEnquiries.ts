@@ -1,7 +1,4 @@
-/**
- * @file hooks/useVendorEnquiries.ts
- * @description TanStack Query hooks for the vendor's enquiry inbox.
- */
+
 
 import {
   useMutation,
@@ -28,9 +25,6 @@ export const vendorEnquiryQueryKeys = {
   detail: (id: string) => ['vendor', 'enquiries', 'detail', id] as const,
 } as const;
 
-/**
- * Returns the enquiry threads started by travelers about the vendor's company.
- */
 export function useVendorEnquiries(): UseQueryResult<EnquirySummary[], Error> {
   const isVendor = useAuthStore((s) => s.user?.role === VENDOR_ROLE);
 
@@ -48,9 +42,6 @@ export function useVendorEnquiries(): UseQueryResult<EnquirySummary[], Error> {
   });
 }
 
-/**
- * Returns a single enquiry thread with its full message history.
- */
 export function useVendorEnquiryDetail(enquiryId: string): UseQueryResult<EnquiryDetail, Error> {
   const isVendor = useAuthStore((s) => s.user?.role === VENDOR_ROLE);
 
@@ -68,9 +59,6 @@ export function useVendorEnquiryDetail(enquiryId: string): UseQueryResult<Enquir
   });
 }
 
-/**
- * Returns the total number of enquiry messages awaiting a vendor reply.
- */
 export function useUnreadEnquiryCount(): number {
   const enquiriesQuery = useVendorEnquiries();
   return (enquiriesQuery.data ?? []).reduce((total, enquiry) => total + enquiry.unread_count, 0);
@@ -81,9 +69,6 @@ interface SendMessageInput {
   message: string;
 }
 
-/**
- * Posts a reply to an enquiry thread.
- */
 export function useSendEnquiryReply(): UseMutationResult<EnquiryDetail, Error, SendMessageInput> {
   const queryClient = useQueryClient();
 
@@ -105,9 +90,6 @@ interface SetStatusInput {
   status: 'open' | 'closed';
 }
 
-/**
- * Marks an enquiry thread as open or closed.
- */
 export function useSetEnquiryStatus(): UseMutationResult<EnquiryDetail, Error, SetStatusInput> {
   const queryClient = useQueryClient();
 

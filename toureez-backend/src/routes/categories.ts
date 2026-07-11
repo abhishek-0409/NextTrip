@@ -3,9 +3,7 @@ import { defaultLimiter } from '../middleware/rateLimiter';
 import { getCategories } from '../services/categoryService';
 import { success } from '../utils/response';
 
-/**
- * Public category lookup routes.
- */
+
 export const categoriesRouter = Router();
 
 categoriesRouter.use(defaultLimiter);

@@ -1,7 +1,4 @@
-/**
- * @file components/vendor/PackageCard.tsx
- * @description Package list item card for the vendor packages screen.
- */
+
 
 import React from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
@@ -26,7 +23,7 @@ export const PackageCard: React.FC<PackageCardProps> = ({ pkg, onPress }) => {
       accessibilityRole="button"
       accessibilityLabel={`Package: ${pkg.title}`}
     >
-      {/* Cover image */}
+      {}
       <View style={styles.imageContainer}>
         {pkg.cover_image != null ? (
           <Image source={{ uri: pkg.cover_image }} style={styles.image} resizeMode="cover" />
@@ -40,7 +37,7 @@ export const PackageCard: React.FC<PackageCardProps> = ({ pkg, onPress }) => {
         </View>
       </View>
 
-      {/* Content */}
+      {}
       <View style={styles.content}>
         <Text style={styles.title} numberOfLines={2}>
           {pkg.title}

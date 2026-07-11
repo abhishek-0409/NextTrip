@@ -1,9 +1,4 @@
-/**
- * @file components/ui/Skeleton.tsx
- * @description Pulsing placeholder box used while data is loading.
- *
- * Animates `opacity` between 0.4 and 1 on a 1.2s loop. No external deps.
- */
+
 
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, ViewStyle, DimensionValue } from 'react-native';

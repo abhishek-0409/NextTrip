@@ -1,7 +1,4 @@
-/**
- * @file components/bookings/CancellationCard.tsx
- * @description Cancellation policy and confirmation sheet for eligible bookings.
- */
+
 
 import React, { useCallback, useMemo, useState } from 'react';
 import {

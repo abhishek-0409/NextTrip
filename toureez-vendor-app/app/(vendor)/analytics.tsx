@@ -1,7 +1,4 @@
-/**
- * @file app/(vendor)/analytics.tsx
- * @description Vendor analytics screen with revenue chart and KPIs.
- */
+
 
 import React from 'react';
 import {
@@ -80,7 +77,7 @@ export default function AnalyticsScreen(): React.ReactElement {
             />
           }
         >
-          {/* ── Revenue chart ── */}
+          {}
           <View style={[styles.section, Shadows.sm]}>
             <Text style={styles.sectionTitle}>Monthly Revenue (₹)</Text>
             {chartData.length === 0 ? (
@@ -108,7 +105,7 @@ export default function AnalyticsScreen(): React.ReactElement {
             )}
           </View>
 
-          {/* ── KPI row ── */}
+          {}
           <View style={styles.kpiRow}>
             <KpiTile
               label="Completion Rate"
@@ -135,7 +132,7 @@ export default function AnalyticsScreen(): React.ReactElement {
             />
           </View>
 
-          {/* ── Top packages ── */}
+          {}
           {(data?.top_packages ?? []).length > 0 && (
             <View style={[styles.section, Shadows.sm]}>
               <Text style={styles.sectionTitle}>Top Packages</Text>

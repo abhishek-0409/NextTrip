@@ -24,39 +24,28 @@ const baseOptions: Partial<Options> = {
   },
 };
 
-/**
- * Default route-group limiter for regular read-heavy API traffic.
- */
+
 export const defaultLimiter = rateLimit({
   ...baseOptions,
   windowMs,
   limit: defaultMax,
 });
 
-/**
- * Strict route-group limiter for write operations and abuse-sensitive endpoints.
- */
+
 export const strictLimiter = rateLimit({
   ...baseOptions,
   windowMs,
   limit: 20,
 });
 
-/**
- * Read limiter for GET endpoints — generous but still bounded.
- * Fixed at 120 requests per minute regardless of the default window env var,
- * so scraping the entire database via pagination is prevented.
- */
+
 export const readLimiter = rateLimit({
   ...baseOptions,
   windowMs: 60 * 1000, // 1 minute
   limit: 120,
 });
 
-/**
- * Limiter for the AI chat endpoint — keeps usage within the Gemini free-tier
- * quota and prevents a single client from exhausting it.
- */
+
 export const chatLimiter = rateLimit({
   ...baseOptions,
   windowMs: 60 * 1000, // 1 minute

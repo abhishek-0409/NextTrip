@@ -1,7 +1,4 @@
-/**
- * @file hooks/useWishlist.ts
- * @description Wishlist query and mutation hooks backed by the Node API.
- */
+
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query';

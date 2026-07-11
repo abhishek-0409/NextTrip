@@ -1,7 +1,4 @@
-/**
- * @file components/home/SearchBar.tsx
- * @description Smart home search card for destination, date, and group size.
- */
+
 
 import React from 'react';
 import {

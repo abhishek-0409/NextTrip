@@ -1,16 +1,6 @@
-/**
- * @file services/bookingService.ts
- * @description All database operations for the booking flow.
- *
- * Responsibilities:
- * - Price calculation (mirrors frontend usePriceCalculation exactly)
- * - Creating pending bookings
- * - Confirming mock payments (status → confirmed, payment_status → paid)
- * - Fetching booking lists and detail for the authenticated user
- */
+
 
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
-// FIXED: 4 - Booking and payment workflows use the explicitly named admin client.
 import { supabaseAdmin } from '../lib/supabase';
 import { createNotification } from './notificationService';
 import { logger } from '../utils/logger';
@@ -153,10 +143,7 @@ const emitPaymentNotifications = async ({
 
 // ── Price calculation ─────────────────────────────────────────────────────────
 
-/**
- * Computes the full price breakdown for a booking.
- * This is the authoritative calculation — the frontend mirrors it for display.
- */
+
 export function calculatePrice(
   pricing: Pick<PackagePricing, 'base_price' | 'discounted_price'>,
   numTravelers: number,
@@ -367,10 +354,7 @@ const mapBookingSummary = (record: Record<string, unknown>): BookingSummary => {
 
 // ── Service functions ─────────────────────────────────────────────────────────
 
-/**
- * Creates a pending booking after verifying the package and pricing tier.
- * Returns the created booking and the computed price breakdown.
- */
+
 export async function createBooking(
   userId: string,
   input: CreateBookingInput
@@ -485,12 +469,7 @@ export async function createBooking(
   return { booking, price_calculation: calc };
 }
 
-/**
- * Confirms a mock payment by updating booking and payment_status.
- * Creates a mock payment record for audit trail.
- *
- * NOTE: Replace this function body with Razorpay signature verification.
- */
+
 export async function confirmMockPayment(
   userId: string,
   bookingId: string,
@@ -596,10 +575,7 @@ export async function confirmMockPayment(
   return { booking };
 }
 
-/**
- * Returns all bookings for the authenticated user, ordered by created_at desc.
- * Includes denormalised package, location, and company data.
- */
+
 export async function getMyBookings(userId: string): Promise<BookingSummary[]> {
   const { data, error } = await supabaseAdmin
     .from('bookings')
@@ -674,10 +650,7 @@ export async function getMyBookings(userId: string): Promise<BookingSummary[]> {
   });
 }
 
-/**
- * Returns the full booking detail for a single booking.
- * Only returns the booking if it belongs to the requesting user.
- */
+
 export async function getBookingById(
   userId: string,
   bookingId: string
@@ -757,9 +730,7 @@ function refundFractionForTravelDate(travelDate: string): number {
   return 0;
 }
 
-/**
- * Cancels an eligible booking and calculates the refundable paid amount.
- */
+
 export async function cancelBooking(
   userId: string,
   bookingId: string

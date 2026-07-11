@@ -1,14 +1,4 @@
-/**
- * @file app/(vendor)/_layout.tsx
- * @description Vendor portal tab navigator.
- *
- * Four tabs: Dashboard, Packages, Bookings, Account.
- * Non-tab screens (onboarding, company, reviews, payouts, settings) are
- * registered with href=null so they are hidden from the tab bar but
- * remain navigable via router.push().
- *
- * The Account tab badge reflects the count of unread notifications.
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -48,7 +38,7 @@ export default function VendorLayout(): React.ReactElement {
         tabBarItemStyle: styles.tabBarItem,
       }}
     >
-      {/* ── Dashboard ── */}
+      {}
       <Tabs.Screen
         name="index"
         options={{
@@ -59,7 +49,7 @@ export default function VendorLayout(): React.ReactElement {
         }}
       />
 
-      {/* ── Packages (nested Stack) ── */}
+      {}
       <Tabs.Screen
         name="packages"
         options={{
@@ -70,7 +60,7 @@ export default function VendorLayout(): React.ReactElement {
         }}
       />
 
-      {/* ── Bookings (nested Stack) ── */}
+      {}
       <Tabs.Screen
         name="bookings"
         options={{
@@ -81,7 +71,7 @@ export default function VendorLayout(): React.ReactElement {
         }}
       />
 
-      {/* ── Account / More ── */}
+      {}
       <Tabs.Screen
         name="account"
         options={{
@@ -95,7 +85,7 @@ export default function VendorLayout(): React.ReactElement {
         }}
       />
 
-      {/* ── Hidden non-tab screens ── */}
+      {}
       <Tabs.Screen name="onboarding" options={{ href: null }} />
       <Tabs.Screen name="company" options={{ href: null }} />
       <Tabs.Screen name="reviews" options={{ href: null }} />

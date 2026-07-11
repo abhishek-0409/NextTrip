@@ -53,7 +53,6 @@ export interface Booking {
   [key: string]: unknown;
 }
 
-/** Backend nests the package under `booking.package`; this is the one place that should be read for the title. */
 export function bookingPackageTitle(booking: Booking): string {
   return booking.package?.title ?? booking.package_id;
 }

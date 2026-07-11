@@ -1,7 +1,4 @@
-/**
- * @file app/(admin)/packages/index.tsx
- * @description Admin package moderation list.
- */
+
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';

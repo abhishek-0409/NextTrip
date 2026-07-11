@@ -1,7 +1,4 @@
-/**
- * @file app/(auth)/_layout.tsx
- * @description Auth group layout — stack navigator for login and sign-up screens.
- */
+
 
 import { Stack } from 'expo-router';
 import React from 'react';

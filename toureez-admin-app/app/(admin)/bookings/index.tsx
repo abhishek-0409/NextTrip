@@ -1,7 +1,4 @@
-/**
- * @file app/(admin)/bookings/index.tsx
- * Admin bookings list with status filtering.
- */
+
 
 import { router } from 'expo-router';
 import React, { useState } from 'react';

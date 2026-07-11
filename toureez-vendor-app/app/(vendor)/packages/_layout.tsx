@@ -1,10 +1,4 @@
-/**
- * @file app/(vendor)/packages/_layout.tsx
- * @description Stack navigator for the Packages tab.
- *
- * All package screens (list, new, detail, pricing, itinerary, images) are
- * rendered within this stack so back-navigation works correctly within the tab.
- */
+
 
 import { Stack } from 'expo-router';
 import React from 'react';

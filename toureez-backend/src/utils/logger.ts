@@ -1,19 +1,4 @@
-﻿/**
- * @file utils/logger.ts
- * @description Shared Pino logger instance for the entire backend.
- *
- * Usage:
- *   import { logger } from '../utils/logger';
- *   logger.info({ userId }, 'User created');
- *   logger.error({ err }, 'DB query failed');
- *
- * Outputs JSON in production (ready for Datadog / CloudWatch / Logtail).
- * Outputs pretty-printed coloured text in development via pino-pretty.
- *
- * Environment variables:
- *   LOG_LEVEL  — pino log level (trace|debug|info|warn|error|fatal). Default: 'info'.
- *   NODE_ENV   — 'production' enables JSON mode; anything else uses pino-pretty.
- */
+
 
 import pino from 'pino';
 

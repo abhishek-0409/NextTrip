@@ -1,16 +1,4 @@
-/**
- * @file components/reviews/StarRating.tsx
- * @description Interactive and display star rating component.
- *
- * Interactive mode: tap to set 1–5 whole-number rating.
- * Display mode: supports half-star rendering for decimal values (e.g. 4.3).
- *
- * Props:
- *   rating      — current value (0–5, decimals supported in display mode)
- *   size        — 'small' | 'medium' | 'large'
- *   interactive — enables tap-to-rate
- *   onRate      — callback fired with the new whole-number rating
- */
+
 
 import React, { useCallback } from 'react';
 import {
@@ -53,7 +41,7 @@ export interface StarRatingProps {
 // ── Single star ───────────────────────────────────────────────────────────────
 
 interface StarProps {
-  /** 'full' | 'half' | 'empty' */
+
   fill: 'full' | 'half' | 'empty';
   size: number;
   interactive: boolean;
@@ -101,14 +89,7 @@ function Star({ fill, size, interactive, value, onPress }: StarProps): React.Rea
 
 // ── StarRating ────────────────────────────────────────────────────────────────
 
-/**
- * Determines the fill type for each star position (1–5) given a decimal rating.
- *
- * Rules:
- *   - position ≤ floor(rating)  → 'full'
- *   - position === ceil(rating) and fractional part ≥ 0.25 → 'half'
- *   - otherwise → 'empty'
- */
+
 function getFill(position: number, rating: number): 'full' | 'half' | 'empty' {
   const floored = Math.floor(rating);
   const fraction = rating - floored;

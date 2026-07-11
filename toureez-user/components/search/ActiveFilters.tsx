@@ -1,9 +1,4 @@
-/**
- * @file components/search/ActiveFilters.tsx
- * @description Horizontally scrollable row of active filter chips.
- * Each chip shows a label and an X button to remove that filter.
- * The row animates in/out when filters are added or cleared.
- */
+
 
 import React, { useCallback, useEffect, useRef } from 'react';
 import {
@@ -34,10 +29,7 @@ export interface ActiveFiltersProps {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-/**
- * Builds the list of active filter chips from the current filter state.
- * Called in the parent screen so this component stays purely presentational.
- */
+
 export function buildActiveFilterChips(
   filters: SearchScreenFilters
 ): ActiveFilterChip[] {

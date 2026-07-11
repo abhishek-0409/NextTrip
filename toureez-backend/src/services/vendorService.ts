@@ -1,21 +1,4 @@
-/**
- * @file services/vendorService.ts
- * @description Database operations for the vendor portal.
- *
- * Covers:
- *  - Vendor profile retrieval (GET /vendor/me)
- *  - Dashboard metrics aggregation (GET /vendor/dashboard)
- *  - Company profile CRUD (GET/POST/PATCH /vendor/company)
- *  - Company document uploads (POST /vendor/company/documents)
- *  - Vendor notifications (GET /vendor/notifications)
- *  - Vendor reviews (GET /vendor/reviews)
- *  - Vendor payout operations (GET /vendor/payouts, POST /vendor/payout-accounts)
- *
- * All DB access uses supabaseAdmin (service role) so RLS is bypassed intentionally.
- * Auth/role guards are enforced at the route layer via requireAuth + requireRole.
- * Every public function scopes queries to the authenticated vendor's company_id,
- * preventing cross-vendor data access.
- */
+
 
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
 import { supabaseAdmin } from '../lib/supabase';
@@ -205,10 +188,7 @@ const mapNotification = (row: Record<string, unknown>): VendorNotification => ({
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-/**
- * Resolves the company owned by the given user.
- * Returns null if no company exists (onboarding not yet complete).
- */
+
 async function resolveCompanyId(ownerId: string): Promise<string | null> {
   const { data, error } = await supabaseAdmin
     .from('companies')
@@ -220,10 +200,7 @@ async function resolveCompanyId(ownerId: string): Promise<string | null> {
   return (data as { id?: string } | null)?.id ?? null;
 }
 
-/**
- * Resolves the company owned by the given user.
- * Throws 404 if no company exists.
- */
+
 export async function requireCompanyId(ownerId: string): Promise<string> {
   const companyId = await resolveCompanyId(ownerId);
   if (companyId === null) {
@@ -234,9 +211,7 @@ export async function requireCompanyId(ownerId: string): Promise<string> {
 
 // ── Vendor Profile ────────────────────────────────────────────────────────────
 
-/**
- * Fetches the authenticated vendor's user profile and company status summary.
- */
+
 export async function getVendorProfile(userId: string): Promise<{
   user: Pick<User, 'id' | 'full_name' | 'avatar_url' | 'phone' | 'city' | 'state' | 'role' | 'created_at'>;
   company: VendorCompany | null;
@@ -268,10 +243,7 @@ export async function getVendorProfile(userId: string): Promise<{
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
-/**
- * Aggregates dashboard metrics for the authenticated vendor.
- * All counts are scoped to the vendor's company_id.
- */
+
 export async function getVendorDashboard(ownerId: string): Promise<VendorDashboardMetrics> {
   const companyId = await requireCompanyId(ownerId);
 
@@ -406,10 +378,7 @@ export interface VendorMonthlyEarnings {
   bookings: number;
 }
 
-/**
- * Returns confirmed/completed booking revenue for the authenticated vendor,
- * scoped to a single calendar month (used by the Earnings Overview month picker).
- */
+
 export async function getVendorEarningsForMonth(
   ownerId: string,
   month: string,
@@ -451,10 +420,7 @@ export async function getVendorEarningsForMonth(
 
 // ── Company ───────────────────────────────────────────────────────────────────
 
-/**
- * Fetches the vendor's company profile.
- * Returns null if the vendor has not yet completed onboarding.
- */
+
 export async function getVendorCompany(ownerId: string): Promise<VendorCompany | null> {
   const { data, error } = await supabaseAdmin
     .from('companies')
@@ -466,10 +432,7 @@ export async function getVendorCompany(ownerId: string): Promise<VendorCompany |
   return data !== null ? mapCompany(toRecord(data)) : null;
 }
 
-/**
- * Creates the vendor's company profile (first-time onboarding).
- * Throws 409 if the vendor already has a company.
- */
+
 export async function createVendorCompany(ownerId: string, input: CreateCompanyInput): Promise<VendorCompany> {
   // Guard: one company per vendor
   const existing = await resolveCompanyId(ownerId);
@@ -514,10 +477,7 @@ export async function createVendorCompany(ownerId: string, input: CreateCompanyI
   return mapCompany(toRecord(data));
 }
 
-/**
- * Updates the vendor's existing company profile.
- * Only provided fields are updated; undefined fields are left unchanged.
- */
+
 export async function updateVendorCompany(ownerId: string, input: UpdateCompanyInput): Promise<VendorCompany> {
   const companyId = await requireCompanyId(ownerId);
 
@@ -549,10 +509,7 @@ export async function updateVendorCompany(ownerId: string, input: UpdateCompanyI
   return mapCompany(toRecord(data));
 }
 
-/**
- * Saves a company document record after the file has been uploaded to Cloudinary.
- * Documents are stored in the company_documents table.
- */
+
 export async function saveCompanyDocument(
   ownerId: string,
   input: UploadCompanyDocumentInput,
@@ -581,10 +538,7 @@ export async function saveCompanyDocument(
 
 // ── Reviews ───────────────────────────────────────────────────────────────────
 
-/**
- * Lists published reviews for the vendor's packages.
- * Scoped to the vendor's company_id via a packages join.
- */
+
 export async function getVendorReviews(
   ownerId: string,
   params: { page: number; limit: number },
@@ -635,9 +589,7 @@ export async function getVendorReviews(
 
 // ── Payouts ───────────────────────────────────────────────────────────────────
 
-/**
- * Lists payout disbursements for the vendor's company.
- */
+
 export async function getVendorPayouts(
   ownerId: string,
   params: { page: number; limit: number },
@@ -680,9 +632,7 @@ export async function getVendorPayouts(
   };
 }
 
-/**
- * Saves a payout account for the vendor's company.
- */
+
 export async function createPayoutAccount(
   ownerId: string,
   input: CreatePayoutAccountInput,
@@ -718,9 +668,7 @@ export async function createPayoutAccount(
   throw new AppError('Payout accounts are not yet available. Please check back later.', 503);
 }
 
-/**
- * Lists payout accounts for the vendor's company.
- */
+
 export async function getPayoutAccounts(ownerId: string): Promise<VendorPayoutAccount[]> {
   const _companyId = await requireCompanyId(ownerId);
 
@@ -746,9 +694,7 @@ export async function getPayoutAccounts(ownerId: string): Promise<VendorPayoutAc
 
 // ── Notifications ─────────────────────────────────────────────────────────────
 
-/**
- * Lists notifications for the authenticated vendor user.
- */
+
 export async function getVendorNotifications(
   userId: string,
   params: VendorListNotificationsQuery,
@@ -782,9 +728,7 @@ export async function getVendorNotifications(
   };
 }
 
-/**
- * Marks a specific notification as read.
- */
+
 export async function markNotificationRead(userId: string, notificationId: string): Promise<void> {
   const { error } = await supabaseAdmin
     .from('notifications')
@@ -795,9 +739,7 @@ export async function markNotificationRead(userId: string, notificationId: strin
   if (error !== null) throwDb('markNotificationRead', error);
 }
 
-/**
- * Marks all notifications for the user as read.
- */
+
 export async function markAllNotificationsRead(userId: string): Promise<void> {
   const { error } = await supabaseAdmin
     .from('notifications')

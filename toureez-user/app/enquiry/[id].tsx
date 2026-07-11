@@ -1,8 +1,4 @@
-/**
- * @file app/enquiry/[id].tsx
- * @description Enquiry thread — traveler's chat with a vendor about a package.
- * All messages are relayed through the backend; no personal contact details are shared.
- */
+
 
 import React, { useCallback, useState } from 'react';
 import {

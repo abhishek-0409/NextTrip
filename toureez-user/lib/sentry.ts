@@ -1,8 +1,4 @@
-/**
- * @file lib/sentry.ts
- * Safe Sentry bootstrap. It is a no-op unless a DSN is configured and the
- * optional native package is installed.
- */
+
 
 export function initialiseSentry(): void {
   const dsn = process.env.EXPO_PUBLIC_SENTRY_DSN;

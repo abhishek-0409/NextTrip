@@ -1,6 +1,4 @@
-/**
- * @file constants/config.ts
- */
+
 import Constants from 'expo-constants';
 
 const env = {

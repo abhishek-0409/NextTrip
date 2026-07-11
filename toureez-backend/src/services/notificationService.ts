@@ -1,5 +1,4 @@
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
-// FIXED: 4 - Notification writes and user-scoped reads use the backend admin client.
 import { supabaseAdmin } from '../lib/supabase';
 import { logger } from '../utils/logger';
 import type {
@@ -86,9 +85,7 @@ const mapNotification = (value: unknown): Notification => {
   };
 };
 
-/**
- * Inserts a notification from trusted backend workflows.
- */
+
 export const createNotification = async (
   userId: string,
   type: NotificationType,
@@ -119,9 +116,7 @@ export const createNotification = async (
   return mapNotification(inserted);
 };
 
-/**
- * Returns the current user's complete notification inbox, newest first.
- */
+
 export const getUserNotifications = async (
   userId: string,
 ): Promise<Notification[]> => {
@@ -138,9 +133,7 @@ export const getUserNotifications = async (
   return ((data as unknown[] | null) ?? []).map(mapNotification);
 };
 
-/**
- * Marks one notification as read after verifying ownership.
- */
+
 export const markNotificationAsRead = async (
   userId: string,
   notificationId: string,
@@ -164,9 +157,7 @@ export const markNotificationAsRead = async (
   return mapNotification(data);
 };
 
-/**
- * Marks every unread notification for the current user as read.
- */
+
 export const markAllNotificationsAsRead = async (
   userId: string,
 ): Promise<{ updated_count: number }> => {
@@ -186,9 +177,7 @@ export const markAllNotificationsAsRead = async (
   };
 };
 
-/**
- * Counts unread notifications for callers that need a lightweight badge value.
- */
+
 export const getUnreadCount = async (userId: string): Promise<number> => {
   const { count, error } = await supabaseAdmin
     .from('notifications')

@@ -1,6 +1,4 @@
-/**
- * Central error messages safe to return to API clients.
- */
+
 export const ERROR_MESSAGES = {
   AUTH_REQUIRED: 'Authentication required',
   INVALID_TOKEN: 'Invalid or expired token',
@@ -13,13 +11,9 @@ export const ERROR_MESSAGES = {
   INTERNAL_SERVER_ERROR: 'Something went wrong',
 } as const;
 
-/**
- * Application-level error carrying an HTTP status and client-safe message.
- */
+
 export class AppError extends Error {
-  /**
-   * Creates an application error that can be handled by the global error middleware.
-   */
+
   constructor(
     message: string,
     public readonly statusCode: number = 500,

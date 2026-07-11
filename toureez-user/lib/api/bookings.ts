@@ -1,13 +1,4 @@
-/**
- * @file lib/api/bookings.ts
- * @description Backend API calls for the traveller booking flow.
- *
- * POST /api/v1/bookings/create       — create a pending booking
- * POST /api/v1/bookings/confirm-mock — confirm with mock payment
- * GET  /api/v1/bookings              — list the user's bookings
- * GET  /api/v1/bookings/:id          — single booking detail
- * PATCH /api/v1/bookings/:id/cancel  — cancel a booking
- */
+
 
 import { apiClient } from './client';
 import { Config } from '../../constants/config';
@@ -51,10 +42,7 @@ export interface CancelBookingResult {
 
 // ── Functions ─────────────────────────────────────────────────────────────────
 
-/**
- * Creates a pending booking. Returns the booking and a server-computed
- * price breakdown so the UI can display exact amounts before payment.
- */
+
 export async function createBooking(
   input: CreateBookingInput,
 ): Promise<ApiResponse<CreateBookingResult>> {
@@ -69,10 +57,7 @@ export async function createBooking(
   return { data: response.data, error: null };
 }
 
-/**
- * Confirms a pending booking with a mock payment (no real gateway).
- * Replace the body with Razorpay signature verification when integrating real payments.
- */
+
 export async function confirmMockPayment(
   bookingId: string,
   paymentType: 'full' | 'advance',
@@ -88,7 +73,7 @@ export async function confirmMockPayment(
   return { data: response.data, error: null };
 }
 
-/** Creates a Razorpay order for a pending booking. Call before opening checkout. */
+
 export async function createRazorpayOrder(
   bookingId: string,
 ): Promise<ApiResponse<RazorpayOrderResult>> {
@@ -103,7 +88,7 @@ export async function createRazorpayOrder(
   return { data: response.data, error: null };
 }
 
-/** Verifies Razorpay signature and confirms the booking as paid. */
+
 export async function verifyRazorpayPayment(params: {
   booking_id:          string;
   razorpay_order_id:   string;
@@ -121,9 +106,7 @@ export async function verifyRazorpayPayment(params: {
   return { data: response.data, error: null };
 }
 
-/**
- * Returns all bookings for the authenticated user, newest first.
- */
+
 export async function getMyBookings(): Promise<ApiResponse<BookingSummary[]>> {
   const response = await apiClient.get<BookingSummary[]>(
     '/bookings',
@@ -136,9 +119,7 @@ export async function getMyBookings(): Promise<ApiResponse<BookingSummary[]>> {
   return { data: response.data, error: null };
 }
 
-/**
- * Returns full detail for a single booking owned by the authenticated user.
- */
+
 export async function getBookingById(
   id: string,
 ): Promise<ApiResponse<Booking>> {
@@ -153,10 +134,7 @@ export async function getBookingById(
   return { data: response.data, error: null };
 }
 
-/**
- * Cancels a confirmed or pending booking. Returns the updated booking and
- * the calculated refund amount.
- */
+
 export async function cancelBooking(
   id: string,
 ): Promise<ApiResponse<CancelBookingResult>> {
@@ -185,7 +163,7 @@ export interface BalanceVerifyResult {
   status:     string;
 }
 
-/** Creates a Razorpay order for the outstanding balance. */
+
 export async function createBalanceOrder(
   bookingId: string,
 ): Promise<ApiResponse<BalanceOrderResult>> {
@@ -200,7 +178,7 @@ export async function createBalanceOrder(
   return { data: response.data, error: null };
 }
 
-/** Verifies Razorpay signature and marks the balance as paid. */
+
 export async function verifyBalancePayment(params: {
   booking_id:          string;
   razorpay_order_id:   string;
@@ -227,10 +205,7 @@ export interface InvoiceDownloadResult {
   filename: string;
 }
 
-/**
- * Fetches the GST invoice PDF for a confirmed/completed booking as a Blob URL.
- * Returns the remote URL string to pass to expo-file-system for download.
- */
+
 export function getInvoiceUrl(bookingId: string): string {
   // Returns the raw backend URL — download is handled by expo-file-system
   // not through apiClient because we need a binary stream, not JSON.

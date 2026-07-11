@@ -1,10 +1,4 @@
-/**
- * @file app/account/delete.tsx
- * @description Permanent account deletion confirmation screen.
- *
- * Requires the user to type "DELETE" before the action is enabled.
- * On success the user is signed out and returned to the login screen.
- */
+
 
 import React, { useState } from 'react';
 import {
@@ -69,7 +63,7 @@ export default function DeleteAccountScreen(): React.ReactElement {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        {/* Warning icon */}
+        {}
         <View style={styles.iconWrap}>
           <Ionicons name="warning" size={40} color={Colors.error} />
         </View>
@@ -81,7 +75,7 @@ export default function DeleteAccountScreen(): React.ReactElement {
           <Text style={{ fontWeight: '800' }}>cannot be undone</Text>.
         </Text>
 
-        {/* What gets deleted */}
+        {}
         <View style={styles.listBox}>
           {[
             'Your profile and personal information',
@@ -111,7 +105,7 @@ export default function DeleteAccountScreen(): React.ReactElement {
           accessibilityLabel="Confirmation input"
         />
 
-        {/* Delete button */}
+        {}
         <View
           style={[styles.deleteBtn, !canDelete && styles.deleteBtnDisabled]}
           accessible

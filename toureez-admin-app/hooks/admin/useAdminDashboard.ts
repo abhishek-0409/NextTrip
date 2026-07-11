@@ -1,7 +1,4 @@
-/**
- * @file hooks/admin/useAdminDashboard.ts
- * @description TanStack Query hook for the admin dashboard metrics endpoint.
- */
+
 
 import { useQuery } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';
@@ -15,10 +12,7 @@ export const adminDashboardQueryKeys = {
   earnings: (month: string) => ['admin', 'earnings', month] as const,
 } as const;
 
-/**
- * Fetches platform-wide metrics for the admin dashboard.
- * Stale after 2 minutes — dashboard data changes frequently.
- */
+
 export function useAdminDashboard(): UseQueryResult<AdminDashboardMetrics, Error> {
   const isAdmin = useAuthStore((s) => s.user?.role === 'admin');
 
@@ -36,10 +30,7 @@ export function useAdminDashboard(): UseQueryResult<AdminDashboardMetrics, Error
   });
 }
 
-/**
- * Fetches total paid-payment revenue for a single calendar month
- * (format: "YYYY-MM"), used by the Revenue Overview month picker.
- */
+
 export function useAdminEarningsForMonth(month: string): UseQueryResult<AdminMonthlyEarnings, Error> {
   const isAdmin = useAuthStore((s) => s.user?.role === 'admin');
   const isValidMonth = /^\d{4}-\d{2}$/.test(month);

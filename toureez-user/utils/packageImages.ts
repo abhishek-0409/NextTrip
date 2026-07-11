@@ -1,18 +1,4 @@
-/**
- * @file utils/packageImages.ts
- * @description Destination photo lookup for package cards.
- *
- * Image priority order used by PackageCard and PackageListCard:
- *   1. Keyword-matched destination image  — always the correct location photo
- *   2. Cloudinary cover_image from the DB — only used if no keyword matches
- *   3. PACKAGE_DEFAULT_IMAGE             — absolute last resort, never blank
- *
- * Rules are evaluated top-to-bottom; first keyword hit wins.
- * The searchable string is: title + city + state + category name + category label.
- *
- * All Unsplash photo IDs are verified (HTTP 200) and kept in sync with the
- * home-screen DESTINATION_IMAGE_RULES in app/(tabs)/index.tsx.
- */
+
 
 interface PackageImageCandidate {
   title: string;
@@ -31,20 +17,11 @@ interface DestinationImageRule {
   url: string;
 }
 
-/**
- * Absolute last-resort image — a vibrant generic India travel shot.
- * Verified HTTP 200 on Unsplash CDN.
- */
+
 export const PACKAGE_DEFAULT_IMAGE =
   'https://images.unsplash.com/photo-1532664189809-02133fee698d?auto=format&fit=crop&w=900&q=80';
 
-/**
- * Per-destination rules — most-specific first so narrow matches don't get
- * eclipsed by broader keyword lists (e.g. "pangong" before "ladakh").
- *
- * Each photo ID has been verified to return HTTP 200 from the Unsplash CDN.
- * IDs kept in sync with home-screen DESTINATION_IMAGE_RULES (app/(tabs)/index.tsx).
- */
+
 const DESTINATION_IMAGE_RULES: DestinationImageRule[] = [
   // ── Ladakh / Leh / Pangong Lake / Bike Expedition ───────────────────────
   // Leh-Manali highway, Pangong blue waters, mountain vistas
@@ -201,15 +178,7 @@ function buildSearchable(item: PackageImageCandidate): string {
   );
 }
 
-/**
- * Returns a destination-matched Unsplash URL for this package, or **null**
- * if no rule fires.
- *
- * Use this to build the image priority list in package card components:
- *   1. getPackageKeywordImage(item)  — correct destination photo (or skip if null)
- *   2. Cloudinary cover_image        — only when keyword returns null
- *   3. PACKAGE_DEFAULT_IMAGE         — absolute last resort
- */
+
 export function getPackageKeywordImage(
   item: PackageImageCandidate,
 ): string | null {
@@ -220,11 +189,7 @@ export function getPackageKeywordImage(
   return match?.url ?? null;
 }
 
-/**
- * Convenience wrapper — returns the keyword-matched URL or PACKAGE_DEFAULT_IMAGE.
- * Kept for backward compatibility; prefer getPackageKeywordImage in components
- * that need fine-grained fallback control.
- */
+
 export function getPackageDestinationImage(
   item: PackageImageCandidate,
 ): string {

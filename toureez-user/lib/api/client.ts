@@ -1,16 +1,4 @@
-﻿/**
- * @file lib/api/client.ts
- * @description Typed HTTP client for the Toureez Node.js/Express backend.
- *
- * Wraps fetch with:
- * - Automatic JSON serialisation / deserialisation
- * - Query parameter building
- * - Bearer token injection from the Supabase session
- * - Consistent ApiResponse<T> return shape — never throws
- *
- * All lib/api/* files that talk to the backend import from this file.
- * Supabase calls continue to use lib/supabase.ts directly.
- */
+
 
 import { Config } from '../../constants/config';
 import { useAuthStore } from '../../store/authStore';

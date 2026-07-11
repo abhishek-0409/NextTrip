@@ -1,10 +1,4 @@
-﻿/**
- * @file components/ui/Button.tsx
- * @description Reusable button component for the Vendor Portal.
- *
- * Supports multiple variants, sizes, loading states, and icons.
- * Matches the Button component API from Toureez-user for ecosystem consistency.
- */
+
 
 import React, { useCallback, useRef } from 'react';
 import {
@@ -42,7 +36,7 @@ export interface ButtonProps {
   variant?: ButtonVariant;
   size?: ButtonSize;
   fullWidth?: boolean;
-  /** Style applied to the outer Animated.View wrapper (e.g. alignSelf). */
+
   containerStyle?: StyleProp<ViewStyle>;
   style?: ViewStyle;
   labelStyle?: TextStyle;

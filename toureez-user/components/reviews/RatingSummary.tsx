@@ -1,12 +1,4 @@
-/**
- * @file components/reviews/RatingSummary.tsx
- * @description Overall rating breakdown card shown at the top of the reviews section.
- *
- * Shows:
- *   - Large overall rating number + stars
- *   - "Based on N reviews"
- *   - Per-category breakdown with labelled progress bars
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -98,7 +90,7 @@ export function RatingSummary({ summary }: RatingSummaryProps): React.ReactEleme
 
   return (
     <View style={styles.card}>
-      {/* Overall score */}
+      {}
       <View style={styles.overallRow}>
         <View style={styles.scoreWrap}>
           <Text style={styles.scoreNumber} numberOfLines={1}>
@@ -122,7 +114,7 @@ export function RatingSummary({ summary }: RatingSummaryProps): React.ReactEleme
         </View>
       </View>
 
-      {/* Category breakdown */}
+      {}
       {summary.review_count > 0 ? (
         <View style={styles.categories}>
           {categories.map((cat) => (

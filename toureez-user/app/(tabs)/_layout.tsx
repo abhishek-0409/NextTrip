@@ -1,7 +1,4 @@
-﻿/**
- * @file app/(tabs)/_layout.tsx
- * @description Toureez bottom tab navigator.
- */
+
 
 import React from 'react';
 import { Tabs } from 'expo-router';

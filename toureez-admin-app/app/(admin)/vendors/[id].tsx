@@ -1,7 +1,4 @@
-/**
- * @file app/(admin)/vendors/[id].tsx
- * @description Admin vendor detail — approve, reject, verify.
- */
+
 
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
@@ -141,7 +138,7 @@ export default function AdminVendorDetailScreen(): React.ReactElement {
         />
       }
     >
-      {/* Hero */}
+      {}
       <View style={[styles.hero, Shadows.sm]}>
         <View style={styles.heroTopRow}>
           <View style={styles.heroIcon}>
@@ -181,7 +178,7 @@ export default function AdminVendorDetailScreen(): React.ReactElement {
         </View>
       </View>
 
-      {/* Company info */}
+      {}
       <Label style={styles.sectionLabel}>Company information</Label>
       <Card variant="default" padding="md" style={styles.section}>
         <LabelRow label="Name" value={vendor.name} />
@@ -198,7 +195,7 @@ export default function AdminVendorDetailScreen(): React.ReactElement {
         />
       </Card>
 
-      {/* Owner */}
+      {}
       {vendor.owner && (
         <>
           <Label style={styles.sectionLabel}>Owner</Label>
@@ -210,7 +207,7 @@ export default function AdminVendorDetailScreen(): React.ReactElement {
         </>
       )}
 
-      {/* Trade license */}
+      {}
       {vendor.trade_license_url && (
         <>
           <Label style={styles.sectionLabel}>Documents</Label>
@@ -223,7 +220,7 @@ export default function AdminVendorDetailScreen(): React.ReactElement {
         </>
       )}
 
-      {/* Sheets */}
+      {}
       <ConfirmActionSheet
         visible={sheet === 'approve'}
         title="Approve vendor?"

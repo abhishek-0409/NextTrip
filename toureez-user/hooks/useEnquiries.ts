@@ -1,7 +1,4 @@
-/**
- * @file hooks/useEnquiries.ts
- * @description TanStack Query hooks for the traveler-facing enquiry system.
- */
+
 
 import {
   useMutation,
@@ -29,9 +26,6 @@ export const enquiryQueryKeys = {
   detail: (id: string) => ['enquiries', 'detail', id] as const,
 } as const;
 
-/**
- * Query hook for the authenticated traveler's enquiry threads.
- */
 export function useMyEnquiries(): UseQueryResult<EnquirySummary[], Error> {
   const isAuthenticated = useAuthStore((state) => state.user !== null);
 
@@ -49,9 +43,6 @@ export function useMyEnquiries(): UseQueryResult<EnquirySummary[], Error> {
   });
 }
 
-/**
- * Query hook for a single enquiry thread with messages.
- */
 export function useEnquiryDetail(id: string): UseQueryResult<EnquiryDetail, Error> {
   const isAuthenticated = useAuthStore((state) => state.user !== null);
 
@@ -74,9 +65,6 @@ interface CreateEnquiryInput {
   message: string;
 }
 
-/**
- * Mutation hook for starting a new enquiry about a package.
- */
 export function useCreateEnquiry(): UseMutationResult<EnquiryDetail, Error, CreateEnquiryInput> {
   const queryClient = useQueryClient();
 
@@ -97,9 +85,6 @@ interface SendEnquiryMessageInput {
   message: string;
 }
 
-/**
- * Mutation hook for posting a follow-up message to an enquiry thread.
- */
 export function useSendEnquiryMessage(): UseMutationResult<EnquiryDetail, Error, SendEnquiryMessageInput> {
   const queryClient = useQueryClient();
 

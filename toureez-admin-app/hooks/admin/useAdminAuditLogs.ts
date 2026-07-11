@@ -1,6 +1,4 @@
-/**
- * @file hooks/admin/useAdminAuditLogs.ts
- */
+
 
 import { useQuery } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';
@@ -15,10 +13,7 @@ export const adminAuditLogQueryKeys = {
   list: (params: AdminAuditLogListParams) => ['admin', 'audit-logs', 'list', params] as const,
 } as const;
 
-/**
- * Read-only audit log query. Stale after 1 minute (audit logs are append-only
- * and written on every admin mutation, so they change frequently).
- */
+
 export function useAdminAuditLogs(
   params: AdminAuditLogListParams = {},
 ): UseQueryResult<PaginatedResponse<AdminAuditLog>, Error> {

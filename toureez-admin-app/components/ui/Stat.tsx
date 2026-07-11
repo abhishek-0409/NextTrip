@@ -1,15 +1,4 @@
-/**
- * @file components/ui/Stat.tsx
- * @description KPI / metric card used by the dashboard.
- *
- *   <Stat
- *     label="Total Users"
- *     value={metrics.total_users}
- *     sublabel="+12 this month"
- *     delta={+8.2}
- *     accent={Colors.secondary}
- *   />
- */
+
 
 import React from 'react';
 import { StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';

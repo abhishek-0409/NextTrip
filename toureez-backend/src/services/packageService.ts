@@ -1,5 +1,4 @@
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
-// FIXED: 4 - Public package discovery uses the clearly named anon client.
 import { supabasePublic } from '../lib/supabase';
 import { logger } from '../utils/logger';
 import type {
@@ -460,9 +459,7 @@ const resolvePackageIdsByPrice = async (
   );
 };
 
-/**
- * Searches active packages using validated filters and returns a paginated list payload.
- */
+
 export const searchPackages = async (filters: SearchFilters): Promise<PaginatedResponse<PackageListItem>> => {
   const page = filters.page ?? 1;
   const limit = Math.min(filters.limit ?? 10, 50);
@@ -610,9 +607,7 @@ export const searchPackages = async (filters: SearchFilters): Promise<PaginatedR
   };
 };
 
-/**
- * Fetches active packages by id and maps them to list items in the same order as requested.
- */
+
 export const getPackageListItemsByIds = async (
   ids: string[],
   pricingMode: PricingMode = 'min',
@@ -639,9 +634,7 @@ export const getPackageListItemsByIds = async (
   return items.sort((left, right) => (order.get(left.id) ?? 0) - (order.get(right.id) ?? 0));
 };
 
-/**
- * Fetches a single active package with gallery, itinerary, pricing, company, location, and category details.
- */
+
 export const getPackageById = async (id: string): Promise<PackageDetail> => {
   const { data, error } = await supabasePublic
     .from('packages')
@@ -706,16 +699,12 @@ export const getPackageById = async (id: string): Promise<PackageDetail> => {
   };
 };
 
-/**
- * Fetches up to four active packages for side-by-side comparison.
- */
+
 export const getPackagesForCompare = async (ids: string[]): Promise<PackageListItem[]> => {
   return getPackageListItemsByIds(ids.slice(0, 4), 'all');
 };
 
-/**
- * Fetches featured active packages ordered by rating for the home screen.
- */
+
 export const getFeaturedPackages = async (tripType?: 'domestic' | 'international'): Promise<PackageListItem[]> => {
   let query = supabasePublic
     .from('packages')
@@ -738,11 +727,7 @@ export const getFeaturedPackages = async (tripType?: 'domestic' | 'international
   return buildListItems((data as unknown[] | null) ?? [], 'min');
 };
 
-/**
- * Returns up to 6 active packages in the same category and location as the
- * given package, excluding itself. Falls back to same-category if not enough
- * location matches.
- */
+
 export const getSimilarPackages = async (packageId: string): Promise<PackageListItem[]> => {
   // First fetch the source package to get its category and location
   const { data: src, error: srcErr } = await supabasePublic
@@ -787,9 +772,7 @@ export const getSimilarPackages = async (packageId: string): Promise<PackageList
   return buildListItems((data as unknown[] | null) ?? [], 'min');
 };
 
-/**
- * Applies computed badges to package list items without mutating the original objects.
- */
+
 export const attachBadgesToPackages = (packages: PackageListItem[], badges: Badge[]): PackageListItem[] => {
   return packages.map((packageItem) => ({
     ...packageItem,

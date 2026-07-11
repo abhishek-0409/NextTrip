@@ -1,15 +1,4 @@
-/**
- * @file utils/vendorValidation.ts
- * @description Zod validation schemas for all vendor portal API payloads.
- *
- * Naming convention:
- *  - *Schema  — the Zod schema object exported for use in route handlers
- *  - *Input   — the TypeScript type inferred via z.infer<typeof ...Schema>
- *
- * All text fields are trimmed before validation.
- * Array fields use preprocess to handle comma-separated query strings.
- * Pagination defaults match the rest of the platform (page 1, limit 20).
- */
+
 
 import { z } from 'zod';
 import { cloudinaryUrl } from './validation';
@@ -31,7 +20,6 @@ export const paginationSchema = z.object({
     .default(20),
 });
 
-/** Same shape but capped at 50 — used by endpoints that previously enforced that cap inline. */
 export const narrowPaginationSchema = z.object({
   page: z
     .preprocess((v) => (v === undefined || v === '' ? 1 : v), z.coerce.number().int().min(1))
@@ -58,16 +46,10 @@ const stringArrayFromBody = (min = 0) =>
 
 // ── Shared param schemas ───────────────────────────────────────────────────────
 
-/**
- * Validates a single UUID route parameter named :id.
- */
 export const VendorUuidParamSchema = z.object({
   id: z.string().uuid('Invalid resource ID'),
 });
 
-/**
- * Validates :id and :imageId double-UUID route parameters.
- */
 export const VendorImageParamsSchema = z.object({
   id: z.string().uuid('Invalid package ID'),
   imageId: z.string().uuid('Invalid image ID'),
@@ -75,10 +57,6 @@ export const VendorImageParamsSchema = z.object({
 
 // ── Company (vendor profile) ──────────────────────────────────────────────────
 
-/**
- * Validates the body for POST /api/v1/vendor/company (initial company creation).
- * Only required fields are enforced here; optional enrichment fields default to null.
- */
 const gstNumberSchema = z
   .string()
   .trim()
@@ -98,10 +76,6 @@ export const CreateCompanySchema = z
 
 export type CreateCompanyInput = z.infer<typeof CreateCompanySchema>;
 
-/**
- * Validates the body for PATCH /api/v1/vendor/company.
- * Every field is optional — only provided fields are updated.
- */
 export const UpdateCompanySchema = z
   .object({
     name: optionalTrimmed(2, 120),
@@ -114,10 +88,6 @@ export const UpdateCompanySchema = z
 
 export type UpdateCompanyInput = z.infer<typeof UpdateCompanySchema>;
 
-/**
- * Validates the body for POST /api/v1/vendor/company/documents.
- * Accepts a Cloudinary URL for the uploaded trade license.
- */
 export const UploadCompanyDocumentSchema = z
   .object({
     document_type: z.enum(['trade_license', 'gst_certificate', 'pan_card', 'other']),
@@ -131,9 +101,6 @@ export type UploadCompanyDocumentInput = z.infer<typeof UploadCompanyDocumentSch
 
 // ── Packages ──────────────────────────────────────────────────────────────────
 
-/**
- * Validates query parameters for GET /api/v1/vendor/packages.
- */
 export const VendorListPackagesQuerySchema = paginationSchema.extend({
   status: z.enum(['draft', 'pending', 'active', 'rejected']).optional(),
   search: optionalTrimmed(1, 120),
@@ -141,11 +108,6 @@ export const VendorListPackagesQuerySchema = paginationSchema.extend({
 
 export type VendorListPackagesQuery = z.infer<typeof VendorListPackagesQuerySchema>;
 
-/**
- * Validates the body for POST /api/v1/vendor/packages (draft creation).
- * Only the title is required to create a draft — all other fields are optional
- * and filled in progressively through the package editing workflow.
- */
 export const CreatePackageSchema = z
   .object({
     title: trimmedString(3, 200),
@@ -166,10 +128,6 @@ export const CreatePackageSchema = z
 
 export type CreatePackageInput = z.infer<typeof CreatePackageSchema>;
 
-/**
- * Validates the body for PATCH /api/v1/vendor/packages/:id.
- * Every field is optional — supports partial updates.
- */
 export const UpdatePackageSchema = z
   .object({
     title: optionalTrimmed(3, 200),
@@ -192,9 +150,6 @@ export type UpdatePackageInput = z.infer<typeof UpdatePackageSchema>;
 
 // ── Pricing ───────────────────────────────────────────────────────────────────
 
-/**
- * A single pricing tier item used in the upsert-pricing endpoint.
- */
 const PricingTierSchema = z
   .object({
     id: z.string().uuid().optional(),
@@ -219,10 +174,6 @@ const PricingTierSchema = z
     { message: 'discounted_price must be less than base_price', path: ['discounted_price'] },
   );
 
-/**
- * Validates the body for PATCH /api/v1/vendor/packages/:id/pricing.
- * Full tier replacement: the caller sends the complete desired state.
- */
 export const UpsertPricingSchema = z
   .object({
     tiers: z.array(PricingTierSchema).min(1, 'At least one pricing tier is required'),
@@ -246,10 +197,6 @@ const ItineraryDaySchema = z
   })
   .strict();
 
-/**
- * Validates the body for PATCH /api/v1/vendor/packages/:id/itinerary.
- * Full itinerary replacement: the caller sends all days at once.
- */
 export const UpsertItinerarySchema = z
   .object({
     days: z.array(ItineraryDaySchema).min(1, 'At least one itinerary day is required'),
@@ -260,11 +207,6 @@ export type UpsertItineraryInput = z.infer<typeof UpsertItinerarySchema>;
 
 // ── Images ────────────────────────────────────────────────────────────────────
 
-/**
- * Validates the body when saving a Cloudinary-uploaded package image.
- * Security: URL is restricted to Cloudinary CDN so vendors cannot inject
- * arbitrary external URLs as package images.
- */
 export const VendorPackageImageSaveSchema = z
   .object({
     url: z
@@ -292,10 +234,6 @@ export type VendorPackageImageSaveInput = z.infer<typeof VendorPackageImageSaveS
 
 // ── Locations ─────────────────────────────────────────────────────────────────
 
-/**
- * Validates the body for POST /api/v1/vendor/locations.
- * Lets a vendor add a destination that isn't yet in the saved locations list.
- */
 export const DOMESTIC_REGIONS = [
   'North India', 'South India', 'East India', 'West India', 'Central India',
 ] as const;
@@ -322,10 +260,6 @@ export const CreateLocationSchema = z
 
 // ── Earnings ──────────────────────────────────────────────────────────────────
 
-/**
- * Validates the query for GET /api/v1/vendor/earnings.
- * `month` must be in YYYY-MM format (e.g. "2026-06").
- */
 export const VendorEarningsQuerySchema = z.object({
   month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'month must be in YYYY-MM format'),
 });
@@ -336,9 +270,6 @@ export type CreateLocationInput = z.infer<typeof CreateLocationSchema>;
 
 // ── Bookings ──────────────────────────────────────────────────────────────────
 
-/**
- * Validates query parameters for GET /api/v1/vendor/bookings.
- */
 export const VendorListBookingsQuerySchema = paginationSchema.extend({
   status: z.enum(['pending', 'confirmed', 'cancelled', 'completed']).optional(),
   payment_status: z.enum(['pending', 'partial', 'paid', 'refunded', 'failed']).optional(),
@@ -349,11 +280,6 @@ export const VendorListBookingsQuerySchema = paginationSchema.extend({
 
 export type VendorListBookingsQuery = z.infer<typeof VendorListBookingsQuerySchema>;
 
-/**
- * Validates the body for PATCH /api/v1/vendor/bookings/:id/status.
- * pending → confirmed | cancelled
- * confirmed → completed | cancelled
- */
 export const VendorUpdateBookingStatusSchema = z
   .object({
     status: z.enum(['confirmed', 'cancelled', 'completed']),
@@ -365,9 +291,6 @@ export type VendorUpdateBookingStatusInput = z.infer<typeof VendorUpdateBookingS
 
 // ── Payout account ────────────────────────────────────────────────────────────
 
-/**
- * Validates the body for POST /api/v1/vendor/payout-accounts.
- */
 export const CreatePayoutAccountSchema = z
   .object({
     account_holder_name: trimmedString(2, 120),
@@ -387,9 +310,6 @@ export type CreatePayoutAccountInput = z.infer<typeof CreatePayoutAccountSchema>
 
 // ── Notifications ─────────────────────────────────────────────────────────────
 
-/**
- * Validates query parameters for GET /api/v1/vendor/notifications.
- */
 export const VendorListNotificationsQuerySchema = paginationSchema.extend({
   is_read: z
     .preprocess((v) => {

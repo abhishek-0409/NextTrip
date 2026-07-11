@@ -1,8 +1,4 @@
-﻿/**
- * @file app/(admin)/index.tsx
- * Admin Dashboard — Luxury SaaS dark-mode redesign.
- * Glassmorphism cards, neon accents, premium typography.
- */
+
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -220,7 +216,7 @@ export default function AdminDashboardScreen(): React.ReactElement {
           />
         }
       >
-        {/* ── Header ─────────────────────────────────────────────── */}
+        {}
         <View style={styles.header}>
           <View style={styles.logoRow}>
             <View style={styles.logoIcon}>
@@ -247,7 +243,7 @@ export default function AdminDashboardScreen(): React.ReactElement {
           </View>
         </View>
 
-        {/* ── Welcome ────────────────────────────────────────────── */}
+        {}
         <View style={styles.welcome}>
           <View style={{ flex: 1 }}>
             <Text style={styles.welcomeTitle}>Welcome Back, {firstName} 👋</Text>
@@ -263,7 +259,7 @@ export default function AdminDashboardScreen(): React.ReactElement {
           </TouchableOpacity>
         </View>
 
-        {/* Error banner */}
+        {}
         {error != null && (
           <View style={styles.errBanner}>
             <MaterialCommunityIcons name="alert-circle-outline" size={16} color={D.danger} />
@@ -271,7 +267,7 @@ export default function AdminDashboardScreen(): React.ReactElement {
           </View>
         )}
 
-        {/* ── Stat cards ─────────────────────────────────────────── */}
+        {}
         <View style={styles.statGrid}>
           <StatCard icon="account-group" iconBg={D.infoDim} iconColor={D.info}
             label="Total Users" value={(metrics?.total_users ?? 0).toLocaleString('en-IN')}
@@ -291,7 +287,7 @@ export default function AdminDashboardScreen(): React.ReactElement {
             onPress={() => push('/(admin)/vendors')} />
         </View>
 
-        {/* ── Revenue overview ───────────────────────────────────── */}
+        {}
         <View style={styles.revCard}>
           <View style={styles.revHeader}>
             <View>
@@ -315,7 +311,7 @@ export default function AdminDashboardScreen(): React.ReactElement {
           </View>
         </View>
 
-        {/* ── Month picker modal ─────────────────────────────────── */}
+        {}
         <Modal
           visible={monthModalVisible}
           animationType="slide"
@@ -354,7 +350,7 @@ export default function AdminDashboardScreen(): React.ReactElement {
           </Pressable>
         </Modal>
 
-        {/* ── Quick actions ──────────────────────────────────────── */}
+        {}
         <View style={styles.section}>
           <Text style={styles.secTitle}>Quick Actions</Text>
           <View style={styles.qaCard}>
@@ -368,7 +364,7 @@ export default function AdminDashboardScreen(): React.ReactElement {
           </View>
         </View>
 
-        {/* ── Needs attention ────────────────────────────────────── */}
+        {}
         {!isLoading && totalPending > 0 && (
           <View style={styles.section}>
             <View style={styles.secRow}>
@@ -399,7 +395,7 @@ export default function AdminDashboardScreen(): React.ReactElement {
           </View>
         )}
 
-        {/* ── Recent activity ────────────────────────────────────── */}
+        {}
         <View style={styles.section}>
           <View style={styles.secRow}>
             <Text style={styles.secTitle}>Recent Activity</Text>
@@ -423,7 +419,7 @@ export default function AdminDashboardScreen(): React.ReactElement {
           </View>
         </View>
 
-        {/* ── Manage modules ─────────────────────────────────────── */}
+        {}
         <View style={styles.section}>
           <Text style={styles.secTitle}>Manage</Text>
           <View style={styles.mgGrid}>
@@ -449,7 +445,7 @@ export default function AdminDashboardScreen(): React.ReactElement {
           </View>
         </View>
 
-        {/* ── Footer ─────────────────────────────────────────────── */}
+        {}
         <View style={styles.footer}>
           <TouchableOpacity onPress={() => push('/(admin)/audit-logs')} activeOpacity={0.8}>
             <Text style={styles.footerLink}>Audit Logs</Text>

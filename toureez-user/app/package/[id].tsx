@@ -1,7 +1,4 @@
-﻿/**
- * @file app/package/[id].tsx
- * @description Toureez package detail screen.
- */
+
 
 import React, { useCallback, useMemo, useState } from 'react';
 import {

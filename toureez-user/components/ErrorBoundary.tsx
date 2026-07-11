@@ -1,15 +1,4 @@
-/**
- * @file components/ErrorBoundary.tsx
- * @description Root error boundary for the traveller app.
- *
- * Catches render-time exceptions that propagate from any screen or component
- * and shows a recoverable fallback UI instead of a blank white screen.
- *
- * Usage — wrap the root Stack in app/_layout.tsx:
- *   <ErrorBoundary>
- *     <Stack ... />
- *   </ErrorBoundary>
- */
+
 
 import React from 'react';
 import {

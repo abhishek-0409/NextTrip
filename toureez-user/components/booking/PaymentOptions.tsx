@@ -1,13 +1,4 @@
-/**
- * @file components/booking/PaymentOptions.tsx
- * @description Payment type selector card (Full vs Advance).
- *
- * Full payment: pay total_amount now, no split.
- * Advance payment: pay 30% now, 70% before travel.
- *
- * Both options show the same total_amount — no phantom discounts.
- * Mirrors the backend calculatePrice() exactly.
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -36,7 +27,7 @@ export function PaymentOptions({
       <Text style={styles.title}>Payment Options</Text>
       <Text style={styles.subtitle}>Choose how you'd like to pay</Text>
 
-      {/* ── Full payment ── */}
+      {}
       <TouchableOpacity
         style={[
           styles.option,
@@ -62,7 +53,7 @@ export function PaymentOptions({
         </View>
       </TouchableOpacity>
 
-      {/* ── Advance payment ── */}
+      {}
       <TouchableOpacity
         style={[
           styles.option,
@@ -87,7 +78,7 @@ export function PaymentOptions({
           </Text>
         </View>
 
-        {/* Split breakdown — only shown when advance is selected */}
+        {}
         {selected === 'advance' ? (
           <View style={styles.splitInfo}>
             <View style={styles.splitItem}>

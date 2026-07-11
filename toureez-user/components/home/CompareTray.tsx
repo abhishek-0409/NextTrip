@@ -1,7 +1,4 @@
-/**
- * @file components/home/CompareTray.tsx
- * @description Persistent floating compare tray — Premium Light 3D design.
- */
+
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -91,7 +88,7 @@ export function CompareTray(): React.ReactElement | null {
       accessibilityRole="toolbar"
       accessibilityLabel={`${compareCount} packages selected for comparison`}
     >
-      {/* Thumbnails */}
+      {}
       <View style={styles.thumbnailRow}>
         {thumbnails.map((pkg) => {
           const thumbnail = getCloudinaryThumbnail(pkg.cover_image);

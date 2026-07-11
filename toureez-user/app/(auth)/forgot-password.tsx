@@ -1,16 +1,4 @@
-/**
- * @file app/(auth)/forgot-password.tsx
- * @description Password reset request screen.
- *
- * Architecture rules enforced:
- * - Zero direct API calls — all logic delegated to useForgotPassword hook
- * - KeyboardAvoidingView handled by ScreenWrapper internally
- * - All colours from constants/colors.ts — zero hardcoded hex values
- * - StyleSheet.create for all styles — zero inline style objects
- * - Expo Router <Link> for navigation back to login
- * - Inline error messages — no alert() calls
- * - Distinct success state shown after submission ("Check your email")
- */
+
 
 import React from 'react';
 import {
@@ -41,7 +29,7 @@ export default function ForgotPasswordScreen(): React.ReactElement {
           accessibilityRole="alert"
           accessibilityLiveRegion="polite"
         >
-          {/* Envelope icon (Unicode — no third-party icon library) */}
+          {}
           <Text style={styles.successIcon} accessibilityElementsHidden>
             ✉️
           </Text>
@@ -54,7 +42,7 @@ export default function ForgotPasswordScreen(): React.ReactElement {
             Check your inbox and follow the link to reset your password.
           </Text>
 
-          {/* Primary CTA — back to login */}
+          {}
           <Link href="/(auth)/login" asChild>
             <TouchableOpacity
               style={styles.backLinkButton}
@@ -65,7 +53,7 @@ export default function ForgotPasswordScreen(): React.ReactElement {
             </TouchableOpacity>
           </Link>
 
-          {/* Secondary — try a different email */}
+          {}
           <Button
             label="Use a different email"
             onPress={reset.resetForm}
@@ -80,7 +68,7 @@ export default function ForgotPasswordScreen(): React.ReactElement {
   // ── Default state ──────────────────────────────────────────────────────────
   return (
     <ScreenWrapper scrollable contentStyle={styles.screenContent}>
-      {/* ── Header ── */}
+      {}
       <View style={styles.header}>
         <Text style={styles.title}>Reset password</Text>
         <Text style={styles.subtitle}>
@@ -88,7 +76,7 @@ export default function ForgotPasswordScreen(): React.ReactElement {
         </Text>
       </View>
 
-      {/* ── Form ── */}
+      {}
       <View style={styles.form}>
         <Input
           label="Email"
@@ -105,7 +93,7 @@ export default function ForgotPasswordScreen(): React.ReactElement {
           editable={!reset.isPending}
         />
 
-        {/* Inline form-level error (e.g. network failure) */}
+        {}
         {reset.formError ? (
           <View
             style={styles.errorPanel}
@@ -124,7 +112,7 @@ export default function ForgotPasswordScreen(): React.ReactElement {
         />
       </View>
 
-      {/* ── Footer ── */}
+      {}
       <View style={styles.footer}>
         <Link href="/(auth)/login" asChild>
           <TouchableOpacity

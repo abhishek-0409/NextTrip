@@ -1,7 +1,4 @@
-/**
- * @file components/compare/PriceRow.tsx
- * @description Price cells — best value column highlighted green.
- */
+
 
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';

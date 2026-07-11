@@ -10,9 +10,7 @@ import {
 import { success } from '../utils/response';
 import { UuidParamSchema } from '../utils/validation';
 
-/**
- * Authenticated notification inbox routes for the current user.
- */
+
 export const notificationsRouter = Router();
 
 notificationsRouter.use(defaultLimiter);

@@ -1,10 +1,4 @@
-﻿/**
- * @file hooks/useAppReview.ts
- * @description Requests an in-app store review after a completed booking.
- *
- * Review is requested at most once per 30 days to comply with Apple and
- * Google quotas. The timestamp is persisted in AsyncStorage.
- */
+
 
 import { useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';

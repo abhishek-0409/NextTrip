@@ -1,7 +1,4 @@
-/**
- * @file hooks/admin/useAdminAnalytics.ts
- * @description Fetches admin analytics for the charts dashboard.
- */
+
 
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { apiClient } from '../../lib/api/client';

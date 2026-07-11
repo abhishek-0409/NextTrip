@@ -1,8 +1,4 @@
-/**
- * @file components/package/PricingSection.tsx
- * @description Pricing tier cards with selection state.
- * The selected tier drives the sticky action bar price via a callback.
- */
+
 
 import React, { useCallback } from 'react';
 import {
@@ -69,14 +65,14 @@ function TierCard({ tier, isSelected, onPress }: TierCardProps): React.ReactElem
       accessibilityState={{ selected: isSelected }}
       accessibilityLabel={`${tier.label}, ${tier.min_people} to ${tier.max_people} people, ${fmt(effectivePrice)} per person`}
     >
-      {/* Selected indicator */}
+      {}
       {isSelected && (
         <View style={styles.selectedDot}>
           <Ionicons name="checkmark-circle" size={18} color={Colors.primary} />
         </View>
       )}
 
-      {/* Season badge */}
+      {}
       {tier.season !== 'all' && (
         <View style={[
           styles.seasonBadge,
@@ -88,12 +84,12 @@ function TierCard({ tier, isSelected, onPress }: TierCardProps): React.ReactElem
         </View>
       )}
 
-      {/* Label */}
+      {}
       <Text style={[styles.tierLabel, isSelected && styles.tierLabelSelected]} numberOfLines={1}>
         {tier.label}
       </Text>
 
-      {/* People range */}
+      {}
       <View style={styles.peopleRow}>
         <Ionicons name="people-outline" size={13} color={Colors.textTertiary} />
         <Text style={styles.peopleText} numberOfLines={1}>
@@ -101,7 +97,7 @@ function TierCard({ tier, isSelected, onPress }: TierCardProps): React.ReactElem
         </Text>
       </View>
 
-      {/* Price */}
+      {}
       {hasDiscount && (
         <Text style={styles.basePrice} numberOfLines={1}>
           {fmt(tier.base_price)}
@@ -112,7 +108,7 @@ function TierCard({ tier, isSelected, onPress }: TierCardProps): React.ReactElem
       </Text>
       <Text style={styles.perPerson} numberOfLines={1}>per person</Text>
 
-      {/* Savings */}
+      {}
       {savings > 0 && (
         <View style={styles.savingsBadge}>
           <Text style={styles.savingsText} numberOfLines={1}>

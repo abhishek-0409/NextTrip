@@ -1,8 +1,4 @@
-/**
- * @file components/compare/EmptyCompare.tsx
- * @description Empty state shown when fewer than 2 packages are in the tray.
- * Shows the single added package thumbnail if exactly 1 exists.
- */
+
 
 import React, { useCallback } from 'react';
 import {
@@ -31,7 +27,7 @@ export function EmptyCompare({ compareItems }: EmptyCompareProps): React.ReactEl
 
   return (
     <View style={styles.container}>
-      {/* Illustration */}
+      {}
       <View style={styles.illustration}>
         {singleItem ? (
           <View style={styles.singleItemWrap}>
@@ -53,7 +49,7 @@ export function EmptyCompare({ compareItems }: EmptyCompareProps): React.ReactEl
           </View>
         ) : null}
 
-        {/* Dashed slot(s) */}
+        {}
         {Array.from({ length: singleItem ? 1 : 2 }, (_, i) => (
           <View key={i} style={styles.dashedSlot}>
             <Ionicons name="add" size={28} color={Colors.textTertiary} />

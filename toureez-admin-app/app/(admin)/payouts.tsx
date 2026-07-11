@@ -1,7 +1,4 @@
-/**
- * @file app/(admin)/payouts.tsx
- * @description Admin vendor payout management — list, filter by status, update status.
- */
+
 
 import { router } from 'expo-router';
 import React, { useState } from 'react';

@@ -1,6 +1,4 @@
-/**
- * @file hooks/admin/useAdminReviews.ts
- */
+
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query';

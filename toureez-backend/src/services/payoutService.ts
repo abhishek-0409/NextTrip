@@ -1,12 +1,4 @@
-/**
- * @file services/payoutService.ts
- * @description Vendor payout account and disbursement management.
- *
- * Responsibilities:
- * - CRUD for vendor payout accounts (bank / UPI)
- * - Listing and status-updating vendor payout disbursements
- * - Admin payout dashboard aggregates
- */
+
 
 import { AppError } from '../constants/errors';
 import { supabaseAdmin } from '../lib/supabase';
@@ -29,7 +21,7 @@ export interface VendorPayoutAccount {
   company_id: string;
   account_holder_name: string;
   bank_name: string | null;
-  /** Last 4 digits of account number (actual column: account_number_last4) */
+
   account_number_last4: string | null;
   ifsc_code: string | null;
   upi_id: string | null;
@@ -48,7 +40,7 @@ export interface VendorPayout {
   status: PayoutStatus;
   period_start: string | null;
   period_end: string | null;
-  /** Timestamp when payout was processed/paid (actual column: processed_at) */
+
   processed_at: string | null;
   failure_reason: string | null;
   metadata: Record<string, unknown>;

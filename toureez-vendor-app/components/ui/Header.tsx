@@ -1,10 +1,4 @@
-/**
- * @file components/ui/Header.tsx
- * @description Screen header component for the Vendor Portal.
- *
- * Provides consistent navigation headers across all vendor portal screens.
- * Supports back button, title, subtitle, and right-side action slots.
- */
+
 
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';

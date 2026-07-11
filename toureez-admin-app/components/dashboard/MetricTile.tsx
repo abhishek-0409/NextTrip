@@ -1,10 +1,4 @@
-/**
- * @file components/dashboard/MetricTile.tsx
- * @description Compact KPI tile (legacy public API preserved).
- *
- * New surfaces should prefer the `Stat` primitive directly, but this file
- * keeps the original interface so existing dashboard sites keep compiling.
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -15,17 +9,17 @@ import { Skeleton } from '../ui/Skeleton';
 export interface MetricTileProps {
   label: string;
   value: number | string;
-  /** Optional sub-label or period description */
+
   sublabel?: string;
-  /** Positive = green, negative = red, undefined = no delta */
+
   delta?: number;
-  /** Colour accent on the left edge */
+
   accent?: string;
-  /** Show skeleton loading state */
+
   loading?: boolean;
-  /** Format function for the value */
+
   format?: (v: number | string) => string;
-  /** Tappable tile */
+
   onPress?: () => void;
 }
 

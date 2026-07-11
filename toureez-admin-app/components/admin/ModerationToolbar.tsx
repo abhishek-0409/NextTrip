@@ -1,20 +1,4 @@
-/**
- * @file components/admin/ModerationToolbar.tsx
- * @description Fixed bottom toolbar for admin moderation actions.
- *
- * Renders 2–4 buttons distributed across the toolbar.
- * - Destructive (`danger`) actions are kept on the left
- * - All other actions are right-aligned (primary actions on the far right)
- * - Each button can show its own loading spinner
- *
- *   <ModerationToolbar
- *     actions={[
- *       { label: 'Reject',  variant: 'danger',  onPress: openReject },
- *       { label: 'Approve', variant: 'success', onPress: handleApprove },
- *       { label: 'Verify',  variant: 'primary', onPress: handleVerify, disabled: vendor.is_verified },
- *     ]}
- *   />
- */
+
 
 import React from 'react';
 import {

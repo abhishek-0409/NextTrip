@@ -1,7 +1,4 @@
-/**
- * @file app/(tabs)/search.tsx
- * @description Toureez package search screen.
- */
+
 
 import React, {
   useCallback,
@@ -94,7 +91,7 @@ export default function SearchScreen(): React.ReactElement {
     if (!user?.id) return;
     void AsyncStorage.getItem(recentKey(user.id)).then((raw) => {
       if (raw) {
-        try { setRecentSearches(JSON.parse(raw) as string[]); } catch { /* ignore corrupt */ }
+        try { setRecentSearches(JSON.parse(raw) as string[]); } catch {  }
       }
     });
   }, [user?.id]);

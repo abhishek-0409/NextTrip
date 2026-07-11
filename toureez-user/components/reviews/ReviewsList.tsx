@@ -1,13 +1,4 @@
-/**
- * @file components/reviews/ReviewsList.tsx
- * @description Reviews section for the package detail screen.
- *
- * Shows:
- *   - RatingSummary card (computed from loaded reviews)
- *   - First 3 ReviewCards inline
- *   - "Show all N reviews" button → Modal bottom sheet with full paginated list
- *   - "Write a Review" CTA (only when user is eligible)
- */
+
 
 import React, { useCallback, useMemo, useState } from 'react';
 import {
@@ -36,10 +27,7 @@ import type { RatingSummary as RatingSummaryType, Review } from '../../types';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-/**
- * Computes the RatingSummary from a flat list of reviews.
- * Averages only the non-null values for each sub-category.
- */
+
 function computeSummary(reviews: Review[]): RatingSummaryType {
   if (reviews.length === 0) {
     return { overall: 0, review_count: 0, guide: 0, hotel: 0, food: 0, transport: 0, value: 0 };
@@ -120,7 +108,7 @@ function AllReviewsSheet({
       onRequestClose={onClose}
     >
       <SafeAreaView style={sheetStyles.safeArea} edges={['top', 'left', 'right']}>
-        {/* Header */}
+        {}
         <View style={sheetStyles.header}>
           <Text style={sheetStyles.title} numberOfLines={1}>
             All Reviews ({totalCount.toLocaleString('en-IN')})
@@ -247,7 +235,7 @@ export function ReviewsList({ packageId }: ReviewsListProps): React.ReactElement
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>Reviews & Ratings</Text>
 
-      {/* Rating summary card */}
+      {}
       {totalCount > 0 ? (
         <RatingSummary summary={summary} />
       ) : (
@@ -260,12 +248,12 @@ export function ReviewsList({ packageId }: ReviewsListProps): React.ReactElement
         </View>
       )}
 
-      {/* Preview reviews */}
+      {}
       {previewReviews.map((review) => (
         <ReviewCard key={review.id} review={review} />
       ))}
 
-      {/* Show all button */}
+      {}
       {totalCount > 3 ? (
         <TouchableOpacity
           style={styles.showAllButton}
@@ -281,7 +269,7 @@ export function ReviewsList({ packageId }: ReviewsListProps): React.ReactElement
         </TouchableOpacity>
       ) : null}
 
-      {/* Write a Review CTA */}
+      {}
       {eligibility?.can_review ? (
         <TouchableOpacity
           style={styles.writeReviewButton}
@@ -295,7 +283,7 @@ export function ReviewsList({ packageId }: ReviewsListProps): React.ReactElement
         </TouchableOpacity>
       ) : null}
 
-      {/* All reviews bottom sheet */}
+      {}
       <AllReviewsSheet
         packageId={packageId}
         visible={sheetVisible}

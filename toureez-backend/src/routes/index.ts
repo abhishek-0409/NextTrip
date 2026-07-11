@@ -14,9 +14,7 @@ import { usersRouter } from './users';
 import { vendorRouter } from './vendor';
 import { wishlistRouter } from './wishlist';
 
-/**
- * Versioned API v1 route aggregator.
- */
+
 export const apiV1Router = Router();
 
 apiV1Router.use('/health', healthRouter);

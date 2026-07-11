@@ -1,8 +1,4 @@
-﻿/**
- * @file app/booking/payment.tsx
- * @description Step 3 of 4 — Payment. Sage green design system.
- * All payment methods, mock flow, and Razorpay placeholder preserved.
- */
+
 
 import React, { useCallback, useState } from 'react';
 import {
@@ -226,7 +222,7 @@ export default function PaymentScreen(): React.ReactElement {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-      {/* Header */}
+      {}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back" hitSlop={8}>
           <Ionicons name="chevron-back" size={22} color={Colors.textPrimary} />
@@ -241,7 +237,7 @@ export default function PaymentScreen(): React.ReactElement {
       <BookingProgressBar currentStep={3} />
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-        {/* Amount card */}
+        {}
         <View style={styles.amountCard}>
           <Text style={styles.amountLabel}>{form.paymentType === 'advance' ? 'Advance Payment (30%)' : 'Total Amount'}</Text>
           <Text style={styles.amountValue}>{formatINR(amountToPay)}</Text>
@@ -254,7 +250,7 @@ export default function PaymentScreen(): React.ReactElement {
           )}
         </View>
 
-        {/* Payment method selector */}
+        {}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Select Payment Method</Text>
           <PaymentMethodOption method="upi" label="UPI" subtitle="Google Pay, PhonePe, Paytm & more" icon="phone-portrait-outline" selected={selectedMethod === 'upi'} onSelect={setSelectedMethod} />
@@ -263,7 +259,7 @@ export default function PaymentScreen(): React.ReactElement {
           <PaymentMethodOption method="emi" label="EMI" subtitle="No-cost EMI on select cards" icon="calculator-outline" selected={selectedMethod === 'emi'} disabled onSelect={setSelectedMethod} />
         </View>
 
-        {/* UPI section */}
+        {}
         {selectedMethod === 'upi' && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Pay via UPI</Text>
@@ -300,7 +296,7 @@ export default function PaymentScreen(): React.ReactElement {
         <View style={styles.bottomSpacer} />
       </ScrollView>
 
-      {/* Pay button */}
+      {}
       <View style={styles.stickyBar}>
         <TouchableOpacity style={[styles.payButton, isPending && styles.payButtonLoading]} onPress={() => void handlePay()} disabled={isPending} activeOpacity={0.85} accessibilityRole="button" accessibilityLabel={`Pay ${formatINR(amountToPay)}`}>
           {isPending ? (

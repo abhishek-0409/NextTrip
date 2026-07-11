@@ -1,13 +1,4 @@
-/**
- * @file hooks/useVendorCompany.ts
- * @description Handles vendor company profile queries and mutations.
- *
- * Provides:
- *  - useVendorCompany()     — fetches company profile (null if not yet created)
- *  - useCreateCompany()     — onboarding mutation: creates the company
- *  - useUpdateCompany()     — updates company name/about/logo/etc.
- *  - useSaveCompanyDocument() — saves a Cloudinary-uploaded document record
- */
+
 
 import {
   useMutation,
@@ -36,10 +27,7 @@ export const vendorCompanyQueryKeys = {
 
 // ── Company query ─────────────────────────────────────────────────────────────
 
-/**
- * Fetches the vendor's company profile.
- * Returns data = null if the vendor has not yet completed onboarding.
- */
+
 export function useVendorCompany(): UseQueryResult<VendorCompany | null, Error> {
   const isVendor = useAuthStore((s) => s.user?.role === VENDOR_ROLE);
 
@@ -69,10 +57,7 @@ interface CreateCompanyVars {
   cover_url?: string;
 }
 
-/**
- * Mutation to create the vendor's company profile during onboarding.
- * Invalidates company + dashboard queries on success.
- */
+
 export function useCreateCompany(): UseMutationResult<VendorCompany, Error, CreateCompanyVars> {
   const queryClient = useQueryClient();
 
@@ -100,10 +85,7 @@ interface UpdateCompanyVars {
   cover_url?: string;
 }
 
-/**
- * Mutation to update the vendor's existing company profile.
- * Applies an optimistic update for a snappy UI experience.
- */
+
 export function useUpdateCompany(): UseMutationResult<VendorCompany, Error, UpdateCompanyVars> {
   const queryClient = useQueryClient();
 
@@ -148,9 +130,7 @@ interface SaveDocumentVars {
   label?: string;
 }
 
-/**
- * Mutation to save a company document after Cloudinary upload.
- */
+
 export function useSaveCompanyDocument(): UseMutationResult<CompanyDocument, Error, SaveDocumentVars> {
   return useMutation({
     mutationFn: async (vars) => {

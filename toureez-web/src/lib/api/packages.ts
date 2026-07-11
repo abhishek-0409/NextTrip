@@ -26,7 +26,6 @@ export interface PackageSummary {
   [key: string]: unknown;
 }
 
-/** Backend returns location/category as nested objects; this normalizes them to display strings. */
 export function packageLocationLabel(pkg: PackageSummary): string {
   if (!pkg.location) return '';
   if (typeof pkg.location === 'string') return pkg.location;
@@ -40,7 +39,6 @@ export function packagePrice(pkg: PackageSummary): number | undefined {
   return pkg.pricing?.[0]?.discounted_price ?? pkg.pricing?.[0]?.base_price;
 }
 
-/** Only present on the single-package detail endpoint — list/search/featured endpoints don't select it. */
 export function packagePricingId(pkg: PackageSummary): string | undefined {
   return pkg.pricing?.[0]?.id;
 }

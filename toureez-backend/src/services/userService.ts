@@ -1,7 +1,6 @@
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
 import { supabaseAdmin } from '../lib/supabase';
 import { logger } from '../utils/logger';
-// FIXED: 2 - Use the shared vendor role constant instead of hardcoding the role value.
 import { VENDOR_ROLE, type User, type UserRole } from '../types';
 import type { UpdateProfileInput } from '../utils/validation';
 
@@ -23,7 +22,6 @@ const readNullableString = (record: Record<string, unknown>, key: string): strin
 
 const readRole = (record: Record<string, unknown>): UserRole => {
   const role = readString(record, 'role');
-  // FIXED: 2 - Keep DB logic aligned with the company_owner enum value.
   return role === VENDOR_ROLE || role === 'admin' ? role : 'traveler';
 };
 
@@ -48,9 +46,7 @@ const mapUser = (value: unknown): User => {
   };
 };
 
-/**
- * Fetches a public user profile by Supabase auth user id.
- */
+
 export const getProfile = async (userId: string): Promise<User> => {
   const { data, error } = await supabaseAdmin.from('users').select('*').eq('id', userId).maybeSingle();
 
@@ -65,9 +61,7 @@ export const getProfile = async (userId: string): Promise<User> => {
   return mapUser(data);
 };
 
-/**
- * Partially updates a public user profile and returns the persisted row.
- */
+
 export const updateProfile = async (userId: string, data: UpdateProfileInput): Promise<User> => {
   const updates: Record<string, string> = {};
 
@@ -116,14 +110,7 @@ export const updateProfile = async (userId: string, data: UpdateProfileInput): P
   return mapUser(updatedUser);
 };
 
-/**
- * Permanently deletes the user's account:
- *  1. Soft-cancel any pending/confirmed bookings they have
- *  2. Remove the public.users profile row
- *  3. Delete the auth.users entry via the Supabase Admin API
- *
- * This is irreversible. All personal data is removed per GDPR/DPDP Act.
- */
+
 export const deleteAccount = async (userId: string): Promise<void> => {
   // Cancel any open bookings before deletion so vendors are notified
   const { error: cancelErr } = await supabaseAdmin

@@ -1,7 +1,4 @@
-/**
- * @file components/package/HighlightsSection.tsx
- * @description Numbered list of package highlights with checkmark icons.
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';

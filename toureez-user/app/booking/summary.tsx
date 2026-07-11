@@ -1,8 +1,4 @@
-/**
- * @file app/booking/summary.tsx
- * @description Step 2 of 4 — Review Booking. Sage green design system.
- * All hooks, stores, cancellation policy, and functionality preserved.
- */
+
 
 import React, { useCallback, useMemo, useState } from 'react';
 import {
@@ -199,7 +195,7 @@ export default function BookingSummaryScreen(): React.ReactElement {
         <CancellationPolicy travelDate={form.travelDate} />
         <View style={styles.spacer} />
 
-        {/* Terms checkbox */}
+        {}
         <TouchableOpacity style={styles.termsRow} onPress={() => setTermsAccepted((v) => !v)} activeOpacity={0.8} accessibilityRole="checkbox" accessibilityState={{ checked: termsAccepted }} accessibilityLabel="Accept terms and conditions">
           <View style={[styles.checkbox, termsAccepted && styles.checkboxChecked]}>
             {termsAccepted && <Ionicons name="checkmark" size={14} color={Colors.white} />}
@@ -212,7 +208,7 @@ export default function BookingSummaryScreen(): React.ReactElement {
         <View style={styles.bottomSpacer} />
       </ScrollView>
 
-      {/* Sticky bottom bar */}
+      {}
       <View style={styles.stickyBar}>
         <View style={styles.stickyTotal}>
           <Text style={styles.stickyTotalLabel}>{paymentType === 'advance' ? 'Pay now (30%)' : 'Amount to pay'}</Text>

@@ -1,13 +1,4 @@
-/**
- * @file components/reviews/RatingCategory.tsx
- * @description A single rating category row used on the Write Review screen.
- *
- * Shows:
- *   - Category label (bold)
- *   - Subtitle (descriptive hint)
- *   - Interactive StarRating (1–5)
- *   - "Optional" pill when no rating is set
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -19,7 +10,7 @@ export interface RatingCategoryProps {
   subtitle: string;
   rating: number;
   onRate: (rating: number) => void;
-  /** When true, shows an "Optional" pill. Defaults to true when rating === 0. */
+
   optional?: boolean;
 }
 

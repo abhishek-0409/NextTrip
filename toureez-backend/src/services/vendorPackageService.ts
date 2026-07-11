@@ -1,23 +1,4 @@
-﻿/**
- * @file services/vendorPackageService.ts
- * @description Package CRUD operations scoped to the authenticated vendor.
- *
- * Covers:
- *  - Listing vendor's own packages with filters/pagination
- *  - Fetching package detail (with pricing, itinerary, images)
- *  - Creating a draft package
- *  - Updating package core fields
- *  - Submitting a package for admin review (draft → pending)
- *  - Upserting pricing tiers (full replacement)
- *  - Upserting itinerary days (full replacement)
- *  - Saving package images (Cloudinary URL already uploaded by client)
- *  - Deleting a package image
- *  - Setting a package image as cover
- *
- * All operations enforce ownership by resolving the vendor's company_id
- * and verifying that every package being mutated belongs to that company.
- * Status-based soft-delete is preferred over hard delete when bookings exist.
- */
+
 
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
 import { supabaseAdmin } from '../lib/supabase';
@@ -144,10 +125,6 @@ const throwDb = (op: string, err: unknown): never => {
 
 // ── Ownership guard ───────────────────────────────────────────────────────────
 
-/**
- * Resolves the company ID for the given owner and returns it.
- * Throws 404 if no company exists for this owner.
- */
 export async function resolveCompanyId(ownerId: string): Promise<string> {
   const { data, error } = await supabaseAdmin
     .from('companies')
@@ -162,10 +139,6 @@ export async function resolveCompanyId(ownerId: string): Promise<string> {
   return (data as { id: string }).id;
 }
 
-/**
- * Verifies that the given package belongs to the vendor's company.
- * Throws 403 if ownership check fails, 404 if package does not exist.
- */
 async function assertPackageOwnership(packageId: string, companyId: string): Promise<void> {
   const { data, error } = await supabaseAdmin
     .from('packages')
@@ -282,10 +255,6 @@ const mapImage = (row: Record<string, unknown>): VendorPackageImage => ({
 
 // ── Package list ──────────────────────────────────────────────────────────────
 
-/**
- * Lists packages belonging to the vendor's company.
- * Supports status filter, full-text search, and pagination.
- */
 export async function listVendorPackages(
   ownerId: string,
   query: VendorListPackagesQuery,
@@ -336,10 +305,6 @@ export async function listVendorPackages(
 
 // ── Package detail ────────────────────────────────────────────────────────────
 
-/**
- * Fetches full package detail for editing.
- * Includes pricing tiers, itinerary days, and gallery images.
- */
 export async function getVendorPackage(ownerId: string, packageId: string): Promise<VendorPackageDetail> {
   const companyId = await resolveCompanyId(ownerId);
   await assertPackageOwnership(packageId, companyId);
@@ -408,9 +373,6 @@ export async function getVendorPackage(ownerId: string, packageId: string): Prom
 
 // ── Create package ────────────────────────────────────────────────────────────
 
-/**
- * Creates a new draft package for the vendor.
- */
 export async function createVendorPackage(
   ownerId: string,
   input: CreatePackageInput,
@@ -463,10 +425,6 @@ export async function createVendorPackage(
 
 // ── Update package ────────────────────────────────────────────────────────────
 
-/**
- * Partially updates a vendor's package.
- * Only provided fields are applied. Active packages revert to draft on changes.
- */
 export async function updateVendorPackage(
   ownerId: string,
   packageId: string,
@@ -506,7 +464,6 @@ export async function updateVendorPackage(
 
 // ── Submit for review ─────────────────────────────────────────────────────────
 
-/** Fields required before a package can be submitted for admin review. */
 const REQUIRED_FOR_SUBMIT = [
   'location_id',
   'category_id',
@@ -514,10 +471,6 @@ const REQUIRED_FOR_SUBMIT = [
   'duration_days',
 ] as const;
 
-/**
- * Transitions a package from draft to pending (submitted for admin review).
- * Validates that all required fields are populated before transitioning.
- */
 export async function submitVendorPackage(
   ownerId: string,
   packageId: string,
@@ -609,11 +562,6 @@ export async function submitVendorPackage(
 
 // ── Pricing ───────────────────────────────────────────────────────────────────
 
-/**
- * Replaces all pricing tiers for a package.
- * Existing tiers not present in the new payload are deleted.
- * Existing tiers with matching IDs are updated; new tiers are inserted.
- */
 export async function upsertPackagePricing(
   ownerId: string,
   packageId: string,
@@ -691,9 +639,6 @@ export async function upsertPackagePricing(
 
 // ── Itinerary ─────────────────────────────────────────────────────────────────
 
-/**
- * Replaces all itinerary days for a package (full replacement).
- */
 export async function upsertPackageItinerary(
   ownerId: string,
   packageId: string,
@@ -730,10 +675,6 @@ export async function upsertPackageItinerary(
 
 // ── Images ────────────────────────────────────────────────────────────────────
 
-/**
- * Saves a package image record after the file has been uploaded to Cloudinary.
- * Automatically assigns display_order as last in the gallery.
- */
 export async function savePackageImage(
   ownerId: string,
   packageId: string,
@@ -784,10 +725,6 @@ export async function savePackageImage(
   return mapImage(toRecord(data));
 }
 
-/**
- * Deletes a package image. Prefers soft-delete semantics where bookings exist.
- * If the deleted image was the cover, promotes the next image to cover.
- */
 export async function deletePackageImage(
   ownerId: string,
   packageId: string,
@@ -837,10 +774,6 @@ export async function deletePackageImage(
   }
 }
 
-/**
- * Sets a specific image as the package cover.
- * Unsets is_cover on all other images for this package.
- */
 export async function setPackageCoverImage(
   ownerId: string,
   packageId: string,
@@ -899,12 +832,6 @@ export interface VendorBookingDetail extends VendorBookingListItem {
   } | null;
 }
 
-/**
- * Maps a booking row to VendorBookingListItem.
- * userRaw must be passed separately because bookings.user_id references
- * auth.users (not public.users), so the embed cannot be done in a single
- * PostgREST query — user data is fetched in a subsequent batch query.
- */
 const mapBookingListItem = (
   row: Record<string, unknown>,
   userRaw: Record<string, unknown> = {},
@@ -941,9 +868,6 @@ const mapBookingListItem = (
   };
 };
 
-/**
- * Lists bookings for the vendor's company with filters and pagination.
- */
 export async function listVendorBookings(
   ownerId: string,
   params: {
@@ -1014,9 +938,6 @@ export async function listVendorBookings(
   };
 }
 
-/**
- * Fetches a single booking detail with traveler info and payment details.
- */
 export async function getVendorBooking(
   ownerId: string,
   bookingId: string,
@@ -1074,10 +995,6 @@ export async function getVendorBooking(
   };
 }
 
-/**
- * Deletes a draft or rejected package.
- * Refuses deletion if the package is active/pending or has any bookings.
- */
 export async function deleteVendorPackage(ownerId: string, packageId: string): Promise<void> {
   const companyId = await resolveCompanyId(ownerId);
   await assertPackageOwnership(packageId, companyId);
@@ -1117,12 +1034,6 @@ export async function deleteVendorPackage(ownerId: string, packageId: string): P
   if (deleteErr !== null) throwDb('deleteVendorPackage.delete', deleteErr);
 }
 
-/**
- * Updates a booking's status.
- * Vendor-allowed transitions:
- *   pending    → confirmed | cancelled
- *   confirmed  → completed | cancelled
- */
 export async function updateVendorBookingStatus(
   ownerId: string,
   bookingId: string,
@@ -1176,12 +1087,6 @@ export async function updateVendorBookingStatus(
   return getVendorBooking(ownerId, bookingId);
 }
 
-/**
- * Duplicates an existing package as a new draft, copying all core fields,
- * pricing tiers, and itinerary (but NOT images — those belong to the original).
- *
- * Returns the newly created draft package.
- */
 export async function duplicateVendorPackage(
   ownerId: string,
   packageId: string,

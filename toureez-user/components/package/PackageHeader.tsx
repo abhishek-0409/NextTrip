@@ -1,8 +1,4 @@
-/**
- * @file components/package/PackageHeader.tsx
- * @description Title, badges, category, location, rating, duration,
- * group size, and wishlist button for the package detail screen.
- */
+
 
 import React, { useCallback } from 'react';
 import {
@@ -39,7 +35,7 @@ export function PackageHeader({ pkg }: PackageHeaderProps): React.ReactElement {
 
   return (
     <View style={styles.container}>
-      {/* Badges row */}
+      {}
       {(pkg.is_featured || pkg.is_bestseller) && (
         <View style={styles.badgesRow}>
           {pkg.is_featured && (
@@ -55,7 +51,7 @@ export function PackageHeader({ pkg }: PackageHeaderProps): React.ReactElement {
         </View>
       )}
 
-      {/* Title + wishlist */}
+      {}
       <View style={styles.titleRow}>
         <Text style={styles.title}>{pkg.title}</Text>
         <Pressable
@@ -75,7 +71,7 @@ export function PackageHeader({ pkg }: PackageHeaderProps): React.ReactElement {
         </Pressable>
       </View>
 
-      {/* Category pill */}
+      {}
       <View style={styles.categoryPill}>
         <Text style={styles.categoryIcon} numberOfLines={1}>
           {pkg.category.icon}
@@ -85,7 +81,7 @@ export function PackageHeader({ pkg }: PackageHeaderProps): React.ReactElement {
         </Text>
       </View>
 
-      {/* Location */}
+      {}
       <View style={styles.metaRow}>
         <Ionicons name="location-outline" size={15} color={Colors.textSecondary} />
         <Text style={styles.metaText} numberOfLines={1}>
@@ -94,7 +90,7 @@ export function PackageHeader({ pkg }: PackageHeaderProps): React.ReactElement {
         </Text>
       </View>
 
-      {/* Rating */}
+      {}
       <View style={styles.ratingRow}>
         {Array.from({ length: 5 }, (_, i) => {
           const filled = i < fullStars;
@@ -116,7 +112,7 @@ export function PackageHeader({ pkg }: PackageHeaderProps): React.ReactElement {
         </Text>
       </View>
 
-      {/* Duration + group size */}
+      {}
       <View style={styles.detailsRow}>
         <View style={styles.detailChip}>
           <Ionicons name="time-outline" size={15} color={Colors.primary} />

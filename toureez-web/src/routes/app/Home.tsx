@@ -62,7 +62,6 @@ const VIBE_DESTINATIONS = [
   },
 ];
 
-
 const TESTIMONIALS = [
   { name: 'Carolina', quote: 'This ride was magical! Thank you for making it effortless.', image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=400&q=70' },
   { name: 'Alessia Marika', quote: 'The guided tour was excellent. I wasn’t much about the history and culture.', image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=70' },

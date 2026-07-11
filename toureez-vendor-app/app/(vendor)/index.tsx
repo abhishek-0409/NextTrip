@@ -1,8 +1,4 @@
-﻿/**
- * @file app/(vendor)/index.tsx
- * Vendor Dashboard — Luxury dark-mode SaaS redesign.
- * Airbnb Host + Stripe + Linear inspired premium UI.
- */
+
 
 import React, { useCallback, useMemo, useState } from 'react';
 import {
@@ -229,7 +225,7 @@ export default function DashboardScreen(): React.ReactElement {
         <RefreshControl refreshing={isFetching && !isLoading} onRefresh={onRefresh} tintColor={D.primary} colors={[D.primary]} />
       }
     >
-      {/* ── Header ─────────────────────────────────────────────── */}
+      {}
       <View style={styles.header}>
         <View style={styles.logoRow}>
           <View style={styles.logoIcon}>
@@ -259,7 +255,7 @@ export default function DashboardScreen(): React.ReactElement {
         </View>
       </View>
 
-      {/* ── Hero / welcome ─────────────────────────────────────── */}
+      {}
       <View style={styles.hero}>
         <View style={{ flex: 1 }}>
           <Text style={styles.heroGreeting}>{greeting}</Text>
@@ -272,7 +268,7 @@ export default function DashboardScreen(): React.ReactElement {
         </TouchableOpacity>
       </View>
 
-      {/* ── 4 Stat cards (2×2) ────────────────────────────────── */}
+      {}
       <View style={styles.statGrid}>
         <StatCard
           icon="cube-outline"
@@ -308,7 +304,7 @@ export default function DashboardScreen(): React.ReactElement {
         />
       </View>
 
-      {/* ── Earnings overview ──────────────────────────────────── */}
+      {}
       <View style={styles.earnCard}>
         <View style={styles.earnHeader}>
           <View>
@@ -338,7 +334,7 @@ export default function DashboardScreen(): React.ReactElement {
         </View>
       </View>
 
-      {/* ── Month picker modal ─────────────────────────────────── */}
+      {}
       <Modal
         visible={monthModalVisible}
         animationType="slide"
@@ -377,7 +373,7 @@ export default function DashboardScreen(): React.ReactElement {
         </Pressable>
       </Modal>
 
-      {/* ── Quick actions ──────────────────────────────────────── */}
+      {}
       <View style={styles.section}>
         <Text style={styles.secTitle}>Quick Actions</Text>
         <View style={styles.qaCard}>
@@ -419,7 +415,7 @@ export default function DashboardScreen(): React.ReactElement {
         </View>
       </View>
 
-      {/* ── Recent bookings ────────────────────────────────────── */}
+      {}
       <View style={styles.section}>
         <View style={styles.secRow}>
           <Text style={styles.secTitle}>Recent Bookings</Text>
@@ -446,7 +442,7 @@ export default function DashboardScreen(): React.ReactElement {
         )}
       </View>
 
-      {/* ── Performance overview ───────────────────────────────── */}
+      {}
       <View style={styles.section}>
         <Text style={styles.secTitle}>Performance</Text>
         <View style={styles.perfGrid}>
@@ -467,7 +463,7 @@ export default function DashboardScreen(): React.ReactElement {
         </View>
       </View>
 
-      {/* ── Reviews summary ────────────────────────────────────── */}
+      {}
       <View style={styles.section}>
         <View style={styles.secRow}>
           <Text style={styles.secTitle}>Customer Reviews</Text>
@@ -476,7 +472,7 @@ export default function DashboardScreen(): React.ReactElement {
           </TouchableOpacity>
         </View>
         <View style={styles.reviewCard}>
-          {/* Rating summary */}
+          {}
           <View style={styles.reviewSummary}>
             <View style={styles.reviewBig}>
               <Ionicons name="star" size={24} color={D.star} />
@@ -490,7 +486,7 @@ export default function DashboardScreen(): React.ReactElement {
         </View>
       </View>
 
-      {/* ── Grow your business ─────────────────────────────────── */}
+      {}
       <View style={styles.growCard}>
         <View style={styles.growOverlay} />
         <View style={{ flex: 1 }}>
@@ -508,7 +504,7 @@ export default function DashboardScreen(): React.ReactElement {
         <Ionicons name="rocket-outline" size={56} color={D.primary} style={{ opacity: 0.3 }} />
       </View>
 
-      {/* ── Need help ──────────────────────────────────────────── */}
+      {}
       <View style={styles.helpCard}>
         <View style={styles.helpLeft}>
           <View style={[styles.perfIcon, { backgroundColor: D.infoDim }]}>

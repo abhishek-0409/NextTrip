@@ -1,10 +1,4 @@
-/**
- * @file utils/dbHelpers.ts
- * @description Shared safe-accessor helpers for PostgREST/Supabase row data.
- *
- * All three service files (adminService, auditLogService, payoutService)
- * previously duplicated these functions. A fix here applies everywhere.
- */
+
 
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
 import { logger } from './logger';
@@ -16,11 +10,7 @@ export const isRecord = (v: unknown): v is Record<string, unknown> =>
 
 // ── Row coercion ──────────────────────────────────────────────────────────────
 
-/**
- * Coerces an unknown value to a plain object.
- * If the value is an array, the first element is used (handles PostgREST
- * embedding that returns a single-element array for to-one relations).
- */
+
 export const toRecord = (v: unknown): Record<string, unknown> =>
   isRecord(v) ? v : Array.isArray(v) && isRecord(v[0]) ? (v[0] as Record<string, unknown>) : {};
 
@@ -50,10 +40,7 @@ export const readArray = (r: Record<string, unknown>, k: string): unknown[] =>
 
 // ── Error helper ──────────────────────────────────────────────────────────────
 
-/**
- * Logs a DB error and throws a standardised AppError(500).
- * Pass the fully-qualified operation name, e.g. `'adminService.listUsers'`.
- */
+
 export const throwDb = (op: string, err: unknown): never => {
   // Surface the PostgREST error code + message so it's immediately visible in logs.
   const code    = isRecord(err) ? String(err['code']    ?? '') : '';

@@ -1,11 +1,4 @@
-﻿/**
- * @file app/(vendor)/company.tsx
- * @description Company profile edit screen.
- *
- * Loads the existing company profile via useVendorCompany() and allows the
- * vendor to update name, about, GST number, and logo. Changes are persisted
- * via useUpdateCompany() which applies an optimistic update in the cache.
- */
+
 
 import React, { useEffect, useState } from 'react';
 import {
@@ -161,7 +154,7 @@ export default function CompanyScreen(): React.ReactElement {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* Verification status */}
+        {}
         <View style={[
           styles.statusBanner,
           {
@@ -197,7 +190,7 @@ export default function CompanyScreen(): React.ReactElement {
           </Text>
         </View>
 
-        {/* Logo */}
+        {}
         <View style={[styles.section, Shadows.sm]}>
           <Text style={styles.sectionTitle}>Company Logo</Text>
           <View style={styles.logoRow}>
@@ -231,7 +224,7 @@ export default function CompanyScreen(): React.ReactElement {
           </View>
         </View>
 
-        {/* Basic info */}
+        {}
         <View style={[styles.section, Shadows.sm]}>
           <Text style={styles.sectionTitle}>Company Details</Text>
           <View style={styles.fields}>
@@ -267,7 +260,7 @@ export default function CompanyScreen(): React.ReactElement {
           </View>
         </View>
 
-        {/* Read-only stats */}
+        {}
         <View style={[styles.section, Shadows.sm]}>
           <Text style={styles.sectionTitle}>Stats (Read-only)</Text>
           <View style={styles.statsRow}>

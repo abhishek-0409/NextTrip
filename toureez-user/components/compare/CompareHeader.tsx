@@ -1,8 +1,4 @@
-/**
- * @file components/compare/CompareHeader.tsx
- * @description Sticky top row — package photo cards, horizontally scrollable.
- * The label spacer on the left is fixed; only the package columns scroll.
- */
+
 
 import React, { useCallback } from 'react';
 import {
@@ -41,7 +37,7 @@ function PackageColumn({ pkg, onRemove }: PackageColumnProps): React.ReactElemen
 
   return (
     <View style={styles.column}>
-      {/* Remove button */}
+      {}
       <Pressable
         style={styles.removeBtn}
         onPress={handleRemove}
@@ -52,7 +48,7 @@ function PackageColumn({ pkg, onRemove }: PackageColumnProps): React.ReactElemen
         <Ionicons name="close" size={13} color={Colors.white} />
       </Pressable>
 
-      {/* Cover image */}
+      {}
       {pkg.cover_image ? (
         <Image
           source={{ uri: pkg.cover_image }}
@@ -66,12 +62,12 @@ function PackageColumn({ pkg, onRemove }: PackageColumnProps): React.ReactElemen
         </View>
       )}
 
-      {/* Title */}
+      {}
       <Text style={styles.title} numberOfLines={2}>
         {pkg.title}
       </Text>
 
-      {/* Company + verified */}
+      {}
       <View style={styles.companyRow}>
         <Text style={styles.company} numberOfLines={1}>
           {pkg.company.name}
@@ -86,7 +82,7 @@ function PackageColumn({ pkg, onRemove }: PackageColumnProps): React.ReactElemen
         )}
       </View>
 
-      {/* Rating pill */}
+      {}
       <View style={styles.ratingPill}>
         <Ionicons name="star" size={11} color={Colors.star} />
         <Text style={styles.ratingText} numberOfLines={1}>
@@ -113,14 +109,14 @@ export function CompareHeader({
 
   return (
     <View style={styles.container}>
-      {/* Fixed label spacer */}
+      {}
       <View style={styles.labelSpacer}>
         <Text style={styles.labelSpacerText} numberOfLines={1}>
           Package
         </Text>
       </View>
 
-      {/* Scrollable columns */}
+      {}
       <ScrollView
         ref={scrollRef}
         horizontal

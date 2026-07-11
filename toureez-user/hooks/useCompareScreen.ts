@@ -1,14 +1,4 @@
-/**
- * @file hooks/useCompareScreen.ts
- * @description Data-fetching hook for the comparison screen.
- *
- * Reads package IDs from compareStore, calls GET /api/v1/packages/compare?ids=
- * which returns PackageListItem[] with badges already computed by the backend.
- * Falls back to the compareStore's cached ComparePackage data while loading.
- *
- * Named useCompareScreen to avoid collision with the existing useCompare.ts
- * tray-controller hook.
- */
+
 
 import { useQuery } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';
@@ -52,10 +42,7 @@ function pushTiedBadges(
     .forEach((e) => badges.push({ type, package_id: e.package_id }));
 }
 
-/**
- * Client-side badge computation — exact mirror of backend badgeService.ts.
- * Used as a fallback when the API response doesn't include badges.
- */
+
 export function computeBadgesClient(packages: PackageListItem[]): Badge[] {
   const badges: Badge[] = [];
   pushTiedBadges(badges, packages, 'best_value', lowestPrice);

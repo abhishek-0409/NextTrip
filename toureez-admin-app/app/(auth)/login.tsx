@@ -1,7 +1,4 @@
-﻿/**
- * @file app/(auth)/login.tsx
- * Enterprise admin sign-in screen.
- */
+
 
 import { router } from 'expo-router';
 import React, { useState } from 'react';
@@ -61,7 +58,7 @@ export default function LoginScreen(): React.ReactElement {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.cardWrap}>
-            {/* Brand */}
+            {}
             <View style={styles.brand}>
               <View style={styles.logoBox}>
                 <Text style={styles.logoGlyph}>✈</Text>
@@ -72,7 +69,7 @@ export default function LoginScreen(): React.ReactElement {
               </Text>
             </View>
 
-            {/* Card */}
+            {}
             <View style={styles.card}>
               <Text style={styles.cardTitle}>Sign in</Text>
               <Text style={styles.cardSubtitle}>

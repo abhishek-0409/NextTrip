@@ -1,15 +1,4 @@
-/**
- * @file app/category/[slug].tsx
- * @description Dedicated category package listing screen.
- *
- * Opened when the user taps a category chip (Pilgrimage, Adventure, etc.)
- * on the home screen. Shows ONLY packages for that category — no search bar,
- * no recent searches. Just a clean header, sort/filter controls, and the
- * package list.
- *
- * Route:  /category/:slug
- * Params: slug — lowercase category name, e.g. "pilgrimage", "adventure"
- */
+
 
 import React, {
   useCallback,
@@ -234,9 +223,9 @@ export default function CategoryScreen(): React.ReactElement {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
       <Animated.View style={[styles.animatedRoot, slideUp.animatedStyle]}>
-        {/* ── Category header ─────────────────────────────────────────────── */}
+        {}
         <View style={[styles.header, Shadows.soft]}>
-          {/* Back button */}
+          {}
           <Pressable
             style={styles.backButton}
             onPress={() => router.back()}
@@ -247,7 +236,7 @@ export default function CategoryScreen(): React.ReactElement {
             <Ionicons name="arrow-back" size={22} color={Colors.navy} />
           </Pressable>
 
-          {/* Title + subtitle */}
+          {}
           <View style={styles.titleArea}>
             <Text style={styles.headerEmoji} accessibilityElementsHidden>
               {meta.icon}
@@ -262,7 +251,7 @@ export default function CategoryScreen(): React.ReactElement {
             </View>
           </View>
 
-          {/* Filter button with badge */}
+          {}
           <Pressable
             style={[
               styles.filterButton,
@@ -290,7 +279,7 @@ export default function CategoryScreen(): React.ReactElement {
           </Pressable>
         </View>
 
-        {/* ── Package list ─────────────────────────────────────────────────── */}
+        {}
         <PackageList
           items={items}
           isLoading={isLoading && !isRefreshing}
@@ -307,7 +296,7 @@ export default function CategoryScreen(): React.ReactElement {
         />
       </Animated.View>
 
-      {/* ── Modals ──────────────────────────────────────────────────────────── */}
+      {}
       <FilterBottomSheet
         visible={isFilterSheetOpen}
         filters={activeFilters}

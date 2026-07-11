@@ -1,11 +1,4 @@
-﻿/**
- * @file components/package/PhotoGallery.tsx
- * @description Full-width horizontal image pager with dot indicators,
- * image counter, fullscreen modal, back button, and share button.
- *
- * Built with ScrollView in pagingEnabled mode — no third-party pager
- * library required. Fullscreen uses a Modal with the same pager inside.
- */
+
 
 import React, {
   useCallback,
@@ -147,7 +140,7 @@ export function PhotoGallery({
     return (
       <View style={styles.container}>
         <GalleryFallback />
-        {/* Overlay buttons on fallback too */}
+        {}
         <View style={[styles.overlayButtons, { top: insets.top + 8 }]}>
           <Pressable
             style={styles.overlayButton}
@@ -174,7 +167,7 @@ export function PhotoGallery({
 
   return (
     <View style={styles.container}>
-      {/* Main pager */}
+      {}
       <ScrollView
         ref={scrollRef}
         horizontal
@@ -204,14 +197,14 @@ export function PhotoGallery({
         ))}
       </ScrollView>
 
-      {/* Counter top-right */}
+      {}
       <View style={[styles.counter, { top: insets.top + 8 }]}>
         <Text style={styles.counterText} numberOfLines={1}>
           {activeIndex + 1} / {images.length}
         </Text>
       </View>
 
-      {/* Back + Share buttons */}
+      {}
       <View style={[styles.overlayButtons, { top: insets.top + 8 }]}>
         <Pressable
           style={styles.overlayButton}
@@ -233,10 +226,10 @@ export function PhotoGallery({
         </Pressable>
       </View>
 
-      {/* Dot indicators */}
+      {}
       <Dots count={images.length} activeIndex={activeIndex} />
 
-      {/* Fullscreen modal */}
+      {}
       <Modal
         visible={fullscreenVisible}
         transparent={false}
@@ -268,14 +261,14 @@ export function PhotoGallery({
             ))}
           </ScrollView>
 
-          {/* Fullscreen counter */}
+          {}
           <View style={[styles.fullscreenCounter, { top: insets.top + 16 }]}>
             <Text style={styles.counterText} numberOfLines={1}>
               {fullscreenIndex + 1} / {images.length}
             </Text>
           </View>
 
-          {/* Close button */}
+          {}
           <Pressable
             style={[styles.fullscreenClose, { top: insets.top + 8 }]}
             onPress={closeFullscreen}

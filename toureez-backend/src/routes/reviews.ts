@@ -1,11 +1,4 @@
-/**
- * @file routes/reviews.ts
- * @description Reviews & Ratings API routes.
- *
- * POST /api/v1/reviews                        — Submit a review (protected)
- * GET  /api/v1/reviews/package/:packageId     — Get published reviews (public)
- * GET  /api/v1/reviews/eligible/:packageId    — Check eligibility (protected)
- */
+
 
 import { Router } from 'express';
 import { z } from 'zod';
@@ -94,13 +87,7 @@ const PackageReviewsQuerySchema = z.object({
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 
-/**
- * POST /api/v1/reviews
- * Submits a new review for a completed booking.
- *
- * Protected — requires a valid Bearer token.
- * Validates: booking ownership, completed status, no duplicate, ≥1 rating.
- */
+
 reviewsRouter.post('/', requireAuth, async (req, res, next) => {
   try {
     const parsed = CreateReviewSchema.safeParse(req.body);
@@ -128,14 +115,7 @@ reviewsRouter.post('/', requireAuth, async (req, res, next) => {
   }
 });
 
-/**
- * GET /api/v1/reviews/package/:packageId
- * Returns paginated published reviews for a package.
- *
- * Public route — no auth required.
- * Query params: page (default 1), limit (default 10, max 50)
- * Ordered by created_at desc.
- */
+
 reviewsRouter.get('/package/:packageId', async (req, res, next) => {
   try {
     const { id: packageId } = UuidParamSchema.parse({
@@ -156,13 +136,7 @@ reviewsRouter.get('/package/:packageId', async (req, res, next) => {
   }
 });
 
-/**
- * GET /api/v1/reviews/eligible/:packageId
- * Checks if the authenticated user can review the given package.
- *
- * Protected — requires a valid Bearer token.
- * Returns { can_review: boolean, booking_id?: string }
- */
+
 reviewsRouter.get('/eligible/:packageId', requireAuth, async (req, res, next) => {
   try {
     const { id: packageId } = UuidParamSchema.parse({

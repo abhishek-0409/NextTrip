@@ -1,19 +1,4 @@
-/**
- * @file components/booking/PriceBreakdown.tsx
- * @description Itemised price breakdown card.
- *
- * Shows: base price × travelers, group discount (7+ pax), GST (5%), total.
- * Mirrors the backend calculatePrice() function exactly — no phantom discounts.
- *
- * Calculation (authoritative — matches bookingService.ts):
- *   subtotal          = base_price × num_travelers
- *   group_discount    = subtotal × 5%  (only when num_travelers >= 7)
- *   discounted_sub    = subtotal − group_discount
- *   gst               = round(discounted_sub × 5%)
- *   total_amount      = discounted_sub + gst
- *   advance_amount    = round(total × 30%)   [advance only]
- *   balance_amount    = total − advance       [advance only]
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -26,7 +11,7 @@ import type { PriceCalculation } from '../../types';
 
 interface PriceBreakdownProps {
   calculation: PriceCalculation;
-  /** Show the advance/balance split when payment_type is 'advance' */
+
   showPaymentSplit?: boolean;
 }
 
@@ -168,14 +153,14 @@ export function PriceBreakdown({
     <View style={styles.card}>
       <Text style={styles.title}>Price Breakdown</Text>
 
-      {/* Base price × travelers */}
+      {}
       <LineItem
         label={`Base price × ${num_travelers} traveler${num_travelers > 1 ? 's' : ''}`}
         value={formatINR(subtotal)}
         hint={`${formatINR(base_price)} per person`}
       />
 
-      {/* Group discount — only shown when applied (7+ travelers) */}
+      {}
       {group_discount > 0 ? (
         <LineItem
           label="Group discount (5%)"
@@ -185,14 +170,14 @@ export function PriceBreakdown({
         />
       ) : null}
 
-      {/* GST — applied on subtotal after group discount */}
+      {}
       <LineItem
         label="GST (5%)"
         value={formatINR(gst)}
         hint="As per Indian travel package regulations"
       />
 
-      {/* Divider + Total */}
+      {}
       <LineItem
         label="Total Amount"
         value={formatINR(total_amount)}
@@ -200,7 +185,7 @@ export function PriceBreakdown({
         isBold
       />
 
-      {/* Advance/balance split — only shown for advance payment */}
+      {}
       {showPaymentSplit && payment_type === 'advance' ? (
         <View style={styles.splitContainer}>
           <View style={styles.splitRow}>

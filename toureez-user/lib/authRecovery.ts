@@ -1,6 +1,4 @@
-/**
- * Helpers for Supabase password-recovery deep links.
- */
+
 
 export interface RecoveryLinkParams {
   code?: string;

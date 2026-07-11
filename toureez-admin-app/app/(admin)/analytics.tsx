@@ -1,7 +1,4 @@
-/**
- * @file app/(admin)/analytics.tsx
- * @description Admin platform analytics — revenue, growth, booking funnel.
- */
+
 
 import { router } from 'expo-router';
 import React from 'react';
@@ -97,7 +94,7 @@ export default function AdminAnalyticsScreen(): React.ReactElement {
       refreshing={isFetching && !isLoading}
       onRefresh={() => void refetch()}
     >
-      {/* ── Summary tiles ── */}
+      {}
       <View style={styles.tileRow}>
         <View style={styles.tile}>
           <Text style={styles.tileLabel}>Revenue (6 mo)</Text>
@@ -121,7 +118,7 @@ export default function AdminAnalyticsScreen(): React.ReactElement {
         </View>
       </View>
 
-      {/* ── Revenue chart ── */}
+      {}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Monthly Revenue</Text>
         {revenueData.length === 0 ? (
@@ -139,7 +136,7 @@ export default function AdminAnalyticsScreen(): React.ReactElement {
         )}
       </View>
 
-      {/* ── Booking funnel ── */}
+      {}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Booking Funnel</Text>
         <FunnelStep label="Pending" count={funnel.pending} color={Colors.warning} />
@@ -148,7 +145,7 @@ export default function AdminAnalyticsScreen(): React.ReactElement {
         <FunnelStep label="Cancelled" count={funnel.cancelled} color={Colors.error} />
       </View>
 
-      {/* ── Vendor stats ── */}
+      {}
       {data?.vendor_stats && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Vendor Status</Text>

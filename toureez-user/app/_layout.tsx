@@ -1,7 +1,4 @@
-﻿/**
- * @file app/_layout.tsx
- * @description Root layout, session resolver, auth listener, and auth gate.
- */
+
 
 import React, { useEffect } from 'react';
 import { AppState, type AppStateStatus } from 'react-native';
@@ -72,7 +69,6 @@ function AppLayout(): React.ReactElement {
   // index.tsx handles the initial cold-start redirect (single source of truth).
   // This effect handles SUBSEQUENT auth changes — e.g. user logs in while on
   // the login screen, or session expires while the user is on a tabs screen.
-  //
   // By checking which *group* the user is currently in, we avoid the double-
   // navigation race that occurs when both this effect and index.tsx's <Redirect>
   // fire simultaneously on cold start.
@@ -91,7 +87,6 @@ function AppLayout(): React.ReactElement {
     }
 
     if (user && isInProtectedGroup && rootSegment !== getHomeGroupForRole(user.role)) {
-      // FIXED: 1 - Prevent cross-role access between traveler, vendor, and admin shells.
       router.replace(getHomeRouteForRole(user.role));
       return;
     }

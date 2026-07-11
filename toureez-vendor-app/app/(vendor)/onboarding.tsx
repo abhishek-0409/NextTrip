@@ -1,11 +1,4 @@
-﻿/**
- * @file app/(vendor)/onboarding.tsx
- * @description Company onboarding screen — shown when the vendor has not yet
- * created their company profile.
- *
- * Creates the company via useCreateCompany() and redirects to the dashboard
- * on success. The vendor may also upload a logo via Cloudinary.
- */
+
 
 import React, { useState } from 'react';
 import {
@@ -96,7 +89,7 @@ export default function OnboardingScreen(): React.ReactElement {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* Brand */}
+        {}
         <View style={styles.brand}>
           <View style={styles.logoContainer}>
             <Ionicons name="briefcase" size={32} color={Colors.textWhite} />
@@ -104,14 +97,14 @@ export default function OnboardingScreen(): React.ReactElement {
           <Text style={styles.brandName}>Toureez</Text>
         </View>
 
-        {/* Card */}
+        {}
         <View style={[styles.card, Shadows.md]}>
           <Text style={styles.heading}>Set Up Your Business</Text>
           <Text style={styles.subheading}>
             Tell us about your travel company to start creating packages and receiving bookings.
           </Text>
 
-          {/* Logo upload */}
+          {}
           <Text style={styles.fieldLabel}>Company Logo <Text style={styles.optional}>(optional)</Text></Text>
           <Pressable
             style={styles.logoUpload}

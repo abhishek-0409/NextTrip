@@ -1,10 +1,4 @@
-/**
- * @file components/booking/ConfirmationCard.tsx
- * @description Booking reference card shown on the confirmation screen.
- *
- * Displays the booking reference in large bold text with a copy button.
- * Also shows package title, travel date, traveler count, and amount paid.
- */
+
 
 import React, { useCallback, useState } from 'react';
 import {
@@ -65,7 +59,7 @@ export function ConfirmationCard({
 
   return (
     <View style={styles.card}>
-      {/* Booking reference */}
+      {}
       <View style={styles.referenceSection}>
         <Text style={styles.referenceLabel}>Booking Reference</Text>
         <View style={styles.referenceRow}>
@@ -95,7 +89,7 @@ export function ConfirmationCard({
 
       <View style={styles.divider} />
 
-      {/* Booking details */}
+      {}
       <View style={styles.detailsGrid}>
         <DetailRow
           icon="briefcase-outline"

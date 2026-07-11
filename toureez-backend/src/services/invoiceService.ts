@@ -1,7 +1,4 @@
-﻿/**
- * @file services/invoiceService.ts
- * @description Generates a GST-compliant tax invoice PDF for a confirmed booking.
- */
+
 
 import PDFDocument from 'pdfkit';
 import { AppError, ERROR_MESSAGES } from '../constants/errors';

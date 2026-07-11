@@ -1,17 +1,4 @@
-/**
- * @file hooks/usePushNotifications.ts
- * @description Registers for Expo push notifications and saves the token to the backend.
- *
- * Call this hook once in the root layout after the user is authenticated.
- * The token is persisted to AsyncStorage so we only re-register if it changes.
- *
- * Prerequisites:
- *  - expo-notifications installed
- *  - expo-device installed
- *  - expo-notifications plugin added to app.json
- *  - FCM credentials set up in EAS (Android)
- *  - APNs key uploaded in EAS (iOS)
- */
+
 
 import { useEffect } from 'react';
 import { Platform } from 'react-native';

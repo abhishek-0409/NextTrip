@@ -1,7 +1,4 @@
-/**
- * @file app/(vendor)/bookings/_layout.tsx
- * @description Stack navigator for the Bookings tab.
- */
+
 
 import { Stack } from 'expo-router';
 import React from 'react';

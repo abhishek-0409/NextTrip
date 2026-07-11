@@ -1,7 +1,4 @@
-/**
- * @file components/search/ResultsHeader.tsx
- * @description Shows result count, sort button, and view toggle row.
- */
+
 
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -42,7 +39,7 @@ export function ResultsHeader({
       </Text>
 
       <View style={styles.actions}>
-        {/* Sort button */}
+        {}
         <Pressable
           style={styles.sortButton}
           onPress={onSortPress}
@@ -65,7 +62,7 @@ export function ResultsHeader({
           />
         </Pressable>
 
-        {/* Grid toggle — Phase 1: list only, grid greyed out */}
+        {}
         <View style={styles.viewToggle}>
           <View style={[styles.toggleButton, styles.toggleButtonActive]}>
             <Ionicons name="list-outline" size={18} color={Colors.primary} />

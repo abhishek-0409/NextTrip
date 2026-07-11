@@ -1,7 +1,4 @@
-/**
- * @file components/bookings/TravelerDetailsCard.tsx
- * @description Collapsible traveler identity summary for a booking.
- */
+
 
 import React, { useCallback, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';

@@ -1,7 +1,4 @@
-﻿/**
- * @file components/ui/SkeletonLoader.tsx
- * @description Toureez shimmer skeleton.
- */
+
 
 import React from 'react';
 import { Animated, StyleSheet, View } from 'react-native';

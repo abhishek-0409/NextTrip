@@ -1,7 +1,4 @@
-﻿/**
- * @file components/search/PackageListCard.tsx
- * @description Toureez full-width package result card.
- */
+
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -66,12 +63,7 @@ export function PackageListCard({
 
   const inCompare = isInCompare(item.id);
 
-  /**
-   * Three-tier image priority — same strategy as PackageCard:
-   *   [0] Keyword destination image  — guaranteed correct location photo
-   *   [1] Cloudinary cover_image     — only if no keyword match
-   *   [2] PACKAGE_DEFAULT_IMAGE      — absolute last resort, never blank
-   */
+
   const imageSources = useMemo((): string[] => {
     const sources: string[] = [];
     const keywordImage = getPackageKeywordImage(item);

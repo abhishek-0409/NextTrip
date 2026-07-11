@@ -1,15 +1,6 @@
-/**
- * @file services/reviewService.ts
- * @description All database operations for the Reviews & Ratings system.
- *
- * Responsibilities:
- * - Submitting a new review (with eligibility + uniqueness checks)
- * - Fetching paginated published reviews for a package
- * - Checking review eligibility for an authenticated user
- */
+
 
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
-// FIXED: 4 - Review publishing uses the explicitly named backend service-role client.
 import { supabaseAdmin } from '../lib/supabase';
 import { logger } from '../utils/logger';
 import type {
@@ -97,11 +88,8 @@ const throwDatabaseError = (operation: string, dbError: unknown): never => {
 
 // ── Mapper ────────────────────────────────────────────────────────────────────
 
-/**
- * Maps a raw Supabase row (with joined user data) to a typed Review.
- */
+
 const mapReview = (record: Record<string, unknown>): Review => {
-  // FIXED: 3 - Reviews join public.users; keep the mapper aligned with that table.
   const userRaw = toRecord(record['user']);
 
   // Build display_name: "First L." format for privacy
@@ -142,15 +130,7 @@ const mapReview = (record: Record<string, unknown>): Review => {
 
 // ── Service functions ─────────────────────────────────────────────────────────
 
-/**
- * Submits a new review after verifying:
- * 1. The booking belongs to the authenticated user
- * 2. The booking status is 'completed'
- * 3. No review already exists for this booking (unique constraint)
- * 4. At least one sub-rating is provided
- *
- * Phase 2: is_published = true (immediate display, admin moderation in Phase 3)
- */
+
 export async function createReview(
   userId: string,
   input: CreateReviewInput
@@ -229,7 +209,6 @@ export async function createReview(
       // Phase 2: publish immediately; Phase 3 will add admin moderation
       is_published: true,
     })
-    // FIXED: 3 - Join public.users instead of the non-existent profiles table.
     .select(
       `
       *,
@@ -251,11 +230,7 @@ export async function createReview(
   return mapReview(toRecord(insertedData));
 }
 
-/**
- * Returns paginated published reviews for a package, newest first.
- * Includes denormalised user display name and avatar.
- * Public route — no auth required.
- */
+
 export async function getPackageReviews(
   packageId: string,
   page: number,
@@ -266,7 +241,6 @@ export async function getPackageReviews(
 
   const { data, error: fetchError, count } = await supabaseAdmin
     .from('reviews')
-    // FIXED: 3 - Join public.users, not the non-existent profiles table.
     .select(
       `
       *,
@@ -293,13 +267,7 @@ export async function getPackageReviews(
   };
 }
 
-/**
- * Checks whether the authenticated user:
- * 1. Has a completed booking for the given package
- * 2. Has NOT already submitted a review for that booking
- *
- * Returns { can_review: true, booking_id } or { can_review: false }.
- */
+
 export async function getReviewEligibility(
   userId: string,
   packageId: string

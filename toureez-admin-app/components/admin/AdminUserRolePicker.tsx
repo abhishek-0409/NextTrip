@@ -1,10 +1,4 @@
-/**
- * @file components/admin/AdminUserRolePicker.tsx
- * @description Inline role picker for the admin user management screen.
- *
- * Renders three role options as styled cards. Fires onSelect when the
- * admin taps a different role. Prevents the admin from changing their own role.
- */
+
 
 import React from 'react';
 import {

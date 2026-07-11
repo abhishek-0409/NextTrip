@@ -1,20 +1,4 @@
-/**
- * @file hooks/useVendorPackages.ts
- * @description Handles vendor package CRUD operations, query synchronization,
- * optimistic updates, and package filtering state.
- *
- * Provides:
- *  - useVendorPackages()        — paginated package list (with filters from store)
- *  - useVendorPackage(id)       — single package detail
- *  - useCreatePackage()         — draft creation mutation
- *  - useUpdatePackage()         — core fields update mutation
- *  - useSubmitPackage()         — submit for review mutation
- *  - useUpsertPricing(id)       — pricing tier replacement mutation
- *  - useUpsertItinerary(id)     — itinerary replacement mutation
- *  - useSavePackageImage(id)    — gallery image save mutation
- *  - useDeletePackageImage(id)  — gallery image delete mutation
- *  - useSetPackageCoverImage(id) — set cover image mutation
- */
+
 
 import {
   useMutation,
@@ -62,10 +46,7 @@ export const vendorPackageQueryKeys = {
 
 // ── Package list ──────────────────────────────────────────────────────────────
 
-/**
- * Returns the paginated list of packages for the authenticated vendor,
- * applying any active filters from the vendorStore.
- */
+
 export function useVendorPackages(page = 1): UseQueryResult<PaginatedResponse<VendorPackageListItem>, Error> {
   const isVendor = useAuthStore((s) => s.user?.role === VENDOR_ROLE);
   const filters = useVendorStore((s) => s.packageFilters);
@@ -86,9 +67,7 @@ export function useVendorPackages(page = 1): UseQueryResult<PaginatedResponse<Ve
 
 // ── Package detail ────────────────────────────────────────────────────────────
 
-/**
- * Returns full package detail (pricing, itinerary, images).
- */
+
 export function useVendorPackage(packageId: string): UseQueryResult<VendorPackageDetail, Error> {
   const isVendor = useAuthStore((s) => s.user?.role === VENDOR_ROLE);
 
@@ -200,10 +179,7 @@ export function useSubmitPackage(): UseMutationResult<VendorPackageDetail, Error
 
 // ── Delete package ────────────────────────────────────────────────────────────
 
-/**
- * Mutation to permanently delete a draft or rejected package with no bookings.
- * Removes the detail cache entry, invalidates the list and dashboard.
- */
+
 export function useDeletePackage(): UseMutationResult<{ deleted: boolean }, Error, string> {
   const queryClient = useQueryClient();
 
@@ -389,10 +365,7 @@ export function useSetPackageCoverImage(): UseMutationResult<VendorPackageImage,
   });
 }
 
-/**
- * Duplicates an existing package as a new draft.
- * Invalidates the package list so the copy appears immediately.
- */
+
 export function useDuplicatePackage(): UseMutationResult<VendorPackageDetail, Error, string> {
   const queryClient = useQueryClient();
 

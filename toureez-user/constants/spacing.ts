@@ -1,7 +1,4 @@
-﻿/**
- * @file constants/spacing.ts
- * @description Toureez spacing scale.
- */
+
 
 export const Spacing = {
   xxs: 2,

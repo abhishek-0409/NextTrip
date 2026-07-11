@@ -55,9 +55,7 @@ const corsOptions: CorsOptions = {
   },
 };
 
-/**
- * Express application configured with security, logging, CORS, routes, and global error handling.
- */
+
 export const app = express();
 
 // Trust the first proxy hop so express-rate-limit, IP logging, and the HTTPS

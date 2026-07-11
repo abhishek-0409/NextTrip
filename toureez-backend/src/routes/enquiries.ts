@@ -1,12 +1,4 @@
-/**
- * @file routes/enquiries.ts
- * @description Traveler-facing enquiry routes (all protected).
- *
- * POST /api/v1/enquiries              — Start a new enquiry about a package
- * GET  /api/v1/enquiries              — List the traveler's enquiry threads
- * GET  /api/v1/enquiries/:id          — Get a single enquiry thread with messages
- * POST /api/v1/enquiries/:id/messages — Post a follow-up message
- */
+
 
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth';

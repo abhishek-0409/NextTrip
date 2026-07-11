@@ -1,7 +1,4 @@
-/**
- * @file components/bookings/BookingTimeline.tsx
- * @description Booking lifecycle timeline with current-step animation.
- */
+
 
 import React, { useEffect, useMemo, useRef } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';

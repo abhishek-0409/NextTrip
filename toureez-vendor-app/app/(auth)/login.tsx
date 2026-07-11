@@ -1,10 +1,4 @@
-﻿/**
- * @file app/(auth)/login.tsx
- * @description Vendor portal login screen.
- *
- * Only users with the company_owner role may sign in here.
- * The signIn() function in lib/api/auth.ts enforces this at the API layer.
- */
+
 
 import React, { useState } from 'react';
 import {
@@ -95,7 +89,7 @@ export default function LoginScreen(): React.ReactElement {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* Brand */}
+        {}
         <View style={styles.brand}>
           <View style={styles.logoContainer}>
             <Ionicons name="briefcase" size={36} color={Colors.textWhite} />
@@ -104,7 +98,7 @@ export default function LoginScreen(): React.ReactElement {
           <Text style={styles.brandTagline}>Vendor Portal</Text>
         </View>
 
-        {/* Card */}
+        {}
         <View style={styles.card}>
           <Text style={styles.heading}>Welcome back</Text>
           <Text style={styles.subheading}>
@@ -161,7 +155,7 @@ export default function LoginScreen(): React.ReactElement {
           </View>
         </View>
 
-        {/* Sign-up link */}
+        {}
         <View style={styles.signUpRow}>
           <Text style={styles.signUpPrompt}>New to Toureez Vendor?</Text>
           <Pressable

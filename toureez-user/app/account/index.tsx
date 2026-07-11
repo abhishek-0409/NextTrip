@@ -57,7 +57,7 @@ export default function AccountScreen(): React.ReactElement {
 
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
-      {/* Header */}
+      {}
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => router.back()}
@@ -72,7 +72,7 @@ export default function AccountScreen(): React.ReactElement {
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Security section */}
+        {}
         <Text style={styles.sectionLabel}>SECURITY</Text>
         <View style={styles.card}>
           <MenuItem
@@ -84,7 +84,7 @@ export default function AccountScreen(): React.ReactElement {
           />
         </View>
 
-        {/* Danger zone */}
+        {}
         <Text style={styles.sectionLabel}>DANGER ZONE</Text>
         <View style={styles.card}>
           <MenuItem

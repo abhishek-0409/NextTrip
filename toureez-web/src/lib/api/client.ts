@@ -30,7 +30,6 @@ function getAuthHeader(): Record<string, string> {
   return {};
 }
 
-
 async function request<T>(
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
   endpoint: string,
@@ -89,7 +88,6 @@ interface Paginated<T> {
   has_more: boolean;
 }
 
-/** Backend list endpoints return {items, total, ...} — flattens that to a plain array for screens that just need the list. */
 export async function unwrapItems<T>(
   promise: Promise<BackendApiResponse<Paginated<T>>>
 ): Promise<BackendApiResponse<T[]>> {

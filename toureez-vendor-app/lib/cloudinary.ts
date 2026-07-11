@@ -1,20 +1,10 @@
-﻿/**
- * @file lib/cloudinary.ts
- * @description Cloudinary direct upload helper for package and company images.
- *
- * Images are uploaded directly from the client to Cloudinary (unsigned upload).
- * Only the resulting URL and public_id are sent to our backend for storage.
- * This matches the pattern used in Toureez-user.
- */
+
 
 import * as ImagePicker from 'expo-image-picker';
 import { Config } from '../constants/config';
 import type { CloudinaryUploadResult } from '../types';
 
-/**
- * Opens the device image picker and uploads the selected image to Cloudinary.
- * Returns the Cloudinary result, or null if the user cancelled.
- */
+
 export async function pickAndUploadImage(options?: {
   allowsEditing?: boolean;
   aspect?: [number, number];
@@ -48,9 +38,7 @@ export async function pickAndUploadImage(options?: {
   return uploadToCloudinary(asset.uri);
 }
 
-/**
- * Uploads a local image URI to Cloudinary using the unsigned upload preset.
- */
+
 export async function uploadToCloudinary(localUri: string): Promise<CloudinaryUploadResult> {
   const cloudName = Config.cloudinaryCloudName;
   const preset = Config.cloudinaryUploadPreset;

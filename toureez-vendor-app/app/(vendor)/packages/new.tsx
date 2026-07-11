@@ -1,15 +1,4 @@
-﻿/**
- * @file app/(vendor)/packages/new.tsx
- * @description Create new package screen.
- *
- * Collects the minimum required fields for a draft package:
- *   - Title (required, min 5 chars)
- *   - Location (required — packages.location_id is NOT NULL in DB)
- *   - Category (required — packages.category_id is NOT NULL in DB)
- *   - Duration (optional)
- *
- * On success navigates to the package detail screen for further editing.
- */
+
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -312,7 +301,7 @@ export default function NewPackageScreen(): React.ReactElement {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* Info banner */}
+        {}
         <View style={[styles.infoBanner, Shadows.sm]}>
           <Ionicons name="bulb-outline" size={18} color={Colors.primary} />
           <Text style={styles.infoText}>
@@ -320,7 +309,7 @@ export default function NewPackageScreen(): React.ReactElement {
           </Text>
         </View>
 
-        {/* ── Title ── */}
+        {}
         <View style={[styles.card, Shadows.sm]}>
           <Input
             label="Package Title"
@@ -335,7 +324,7 @@ export default function NewPackageScreen(): React.ReactElement {
           />
         </View>
 
-        {/* ── Trip Type ── */}
+        {}
         <View style={[styles.card, Shadows.sm]}>
           <Text style={styles.fieldLabel}>Trip Type <Text style={styles.required}>*</Text></Text>
           <View style={styles.tripTypeRow}>
@@ -358,7 +347,7 @@ export default function NewPackageScreen(): React.ReactElement {
           </View>
         </View>
 
-        {/* ── Location ── */}
+        {}
         <View style={[styles.card, Shadows.sm]}>
           <Text style={styles.fieldLabel}>Destination <Text style={styles.required}>*</Text></Text>
           <Pressable
@@ -380,7 +369,7 @@ export default function NewPackageScreen(): React.ReactElement {
           {locationError ? <Text style={styles.errorText}>{locationError}</Text> : null}
         </View>
 
-        {/* ── Category ── */}
+        {}
         <View style={[styles.card, Shadows.sm]}>
           <Text style={styles.fieldLabel}>Category <Text style={styles.required}>*</Text></Text>
           <View style={styles.categoryGrid}>
@@ -403,7 +392,7 @@ export default function NewPackageScreen(): React.ReactElement {
           {categoryError ? <Text style={styles.errorText}>{categoryError}</Text> : null}
         </View>
 
-        {/* ── Duration ── */}
+        {}
         <View style={[styles.card, Shadows.sm]}>
           <Text style={styles.fieldLabel}>Duration <Text style={styles.optional}>(optional)</Text></Text>
           <View style={styles.durationRow}>
@@ -441,7 +430,7 @@ export default function NewPackageScreen(): React.ReactElement {
         />
       </ScrollView>
 
-      {/* ── Location picker modal ── */}
+      {}
       <Modal
         visible={locationModalVisible}
         animationType="slide"
@@ -535,7 +524,7 @@ export default function NewPackageScreen(): React.ReactElement {
             </ScrollView>
           ) : (
             <>
-              {/* Search bar */}
+              {}
               <View style={styles.modalSearchWrapper}>
                 <Ionicons name="search-outline" size={16} color={Colors.textSecondary} style={styles.modalSearchIcon} />
                 <TextInput

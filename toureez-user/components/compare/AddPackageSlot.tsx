@@ -1,8 +1,4 @@
-/**
- * @file components/compare/AddPackageSlot.tsx
- * @description Dashed "+" slot shown in the header when fewer than 4 packages
- * are selected. Tapping navigates back to search.
- */
+
 
 import React, { useCallback } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -11,9 +7,9 @@ import { router } from 'expo-router';
 
 import { Colors } from '../../constants/colors';
 
-/** Width of each package column */
+
 export const COLUMN_WIDTH = 180;
-/** Gap between columns */
+
 export const COLUMN_GAP = 10;
 
 export function AddPackageSlot(): React.ReactElement {

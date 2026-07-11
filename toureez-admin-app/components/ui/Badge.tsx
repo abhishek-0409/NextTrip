@@ -1,10 +1,4 @@
-/**
- * @file components/ui/Badge.tsx
- * @description Pill badge for statuses and roles.
- *
- * Accepts any status string and maps it to the right semantic color.
- * Falls back to the neutral (`textLight`) palette for unknown values.
- */
+
 
 import React from 'react';
 import { StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';

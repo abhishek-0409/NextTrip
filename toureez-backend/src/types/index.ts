@@ -1,14 +1,8 @@
-/**
- * Role assigned to an application user.
- */
+
 export type UserRole = 'traveler' | 'company_owner' | 'admin';
 
-// FIXED: 2 - The DB enum uses company_owner; "Vendor" remains UI copy only.
 export const VENDOR_ROLE = 'company_owner' as const;
 
-/**
- * Public profile stored for a Supabase-authenticated user.
- */
 export interface User {
   id: string;
   full_name: string | null;
@@ -21,9 +15,6 @@ export interface User {
   updated_at: string;
 }
 
-/**
- * Travel destination metadata available for package discovery.
- */
 export interface Location {
   id: string;
   city: string;
@@ -37,9 +28,6 @@ export interface Location {
   created_at: string;
 }
 
-/**
- * Package category used to group and filter travel experiences.
- */
 export interface Category {
   id: string;
   name: string;
@@ -51,9 +39,6 @@ export interface Category {
   created_at: string;
 }
 
-/**
- * Verified or pending travel operator profile.
- */
 export interface Company {
   id: string;
   owner_id: string;
@@ -69,16 +54,10 @@ export interface Company {
   created_at: string;
 }
 
-/**
- * Lifecycle status for a travel package.
- */
 export type PackageStatus = 'draft' | 'pending' | 'active' | 'rejected';
 
 export type TripType = 'domestic' | 'international';
 
-/**
- * Core package entity as stored in the database.
- */
 export interface Package {
   id: string;
   company_id: string;
@@ -106,9 +85,6 @@ export interface Package {
   updated_at: string;
 }
 
-/**
- * Price band for a package, optionally scoped by season and validity dates.
- */
 export interface PackagePricing {
   id: string;
   package_id: string;
@@ -124,9 +100,6 @@ export interface PackagePricing {
   is_active: boolean;
 }
 
-/**
- * Image belonging to a package gallery.
- */
 export interface PackageImage {
   id: string;
   package_id: string;
@@ -137,9 +110,6 @@ export interface PackageImage {
   display_order: number;
 }
 
-/**
- * Day-level package itinerary item.
- */
 export interface Itinerary {
   id: string;
   package_id: string;
@@ -152,9 +122,6 @@ export interface Itinerary {
   transport: string | null;
 }
 
-/**
- * Complete package payload for the package detail screen.
- */
 export interface PackageDetail extends Package {
   images: PackageImage[];
   itineraries: Itinerary[];
@@ -167,17 +134,11 @@ export interface PackageDetail extends Package {
   category: Pick<Category, 'id' | 'name' | 'label' | 'icon'>;
 }
 
-/**
- * Comparison badge assigned to a package by computed business rules.
- */
 export interface Badge {
   type: 'best_value' | 'highest_rated' | 'most_inclusive';
   package_id: string;
 }
 
-/**
- * Compact package payload optimized for search, lists, wishlists, and compare cards.
- */
 export interface PackageListItem extends Package {
   cover_image: string | null;
   company: Pick<Company, 'id' | 'name' | 'logo_url' | 'is_verified'>;
@@ -187,9 +148,6 @@ export interface PackageListItem extends Package {
   badges: Badge[];
 }
 
-/**
- * User-controlled package search and filter inputs.
- */
 export interface SearchFilters {
   destination?: string;
   state?: string;
@@ -207,9 +165,6 @@ export interface SearchFilters {
   limit?: number;
 }
 
-/**
- * Standard pagination wrapper for list endpoints.
- */
 export interface PaginatedResponse<T> {
   items: T[];
   total: number;
@@ -218,9 +173,6 @@ export interface PaginatedResponse<T> {
   has_more: boolean;
 }
 
-/**
- * Standard API response envelope returned by all endpoints.
- */
 export interface ApiResponse<T> {
   success: boolean;
   data: T | null;
@@ -228,19 +180,13 @@ export interface ApiResponse<T> {
   meta?: Record<string, unknown>;
 }
 
-/**
- * Supabase-authenticated user attached to protected Express requests.
- */
 export interface AuthenticatedUser {
   id: string;
   email: string;
-  // FIXED: 1 - Request auth role is typed from public.users.role.
+
   role: UserRole;
 }
 
-/**
- * Notification events supported by the notifications table and mobile UI.
- */
 export type NotificationType =
   | 'booking_confirmed'
   | 'payment_received'
@@ -252,14 +198,8 @@ export type NotificationType =
   | 'wishlist_price_drop'
   | 'booking_received';
 
-/**
- * Entity types that can be opened from a notification.
- */
 export type NotificationRelatedType = 'booking' | 'package' | 'review';
 
-/**
- * User-facing notification row returned by notification endpoints.
- */
 export interface Notification {
   id: string;
   user_id: string;
@@ -275,9 +215,6 @@ export interface Notification {
 
 // ── Booking types ─────────────────────────────────────────────────────────────
 
-/**
- * Individual traveler details collected during booking.
- */
 export interface TravelerDetail {
   name: string;
   age: number;
@@ -287,9 +224,6 @@ export interface TravelerDetail {
   is_primary: boolean;
 }
 
-/**
- * Full booking entity as stored in the database.
- */
 export interface Booking {
   id: string;
   user_id: string;
@@ -330,9 +264,6 @@ export interface Booking {
   };
 }
 
-/**
- * Compact booking shape for the bookings list endpoint.
- */
 export interface BookingSummary {
   id: string;
   booking_reference: string;
@@ -352,9 +283,6 @@ export interface BookingSummary {
   created_at: string;
 }
 
-/**
- * Validated input for POST /api/v1/bookings/create
- */
 export interface CreateBookingInput {
   package_id: string;
   pricing_id: string;
@@ -372,9 +300,6 @@ export interface CreateBookingInput {
   } | null;
 }
 
-/**
- * Computed price breakdown returned with the booking.
- */
 export interface PriceCalculation {
   base_price: number;
   num_travelers: number;
@@ -389,9 +314,6 @@ export interface PriceCalculation {
 
 // ── Review types ──────────────────────────────────────────────────────────────
 
-/**
- * A single review submitted by a verified traveler after a completed booking.
- */
 export interface ReviewImage {
   url: string;
   public_id: string;
@@ -420,9 +342,6 @@ export interface Review {
   };
 }
 
-/**
- * Aggregated rating breakdown for a package's review summary.
- */
 export interface RatingSummary {
   overall: number;
   review_count: number;
@@ -433,9 +352,6 @@ export interface RatingSummary {
   value: number;
 }
 
-/**
- * Validated input for POST /api/v1/reviews
- */
 export interface CreateReviewInput {
   booking_id: string;
   package_id: string;
@@ -449,9 +365,6 @@ export interface CreateReviewInput {
   images?: ReviewImage[];
 }
 
-/**
- * Response from GET /api/v1/reviews/eligible/:packageId
- */
 export interface ReviewEligibility {
   can_review: boolean;
   booking_id?: string;
@@ -459,9 +372,6 @@ export interface ReviewEligibility {
 
 // ── Enquiries ────────────────────────────────────────────────────────────────
 
-/**
- * A single message within an enquiry thread.
- */
 export interface EnquiryMessage {
   id: string;
   sender_role: 'user' | 'vendor';
@@ -469,9 +379,6 @@ export interface EnquiryMessage {
   created_at: string;
 }
 
-/**
- * Enquiry thread summary, as returned in list views.
- */
 export interface EnquirySummary {
   id: string;
   package: { id: string; title: string } | null;
@@ -484,16 +391,10 @@ export interface EnquirySummary {
   created_at: string;
 }
 
-/**
- * Full enquiry thread including all messages, oldest first.
- */
 export interface EnquiryDetail extends EnquirySummary {
   messages: EnquiryMessage[];
 }
 
-/**
- * Body for POST /api/v1/enquiries.
- */
 export interface CreateEnquiryInput {
   package_id: string;
   message: string;

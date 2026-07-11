@@ -1,20 +1,4 @@
-﻿/**
- * @file services/adminService.ts
- * @description All database operations for the admin portal.
- *
- * Covers:
- *  - Dashboard analytics
- *  - User management (list, detail, role update)
- *  - Vendor (company) management (list, detail, approve, reject, verify)
- *  - Package moderation (list, detail, approve, reject, feature, bestseller)
- *  - Booking management (list, detail, status update)
- *  - Review moderation (list, publish, unpublish, verify)
- *  - Category CRUD
- *  - Location CRUD
- *
- * All DB access uses supabaseAdmin (service role) so RLS is bypassed
- * intentionally. Auth/role guards are enforced at the route layer.
- */
+
 
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
 import { supabaseAdmin } from '../lib/supabase';
@@ -216,10 +200,6 @@ export interface AdminDashboardMetrics {
 
 // ── Dashboard helpers ─────────────────────────────────────────────────────────
 
-/**
- * Detects the PostgREST "function not found" error (PGRST202).
- * This happens when get_admin_dashboard() hasn't been deployed to Supabase yet.
- */
 function isRpcNotFound(err: unknown): boolean {
   if (!isRecord(err)) return false;
   const code = String(err['code'] ?? '');
@@ -231,13 +211,6 @@ function isRpcNotFound(err: unknown): boolean {
   );
 }
 
-/**
- * Fallback: 11 parallel COUNT queries + 2 PostgREST aggregate selects.
- * Used automatically when get_admin_dashboard() RPC is not yet deployed.
- *
- * To enable the optimised single-query path, run:
- *   Toureez-backend/supabase/get_admin_dashboard.sql  in the Supabase SQL Editor.
- */
 async function getDashboardFallback(): Promise<AdminDashboardMetrics> {
   logger.warn(
     'get_admin_dashboard RPC not found — falling back to parallel queries. ' +
@@ -343,10 +316,6 @@ export interface AdminMonthlyEarnings {
   revenue: number;
 }
 
-/**
- * Returns total paid-payment revenue across the platform for a single
- * calendar month, used by the Revenue Overview month picker on the admin dashboard.
- */
 export async function getAdminEarningsForMonth(month: string): Promise<AdminMonthlyEarnings> {
   const [year, mon] = month.split('-').map(Number);
   const rangeStart = new Date(year, mon - 1, 1).toISOString();
@@ -811,13 +780,6 @@ export async function setBestsellerPackage(packageId: string, isBestseller: bool
 
 // ── Booking helpers ───────────────────────────────────────────────────────────
 
-/**
- * Batch-fetches { full_name, phone } from public.users by id.
- *
- * Note: email lives in auth.users (private schema), not public.users, so it is
- * intentionally omitted here. Use supabaseAdmin.auth.admin.getUserById() when
- * a specific user's email is needed (e.g. vendor detail screen).
- */
 async function fetchUserMap(
   userIds: string[],
 ): Promise<Map<string, { full_name: string | null; email: string }>> {

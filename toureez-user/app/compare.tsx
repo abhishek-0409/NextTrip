@@ -1,8 +1,4 @@
-/**
- * @file app/compare.tsx
- * @description Comparison screen — sage green design system applied.
- * All scroll architecture, hooks, and data logic fully preserved.
- */
+
 
 import React, {
   useCallback,
@@ -395,7 +391,7 @@ export default function CompareScreen(): React.ReactElement {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-      {/* ── Header ── */}
+      {}
       <View style={styles.header}>
         <Pressable
           style={styles.backBtn}
@@ -409,7 +405,7 @@ export default function CompareScreen(): React.ReactElement {
         <View style={styles.headerRight} />
       </View>
 
-      {/* ── Sticky package header row ── */}
+      {}
       <ScrollView
         ref={headerScrollRef}
         horizontal
@@ -422,9 +418,9 @@ export default function CompareScreen(): React.ReactElement {
         <CompareHeader packages={packages} canAddMore={false} scrollRef={headerScrollRef} onScroll={(x) => syncHorizontal(x, 'header')} onRemove={() => {}} />
       </ScrollView>
 
-      {/* ── Body ── */}
+      {}
       <View style={styles.bodyContainer}>
-        {/* Fixed label column */}
+        {}
         <ScrollView
           ref={labelScrollRef}
           style={styles.labelColumn}
@@ -447,7 +443,7 @@ export default function CompareScreen(): React.ReactElement {
           <RowLabel label="Actions" height={ROW_HEIGHTS.actions} />
         </ScrollView>
 
-        {/* Scrollable data columns */}
+        {}
         <ScrollView
           ref={bodyScrollRef}
           horizontal
@@ -467,7 +463,7 @@ export default function CompareScreen(): React.ReactElement {
             <PriceCells packages={packages} />
             <RatingCells packages={packages} />
 
-            {/* Duration */}
+            {}
             <CompareRowCells
               cells={packages.map((pkg) => (
                 <TxtCell key={pkg.id} text={`${pkg.duration_days}D / ${pkg.duration_nights}N`} />
@@ -475,7 +471,7 @@ export default function CompareScreen(): React.ReactElement {
               minHeight={ROW_HEIGHTS.standard}
             />
 
-            {/* Category */}
+            {}
             <CompareRowCells
               cells={packages.map((pkg) => (
                 <CategoryCell key={pkg.id} pkg={pkg} />
@@ -483,7 +479,7 @@ export default function CompareScreen(): React.ReactElement {
               minHeight={ROW_HEIGHTS.standard}
             />
 
-            {/* Company */}
+            {}
             <CompareRowCells
               cells={packages.map((pkg) => (
                 <CompanyCell key={pkg.id} pkg={pkg} />
@@ -491,7 +487,7 @@ export default function CompareScreen(): React.ReactElement {
               minHeight={ROW_HEIGHTS.standard}
             />
 
-            {/* Group size */}
+            {}
             <CompareRowCells
               cells={packages.map((pkg) => (
                 <TxtCell key={pkg.id} text={`${pkg.min_group_size}–${pkg.max_group_size} pax`} />
@@ -499,7 +495,7 @@ export default function CompareScreen(): React.ReactElement {
               minHeight={ROW_HEIGHTS.standard}
             />
 
-            {/* Inclusions */}
+            {}
             <CompareRowCells
               cells={packages.map((pkg) => {
                 const maxInclusions = Math.max(...packages.map((p) => p.inclusions.length));
@@ -514,18 +510,18 @@ export default function CompareScreen(): React.ReactElement {
               minHeight={ROW_HEIGHTS.standard}
             />
 
-            {/* Highlights */}
+            {}
             <CompareRowCells
               cells={[<HighlightsCells key="highlights" packages={packages} />]}
               minHeight={ROW_HEIGHTS.highlights}
             />
 
-            {/* Amenities — use pre-computed cells from useAmenitiesData */}
+            {}
             {amenitiesData.map((a) => (
               <View key={a.amenity}>{a.cells}</View>
             ))}
 
-            {/* Actions */}
+            {}
             <ActionCells packages={packages} onEnquire={handleEnquire} />
           </ScrollView>
         </ScrollView>

@@ -1,7 +1,4 @@
-/**
- * @file lib/api/chat.ts
- * @description Backend API calls for the AI travel assistant (Gemini-powered).
- */
+
 
 import { apiClient } from './client';
 import type { ApiResponse, BackendApiResponse } from '../../types';
@@ -18,10 +15,6 @@ function toApiResponse<T>(response: BackendApiResponse<T>): ApiResponse<T> {
   };
 }
 
-/**
- * Sends a message to the AI travel assistant, along with recent conversation
- * history for multi-turn context, and returns the assistant's reply.
- */
 export async function sendChatMessage(
   message: string,
   history: ChatMessage[]

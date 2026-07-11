@@ -1,10 +1,4 @@
-﻿/**
- * @file app/(vendor)/account.tsx
- * @description Account tab — user profile, company info, and navigation to
- * company, reviews, payouts, settings, and notifications.
- *
- * Also shows the count of unread notifications as a badge.
- */
+
 
 import React from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -118,7 +112,7 @@ export default function AccountScreen(): React.ReactElement {
       contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 32 }]}
       showsVerticalScrollIndicator={false}
     >
-      {/* ── Profile card ─────────────────────────────────────────────── */}
+      {}
       <View style={[styles.profileCard, Shadows.card]}>
         <View style={styles.avatarContainer}>
           <Text style={styles.avatarInitials}>
@@ -146,7 +140,7 @@ export default function AccountScreen(): React.ReactElement {
         </Pressable>
       </View>
 
-      {/* ── Approval status banner (only shown when NOT yet approved) ── */}
+      {}
       {company != null && !company.is_verified && (
         <Pressable
           style={[
@@ -169,7 +163,7 @@ export default function AccountScreen(): React.ReactElement {
         </Pressable>
       )}
 
-      {/* ── My Business ──────────────────────────────────────────────── */}
+      {}
       <MenuSection title="My Business">
         <MenuRow
           icon="business-outline"
@@ -216,7 +210,7 @@ export default function AccountScreen(): React.ReactElement {
         />
       </MenuSection>
 
-      {/* ── App ──────────────────────────────────────────────────────── */}
+      {}
       <MenuSection title="App">
         <MenuRow
           icon="notifications-outline"
@@ -247,7 +241,7 @@ export default function AccountScreen(): React.ReactElement {
         />
       </MenuSection>
 
-      {/* ── Sign out ─────────────────────────────────────────────────── */}
+      {}
       <View style={styles.section}>
         <View style={[styles.sectionCard, Shadows.sm]}>
           <MenuRow
@@ -262,7 +256,7 @@ export default function AccountScreen(): React.ReactElement {
         </View>
       </View>
 
-      {/* ── App version ──────────────────────────────────────────────── */}
+      {}
       <Text style={styles.version}>Toureez Vendor Portal</Text>
     </ScrollView>
   );

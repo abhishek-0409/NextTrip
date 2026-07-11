@@ -1,7 +1,4 @@
-/**
- * @file components/notifications/NotificationIcon.tsx
- * @description Type-aware icon treatment for notification rows.
- */
+
 
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -51,9 +48,7 @@ const ICONS: Record<
   },
 };
 
-/**
- * Renders the semantic icon assigned to a notification type.
- */
+
 export function NotificationIcon({
   type,
 }: NotificationIconProps): React.ReactElement {

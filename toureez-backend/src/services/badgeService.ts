@@ -48,9 +48,7 @@ const pushTiedBadges = (
     });
 };
 
-/**
- * Computes comparison badges for best value, highest rated, and most inclusive packages, including all ties.
- */
+
 export const computeBadges = (packages: PackageListItem[]): Badge[] => {
   const badges: Badge[] = [];
 

@@ -1,7 +1,4 @@
-﻿/**
- * @file app/(auth)/signup.tsx
- * @description Toureez signup screen.
- */
+
 
 import React, { useRef, useState } from 'react';
 import {

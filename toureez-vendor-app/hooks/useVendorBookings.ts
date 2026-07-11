@@ -1,12 +1,4 @@
-/**
- * @file hooks/useVendorBookings.ts
- * @description Handles vendor booking queries and status update mutations.
- *
- * Provides:
- *  - useVendorBookings()          — paginated list with active filters
- *  - useVendorBooking(id)         — single booking detail
- *  - useUpdateBookingStatus()     — confirm or cancel a booking
- */
+
 
 import {
   useMutation,
@@ -33,10 +25,7 @@ export const vendorBookingQueryKeys = {
 
 // ── Booking list ──────────────────────────────────────────────────────────────
 
-/**
- * Returns the paginated list of bookings for the vendor's company.
- * Applies active filters from the vendorStore.
- */
+
 export function useVendorBookings(page = 1): UseQueryResult<PaginatedResponse<VendorBookingListItem>, Error> {
   const isVendor = useAuthStore((s) => s.user?.role === VENDOR_ROLE);
   const filters = useVendorStore((s) => s.bookingFilters);
@@ -61,9 +50,7 @@ export function useVendorBookings(page = 1): UseQueryResult<PaginatedResponse<Ve
 
 // ── Booking detail ────────────────────────────────────────────────────────────
 
-/**
- * Returns full booking detail including traveler info and payment summary.
- */
+
 export function useVendorBooking(bookingId: string): UseQueryResult<VendorBookingDetail, Error> {
   const isVendor = useAuthStore((s) => s.user?.role === VENDOR_ROLE);
 
@@ -89,10 +76,7 @@ interface UpdateStatusVars {
   note?: string;
 }
 
-/**
- * Mutation to update a booking's status (confirm, cancel, or mark completed).
- * Invalidates booking list and dashboard on success.
- */
+
 export function useUpdateBookingStatus(): UseMutationResult<VendorBookingDetail, Error, UpdateStatusVars> {
   const queryClient = useQueryClient();
 

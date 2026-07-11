@@ -1,20 +1,4 @@
-/**
- * @file app/review/[bookingId].tsx
- * @description Write Review screen — Step 1 of the review flow.
- *
- * Layout:
- *   - Custom header with back button + "Write a Review" title
- *   - Package mini-card (cover image, title, company, travel date, VerifiedBadge)
- *   - 5 RatingCategory rows (guide, hotel, food, transport, value)
- *   - Auto-computed overall rating display (read-only large stars)
- *   - Optional title input (max 100 chars)
- *   - Optional body textarea (max 1000 chars) with character counter
- *   - Submit button (disabled until ≥1 rating, loading state)
- *
- * Guards:
- *   - Redirects to /(tabs)/bookings if bookingId is missing
- *   - Shows error toast on submission failure
- */
+
 
 import React, {
   useCallback,
@@ -478,7 +462,7 @@ export default function WriteReviewScreen(): React.ReactElement {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
-        {/* Header */}
+        {}
         <View style={styles.header}>
           <Pressable
             onPress={handleBack}
@@ -501,7 +485,7 @@ export default function WriteReviewScreen(): React.ReactElement {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          {/* Package mini-card */}
+          {}
           <PackageMiniCard
             title={packageTitle}
             companyName={companyName}
@@ -509,7 +493,7 @@ export default function WriteReviewScreen(): React.ReactElement {
             travelDate={booking.travel_date}
           />
 
-          {/* Rating categories */}
+          {}
           <Text style={styles.sectionLabel}>Rate Your Experience</Text>
           <View style={styles.categoriesCard}>
             {RATING_CATEGORIES.map((cat) => (
@@ -524,10 +508,10 @@ export default function WriteReviewScreen(): React.ReactElement {
             ))}
           </View>
 
-          {/* Overall rating */}
+          {}
           <OverallRatingDisplay rating={overallRating} />
 
-          {/* Review title */}
+          {}
           <Text style={styles.sectionLabel}>Review Title</Text>
           <TextInput
             style={styles.titleInput}
@@ -541,7 +525,7 @@ export default function WriteReviewScreen(): React.ReactElement {
             accessibilityLabel="Review title"
           />
 
-          {/* Review body */}
+          {}
           <View style={styles.bodyLabelRow}>
             <Text style={styles.sectionLabel}>Your Review</Text>
             <Text style={styles.charCounter} numberOfLines={1}>
@@ -561,7 +545,7 @@ export default function WriteReviewScreen(): React.ReactElement {
             accessibilityLabel="Review body"
           />
 
-          {/* Photos */}
+          {}
           <View style={styles.bodyLabelRow}>
             <Text style={styles.sectionLabel}>Add Photos</Text>
             <Text style={styles.charCounter} numberOfLines={1}>
@@ -600,7 +584,7 @@ export default function WriteReviewScreen(): React.ReactElement {
             ) : null}
           </View>
 
-          {/* Submit button */}
+          {}
           <TouchableOpacity
             style={[
               styles.submitButton,

@@ -1,14 +1,4 @@
-/**
- * @file components/ui/SearchBar.tsx
- * @description Pill-shaped search input with prefix and optional clear button.
- *
- *   <SearchBar
- *     value={search}
- *     onChangeText={setSearch}
- *     placeholder="Search vendors…"
- *     onClear={() => setSearch('')}
- *   />
- */
+
 
 import React from 'react';
 import {

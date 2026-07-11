@@ -1,7 +1,4 @@
-/**
- * @file hooks/useSimilarPackages.ts
- * @description Fetches similar packages for a given package ID.
- */
+
 
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { apiClient } from '../lib/api/client';

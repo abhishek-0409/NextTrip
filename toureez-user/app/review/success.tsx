@@ -1,13 +1,4 @@
-/**
- * @file app/review/success.tsx
- * @description Review submitted success screen.
- *
- * - Animated green checkmark on mount (spring scale + fade)
- * - "Review Submitted!" heading
- * - Verification notice
- * - "View My Bookings" and "Explore More Packages" CTAs
- * - gestureEnabled: false in _layout.tsx prevents back navigation
- */
+
 
 import React, { useEffect, useRef } from 'react';
 import {
@@ -74,7 +65,7 @@ function AnimatedCheckmark(): React.ReactElement {
       accessibilityRole="image"
       accessibilityLabel="Review submitted successfully"
     >
-      {/* Ripple ring */}
+      {}
       <Animated.View
         style={[
           checkStyles.ring,
@@ -82,7 +73,7 @@ function AnimatedCheckmark(): React.ReactElement {
         ]}
         accessibilityElementsHidden
       />
-      {/* Main circle */}
+      {}
       <Animated.View
         style={[
           checkStyles.circle,
@@ -131,7 +122,7 @@ export default function ReviewSuccessScreen(): React.ReactElement {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
       <View style={styles.container}>
-        {/* Hero */}
+        {}
         <View style={styles.hero}>
           <AnimatedCheckmark />
 
@@ -140,7 +131,7 @@ export default function ReviewSuccessScreen(): React.ReactElement {
             Thank you for sharing your experience
           </Text>
 
-          {/* Verification notice */}
+          {}
           <View style={styles.noticeCard}>
             <Ionicons
               name="shield-checkmark-outline"
@@ -153,7 +144,7 @@ export default function ReviewSuccessScreen(): React.ReactElement {
           </View>
         </View>
 
-        {/* CTAs */}
+        {}
         <View style={styles.actions}>
           <TouchableOpacity
             style={styles.primaryButton}

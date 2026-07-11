@@ -1,10 +1,4 @@
-/**
- * @file app/(vendor)/bookings/[id].tsx
- * @description Booking detail screen.
- *
- * Shows the full booking detail including traveler info, payment summary,
- * and contact details. Vendors can confirm or cancel pending bookings.
- */
+
 
 import React, { useState } from 'react';
 import {
@@ -181,7 +175,7 @@ export default function BookingDetailScreen(): React.ReactElement {
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={isFetching} onRefresh={() => void refetch()} />}
       >
-        {/* Status header */}
+        {}
         <View style={[styles.statusCard, Shadows.card]}>
           <View style={styles.statusHeader}>
             <View>
@@ -198,7 +192,7 @@ export default function BookingDetailScreen(): React.ReactElement {
           </View>
         </View>
 
-        {/* Booking info */}
+        {}
         <View style={[styles.section, Shadows.sm]}>
           <Text style={styles.sectionTitle}>Booking Info</Text>
           <InfoRow icon="calendar-outline" label="Travel Date" value={travelDate} />
@@ -209,7 +203,7 @@ export default function BookingDetailScreen(): React.ReactElement {
           )}
         </View>
 
-        {/* Guest info */}
+        {}
         <View style={[styles.section, Shadows.sm]}>
           <Text style={styles.sectionTitle}>Guest Details</Text>
           <InfoRow icon="person-outline" label="Name" value={booking.user.full_name ?? '—'} />
@@ -219,7 +213,7 @@ export default function BookingDetailScreen(): React.ReactElement {
           )}
         </View>
 
-        {/* Payment info */}
+        {}
         <View style={[styles.section, Shadows.sm]}>
           <Text style={styles.sectionTitle}>Payment</Text>
           <InfoRow icon="cash-outline" label="Total Amount" value={`₹${booking.total_amount.toLocaleString('en-IN')}`} />
@@ -250,7 +244,7 @@ export default function BookingDetailScreen(): React.ReactElement {
           )}
         </View>
 
-        {/* Traveler details */}
+        {}
         {booking.traveler_details != null && booking.traveler_details.length > 0 && (
           <View style={[styles.section, Shadows.sm]}>
             <Text style={styles.sectionTitle}>Traveler Details</Text>
@@ -271,7 +265,7 @@ export default function BookingDetailScreen(): React.ReactElement {
           </View>
         )}
 
-        {/* Actions for pending or confirmed bookings */}
+        {}
         {(isPending || isConfirmed) && (
           <View style={[styles.section, Shadows.sm]}>
             <Text style={styles.sectionTitle}>Add a Note (Optional)</Text>

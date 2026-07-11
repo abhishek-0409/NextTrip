@@ -1,5 +1,4 @@
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
-// FIXED: 4 - Public location reads use the clearly named anon client.
 import { supabasePublic, supabaseAdmin } from '../lib/supabase';
 import { logger } from '../utils/logger';
 import type { Location } from '../types';
@@ -61,9 +60,7 @@ const mapLocation = (value: unknown): Location => {
   };
 };
 
-/**
- * Fetches active locations, optionally restricted to popular destinations.
- */
+
 export const getLocations = async (popular?: boolean): Promise<Location[]> => {
   let query = supabasePublic
     .from('locations')
@@ -86,11 +83,7 @@ export const getLocations = async (popular?: boolean): Promise<Location[]> => {
   return ((data as unknown[] | null) ?? []).map(mapLocation);
 };
 
-/**
- * Creates a vendor-submitted destination that isn't yet in the saved locations list.
- * If a location with the same city/state/country already exists, returns it instead
- * of erroring, since the vendor's intent is just "make sure this destination is selectable".
- */
+
 export const createLocation = async (input: CreateLocationInput): Promise<Location> => {
   const country = input.country ?? 'India';
 

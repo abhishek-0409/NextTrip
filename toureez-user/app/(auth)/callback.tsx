@@ -1,17 +1,4 @@
-﻿/**
- * @file app/(auth)/callback.tsx
- * @description OAuth deep-link fallback screen.
- *
- * On some Android versions, the OS passes the toureez://auth/callback URL
- * through Expo Router's deep-link system instead of letting
- * WebBrowser.openAuthSessionAsync intercept it. Expo Router would then show
- * "Unmatched Route" because no file handled the path.
- *
- * This screen catches that case. By the time the deep-link reaches here,
- * the OAuth session has already been set by runGoogleOAuth (via
- * WebBrowser.openAuthSessionAsync). The _layout.tsx auth guard will route
- * the user to (tabs) once the session is confirmed.
- */
+
 
 import React from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';

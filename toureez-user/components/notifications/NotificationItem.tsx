@@ -1,7 +1,4 @@
-/**
- * @file components/notifications/NotificationItem.tsx
- * @description Swipeable notification row with read-state styling.
- */
+
 
 import React, { useCallback, useMemo, useRef } from 'react';
 import {
@@ -70,9 +67,7 @@ function formatTimeAgo(createdAt: string): string {
   return pluralize(Math.floor(elapsed / HOUR_MS), 'hour');
 }
 
-/**
- * Renders one notification and exposes a left swipe as a read action.
- */
+
 export function NotificationItem({
   notification,
   onMarkAsRead,

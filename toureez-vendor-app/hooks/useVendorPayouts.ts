@@ -1,12 +1,4 @@
-/**
- * @file hooks/useVendorPayouts.ts
- * @description Fetches payout disbursement history and payout accounts.
- *
- * Provides:
- *  - useVendorPayouts()         — paginated payout history
- *  - useVendorPayoutAccounts()  — list of bank/UPI accounts
- *  - useCreatePayoutAccount()   — add a new payout account
- */
+
 
 import {
   useMutation,
@@ -27,9 +19,7 @@ export const vendorPayoutQueryKeys = {
   accounts: () => ['vendor', 'payout-accounts'] as const,
 } as const;
 
-/**
- * Returns paginated payout disbursement history.
- */
+
 export function useVendorPayouts(page = 1): UseQueryResult<PaginatedResponse<VendorPayout>, Error> {
   const isVendor = useAuthStore((s) => s.user?.role === VENDOR_ROLE);
 
@@ -47,9 +37,7 @@ export function useVendorPayouts(page = 1): UseQueryResult<PaginatedResponse<Ven
   });
 }
 
-/**
- * Returns all payout bank/UPI accounts for the vendor's company.
- */
+
 export function useVendorPayoutAccounts(): UseQueryResult<VendorPayoutAccount[], Error> {
   const isVendor = useAuthStore((s) => s.user?.role === VENDOR_ROLE);
 
@@ -78,9 +66,7 @@ interface CreateAccountVars {
   is_primary?: boolean;
 }
 
-/**
- * Mutation to add a new payout account.
- */
+
 export function useCreatePayoutAccount(): UseMutationResult<VendorPayoutAccount, Error, CreateAccountVars> {
   const queryClient = useQueryClient();
 
