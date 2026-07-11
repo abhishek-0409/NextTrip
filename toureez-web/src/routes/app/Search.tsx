@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams, Link } from 'react-router-dom';
-import { searchPackages, packageCoverImage, packageLocationLabel, packagePrice, packageVendorName } from '../../lib/api/packages';
+import { searchPackages, packageCoverImage, packageLocationLabel, packagePrice, packageVendorName, type TripType } from '../../lib/api/packages';
 import { LoadingState, ErrorState, EmptyState } from '../../components/ui';
 import { Config } from '../../constants/config';
 
@@ -15,6 +15,10 @@ export default function Search() {
   const [params, setParams] = useSearchParams();
   const [destination, setDestination] = useState(params.get('destination') ?? '');
   const [category, setCategory] = useState(params.get('category') ?? '');
+  const rawTripType = params.get('trip_type');
+  const [tripType, setTripType] = useState<TripType | ''>(
+    rawTripType === 'domestic' || rawTripType === 'international' ? rawTripType : ''
+  );
   const [minPrice, setMinPrice] = useState(1000);
   const [maxPrice, setMaxPrice] = useState(15000);
   const [minRating, setMinRating] = useState<number | null>(null);
@@ -25,7 +29,7 @@ export default function Search() {
   const [compareIds, setCompareIds] = useState<string[]>([]);
 
   const query = useQuery({
-    queryKey: ['packages', 'search', destination, category, minPrice, maxPrice, minRating, sort, page],
+    queryKey: ['packages', 'search', destination, category, minPrice, maxPrice, minRating, tripType, sort, page],
     queryFn: () =>
       searchPackages({
         destination: destination || undefined,
@@ -33,6 +37,7 @@ export default function Search() {
         minPrice: minPrice || undefined,
         maxPrice: maxPrice || undefined,
         minRating: minRating ?? undefined,
+        trip_type: tripType || undefined,
         sort,
         page,
         pageSize: Config.packagesPageSize,
@@ -47,6 +52,7 @@ export default function Search() {
   function clearFilters() {
     setDestination('');
     setCategory('');
+    setTripType('');
     setMinPrice(1000);
     setMaxPrice(15000);
     setMinRating(null);
@@ -80,6 +86,23 @@ export default function Search() {
           <div className="filters-panel-head">
             <strong>Filters</strong>
             <button onClick={clearFilters}>Clear All</button>
+          </div>
+
+          <h3>Trip Type</h3>
+          <div className="filter-btn-group">
+            {([
+              { value: '', label: 'All' },
+              { value: 'domestic', label: '🇮🇳 Domestic' },
+              { value: 'international', label: '🌍 International' },
+            ] as const).map((opt) => (
+              <button
+                key={opt.value}
+                className={`filter-btn ${tripType === opt.value ? 'active' : ''}`}
+                onClick={() => setTripType(opt.value as TripType | '')}
+              >
+                {opt.label}
+              </button>
+            ))}
           </div>
 
           <h3>Destination</h3>

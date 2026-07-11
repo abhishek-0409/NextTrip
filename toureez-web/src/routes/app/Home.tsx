@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import { getCategories } from '../../lib/api/categories';
 import { getLocations } from '../../lib/api/locations';
+import { getFeaturedPackages, packageLocationLabel, packagePrice, packageCoverImage, type TripType } from '../../lib/api/packages';
 import { LoadingState, ErrorState } from '../../components/ui';
 import { useAuthStore } from '../../store/authStore';
 
@@ -61,21 +62,13 @@ const VIBE_DESTINATIONS = [
   },
 ];
 
-const TRIPS = [
-  { title: 'Chaukhamba Sunrise View', vendor: 'BROTRIPS ADV GROUP', location: 'CHANDRASHILA, UTTRAKHAND', duration: '3 days/2 nights', activities: '4+ Activities', rating: 4.2, reviews: 148, priceLow: 6500, priceHigh: 8500, image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=600&q=70' },
-  { title: 'Where Valleys Collide', vendor: 'ADI KAILASH TOURS', location: 'HAMPTA PASS, HIMACHAL PRADESH', duration: '5 days/4 nights', activities: '16+ Activities', rating: 3.9, reviews: 118, priceLow: 9500, priceHigh: 12500, image: 'https://images.unsplash.com/photo-1626016228894-3d0f3f7c1a1a?auto=format&fit=crop&w=600&q=70' },
-  { title: 'Roof of Bengal', vendor: 'WEST BENGAL TOURISM', location: 'SANDAKPHU, WEST BENGAL', duration: '4 days/3 nights', activities: '10+ Activities', rating: 4.6, reviews: 1438, priceLow: 8500, priceHigh: 10000, image: 'https://images.unsplash.com/photo-1626016228894-3d0f3f7c1a1a?auto=format&fit=crop&w=600&q=70' },
-  { title: "Nagaland's Secret Garden", vendor: 'BROTRIPS ADV GROUP', location: 'DZOKOU VALLEY, NAGALAND', duration: '3 days/2 nights', activities: '4+ Activities', rating: 4.2, reviews: 108, priceLow: 5500, priceHigh: 8000, image: 'https://images.unsplash.com/photo-1598091383021-15ddea10925d?auto=format&fit=crop&w=600&q=70' },
-  { title: "India's Tibetian Touch", vendor: 'BROTRIPS ADV GROUP', location: 'LADAKH, LEH & LADAKH', duration: '11 days/10 nights', activities: '25+ Activities', rating: 4.9, reviews: 178, priceLow: 20000, priceHigh: 25000, image: 'https://images.unsplash.com/photo-1601922046210-8f2b17e1e5a5?auto=format&fit=crop&w=600&q=70' },
-  { title: "Asia's Barefoot Paradise", vendor: 'ISLANDS TOUR & PACKAGES', location: 'HAVELOCK ISLAND, ANDAMAN', duration: '7 days/6 nights', activities: '10+ Activities', rating: 3.2, reviews: 18, priceLow: 4500, priceHigh: 7500, image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=70' },
-  { title: 'Cliffs above Arabian Sea', vendor: 'KERALA TOURISM', location: 'VARKALA BEACH, KERALA', duration: '3 days/2 nights', activities: '8+ Activities', rating: 4.2, reviews: 248, priceLow: 8500, priceHigh: 9500, image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=70' },
-  { title: "Maharashtra's Coral Secret", vendor: 'MARATHI TOUR & PACKAGES', location: 'TARKARLI, MAHARASHTRA', duration: '3 days/2 nights', activities: '4+ Activities', rating: 4.2, reviews: 178, priceLow: 4500, priceHigh: 6000, image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=70' },
-  { title: "Arunachal's Emerald Hush", vendor: 'NORTHEASTERN TOURS', location: 'ZIRO VALLEY, ARUNACHAL PRADESH', duration: '3 days/2 nights', activities: '6+ Activities', rating: 4.2, reviews: 148, priceLow: 9500, priceHigh: 10500, image: 'https://images.unsplash.com/photo-1598091383021-15ddea10925d?auto=format&fit=crop&w=600&q=70' },
-  { title: 'Chaukhamba Sunrise View', vendor: 'HISTORICAL TOURS', location: 'HAMPI, KARNATAKA', duration: '2 days/1 nights', activities: '4+ Activities', rating: 3.6, reviews: 148, priceLow: 3500, priceHigh: 6500, image: 'https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=600&q=70' },
-  { title: 'Where Ganges Remember', vendor: 'SHREE GURU TRAVELS', location: 'VARANASI, UTTAR PRADESH', duration: '3 days/2 nights', activities: '4+ Activities', rating: 4.6, reviews: 148, priceLow: 6500, priceHigh: 8500, image: 'https://images.unsplash.com/photo-1561361058-c24cecae35ca?auto=format&fit=crop&w=600&q=70' },
-  { title: 'Stone stories in Sandstone', vendor: 'KHILJI TRAVELS', location: 'KHAJURAHO, MADHYA PRADESH', duration: '3 days/2 nights', activities: '2+ Activities', rating: 3.2, reviews: 48, priceLow: 6000, priceHigh: 8500, image: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=600&q=70' },
-  { title: 'Monastery in Frozen Earth', vendor: 'TIBETIAN ADV GROUP', location: 'ZANSKAR VALLEY, LADAKH', duration: '5 days/4 nights', activities: '6+ Activities', rating: 4.2, reviews: 548, priceLow: 8500, priceHigh: 12500, image: 'https://images.unsplash.com/photo-1626016228894-3d0f3f7c1a1a?auto=format&fit=crop&w=600&q=70' },
-  { title: 'River Island at Dusk', vendor: 'BROTRIPS ADV GROUP', location: 'MAJULI ISLAND, ASSAM', duration: '3 days/2 nights', activities: '4+ Activities', rating: 4.2, reviews: 148, priceLow: 6500, priceHigh: 8500, image: 'https://images.unsplash.com/photo-1598091383021-15ddea10925d?auto=format&fit=crop&w=600&q=70' },
+
+const TESTIMONIALS = [
+  { name: 'Carolina', quote: 'This ride was magical! Thank you for making it effortless.', image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=400&q=70' },
+  { name: 'Alessia Marika', quote: 'The guided tour was excellent. I wasn’t much about the history and culture.', image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&q=70' },
+  { name: 'Aisha Davina', quote: 'Namra made my solo trip feel safe and easy sunset last night.', image: 'https://images.unsplash.com/photo-1509824227185-9c5a01ceba0d?auto=format&fit=crop&w=400&q=70' },
+  { name: 'Kenji', quote: 'Trip was planned perfectly, and I had proof along the way.', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=70' },
+  { name: 'Philips', quote: 'Best time of my life! I’ll remember the Himalayan sunrise forever.', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=70' },
 ];
 
 const FAQS = [
@@ -100,8 +93,14 @@ export default function Home() {
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
 
+  const [activeTripType, setActiveTripType] = useState<TripType>('domestic');
+
   const categoriesQuery = useQuery({ queryKey: ['categories'], queryFn: getCategories });
   const locationsQuery = useQuery({ queryKey: ['locations', 'popular'], queryFn: () => getLocations(true) });
+  const featuredQuery = useQuery({
+    queryKey: ['packages', 'featured', activeTripType],
+    queryFn: () => getFeaturedPackages(activeTripType),
+  });
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -196,45 +195,84 @@ export default function Home() {
       <div className="site-content">
         <section className="home-section">
           <div className="section-tag2">CURATED FOR YOU</div>
-          <h2 className="section-heading">Popular Indian Trips</h2>
+          <h2 className="section-heading">
+            {activeTripType === 'domestic' ? 'Popular Indian Trips' : 'International Packages'}
+          </h2>
           <p className="section-sub2">Discover where travelers are heading this season, from tropical escapes to<br />urban adventures. These trips are stealing the spotlight.</p>
+
+          <div className="trip-type-toggle">
+            {(['domestic', 'international'] as const).map((type) => (
+              <button
+                key={type}
+                type="button"
+                className={`trip-type-tab ${activeTripType === type ? 'active' : ''}`}
+                onClick={() => { setActiveTripType(type); setActiveDot(0); }}
+              >
+                {type === 'domestic' ? '🇮🇳 Domestic' : '🌍 International'}
+              </button>
+            ))}
+          </div>
 
           <div className="carousel-wrap">
             <button className="carousel-arrow prev" onClick={() => scrollCarousel(-1)} aria-label="Previous">‹</button>
             <button className="carousel-arrow next" onClick={() => scrollCarousel(1)} aria-label="Next">›</button>
             <div className="carousel-track" ref={trackRef} onScroll={handleScroll}>
-              {TRIPS.map((t, i) => (
-                <div className="trip-card-v2" key={`${t.title}-${i}`}>
-                  <img src={t.image} alt={t.title} />
-                  <div className="trip-card-v2-overlay" />
-                  <span className="trip-card-v2-vendor">{t.vendor}</span>
-                  <span className="trip-card-v2-location">{t.location}</span>
-                  <div className="trip-card-v2-body">
-                    <h4>{t.title}</h4>
-                    <div className="trip-card-v2-meta">
-                      <span>{t.duration}</span>
-                      <span>{t.activities}</span>
-                      <span className="trip-card-v2-rating">★ {t.rating.toFixed(1)}</span>
-                      <span className="trip-card-v2-reviews">( {t.reviews} )</span>
-                    </div>
-                    <div className="trip-card-v2-footer">
-                      <div className="trip-card-v2-price">
-                        Rs {t.priceLow.toLocaleString()} - {t.priceHigh.toLocaleString()}/<span>per person</span>
+              {featuredQuery.isLoading && <LoadingState />}
+              {featuredQuery.isError && <ErrorState message="Failed to load packages" onRetry={() => featuredQuery.refetch()} />}
+              {!featuredQuery.isLoading && !featuredQuery.isError && (featuredQuery.data?.data ?? []).length === 0 && (
+                <div style={{ padding: '32px 16px', color: '#888' }}>No {activeTripType} packages yet.</div>
+              )}
+              {(featuredQuery.data?.data ?? []).map((pkg) => {
+                const price = packagePrice(pkg);
+                const img = packageCoverImage(pkg);
+                return (
+                  <div className="trip-card-v2" key={pkg.id}>
+                    {img ? (
+                      <img src={img} alt={pkg.title} />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg,#1A1A2E,#2D2D4E)' }} />
+                    )}
+                    <div className="trip-card-v2-overlay" />
+                    <span className="trip-card-v2-vendor">{pkg.company?.name ?? ''}</span>
+                    <span className="trip-card-v2-location">{packageLocationLabel(pkg).toUpperCase()}</span>
+                    <div className="trip-card-v2-body">
+                      <h4>{pkg.title}</h4>
+                      <div className="trip-card-v2-meta">
+                        {pkg.duration_days ? <span>{pkg.duration_days}D/{(pkg.duration_days - 1)}N</span> : null}
+                        {pkg.avg_rating !== undefined && (
+                          <>
+                            <span className="trip-card-v2-rating">★ {pkg.avg_rating.toFixed(1)}</span>
+                            <span className="trip-card-v2-reviews">({pkg.review_count ?? 0})</span>
+                          </>
+                        )}
                       </div>
-                      <div className="trip-card-v2-actions">
-                        <Link to="/app/search" className="trip-card-v2-book">Book</Link>
-                        <Link to="/app/search" className="trip-card-v2-explore">Explore</Link>
+                      <div className="trip-card-v2-footer">
+                        <div className="trip-card-v2-price">
+                          {price ? <>₹{price.toLocaleString()}/<span>per person</span></> : <span>Price on request</span>}
+                        </div>
+                        <div className="trip-card-v2-actions">
+                          <Link to={`/app/package/${pkg.id}`} className="trip-card-v2-book">Book</Link>
+                          <Link to={`/app/package/${pkg.id}`} className="trip-card-v2-explore">Explore</Link>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <div className="carousel-dots">
-              {TRIPS.slice(0, 6).map((_, i) => (
+              {(featuredQuery.data?.data ?? []).slice(0, 6).map((_, i) => (
                 <span key={i} className={`carousel-dot ${i === activeDot % 6 ? 'active' : ''}`} />
               ))}
             </div>
+          </div>
+          <div style={{ textAlign: 'center', marginTop: 16 }}>
+            <Link
+              to={`/app/search?trip_type=${activeTripType}`}
+              className="btn btn-outline"
+            >
+              See all {activeTripType === 'domestic' ? 'India' : 'International'} packages →
+            </Link>
           </div>
         </section>
 
@@ -247,34 +285,23 @@ export default function Home() {
             <span className="taupe">effortless</span>
             <span> so you can focus on what really matters</span>
           </h2>
-          <div className="value-trio">
-            <div className="value-trio-item">
-              <div className="value-trio-icon">⚖️</div>
-              <h4>Compare prices</h4>
-              <p>See every vendor's price side by side before you book.</p>
-            </div>
-            <div className="value-trio-item">
-              <div className="value-trio-icon">📍</div>
-              <h4>Verified for travelers</h4>
-              <p>Every vendor on NexTTrp is reviewed and verified.</p>
-            </div>
-            <div className="value-trio-item">
-              <div className="value-trio-icon">📅</div>
-              <h4>Plan your trip</h4>
-              <p>Because every journey deserves a personal touch.</p>
-            </div>
-            <div className="value-trio-item">
-              <div className="value-trio-icon">🎁</div>
-              <h4>Book your trip</h4>
-              <p>Enjoy exclusive deals and budget-efficient travel offers.</p>
-            </div>
+          <div className="value-icon-row">
+            <span className="value-icon-line" />
+            <div className="value-icon">🧭</div>
+            <div className="value-icon">🛡️</div>
+            <div className="value-icon">✅</div>
+            <div className="value-icon">📅</div>
           </div>
+          <p className="value-tagline">Founded by travellers, because every journey deserves a personal touch</p>
         </section>
 
         <div className="value-band">
-          <div className="value-item"><strong>30K+</strong><span>Happy explorers who found their dream trips with us</span></div>
-          <div className="value-item"><strong>500+</strong><span>Handpicked destinations curated for every kind of traveler and every age of traveler</span></div>
-          <div className="value-item"><strong>60%</strong><span>Book your next trip with us and enjoy exclusive deals and have budget-efficient travel deals</span></div>
+          <h3 className="value-band-title">Trusted by thousands of travelers around the country</h3>
+          <div className="value-band-row">
+            <div className="value-band-item"><strong>30K+</strong><span>Happy explorers who found their dream trips with us</span></div>
+            <div className="value-band-item"><strong>500+</strong><span>Handpicked destinations curated for every kind of traveler and every age of traveler</span></div>
+            <div className="value-band-item"><strong>60%</strong><span>Book your next trip with us and enjoy exclusive deals and have budget-efficient travel deals</span></div>
+          </div>
         </div>
 
         <section className="home-section">
@@ -333,10 +360,20 @@ export default function Home() {
         </section>
 
         <section className="home-section">
-          <div className="section-tag2">Real stories from Real travelers</div>
+          <div className="section-tag2-plain">Real stories from Real travelers</div>
           <h2 className="section-heading">Moments that made every journey unforgettable</h2>
-          <div className="testimonial-band">
-            <h3>Trusted by thousands of travelers around the country</h3>
+
+          <div className="testimonial-strip">
+            {TESTIMONIALS.map((t) => (
+              <div className="testimonial-photo" key={t.name}>
+                <img src={t.image} alt={t.name} />
+                <span className="testimonial-photo-name">{t.name}</span>
+                <span className="testimonial-photo-quote">{t.quote}</span>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ textAlign: 'center', marginTop: 32 }}>
             <Link to="/app/search" className="btn testimonial-cta">See more happiness</Link>
           </div>
         </section>
@@ -355,7 +392,7 @@ export default function Home() {
                   aria-expanded={openFaq === i}
                 >
                   {item.q}
-                  <span className="faq-item-toggle">{openFaq === i ? '−' : '+'}</span>
+                  <span className="faq-item-toggle">{openFaq === i ? '↑' : '↓'}</span>
                 </button>
                 {openFaq === i && <div className="faq-item-body">{item.a}</div>}
               </div>
@@ -376,8 +413,8 @@ export default function Home() {
       <footer className="site-footer">
         <div className="site-footer-inner">
           <div className="site-footer-brand">
-            <span className="site-footer-logo-mark">N</span>
-            <h4>NexTTrp</h4>
+            <span className="site-footer-logo-mark">T</span>
+            <h4>Toureez</h4>
             <p>We make travel planning seamless and travel booking easier and faster, so that you can get more time for packing.</p>
           </div>
           <div>
@@ -405,7 +442,7 @@ export default function Home() {
             </form>
           </div>
         </div>
-        <div className="site-footer-bottom">© {new Date().getFullYear()} NexTTrp. All rights reserved.</div>
+        <div className="site-footer-bottom">© {new Date().getFullYear()} Toureez. All rights reserved.</div>
       </footer>
     </div>
   );
