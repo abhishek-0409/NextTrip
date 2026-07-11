@@ -438,12 +438,17 @@ export async function createPayoutAccount(input: {
  * Adds a destination that isn't yet in the saved locations list.
  * Returns the existing location instead if the same city/state already exists.
  */
+export const DOMESTIC_REGIONS = ['North India', 'South India', 'East India', 'West India', 'Central India'] as const;
+export const INTERNATIONAL_REGIONS = ['Southeast Asia', 'East Asia', 'South Asia', 'Middle East', 'Central Asia', 'Europe', 'Eastern Europe', 'Africa', 'North Africa', 'North America', 'South America', 'Central America', 'Oceania', 'Arctic / Antarctica'] as const;
+export type LocationRegion = typeof DOMESTIC_REGIONS[number] | typeof INTERNATIONAL_REGIONS[number];
+
 export async function createLocation(input: {
   city: string;
-  state: string;
-  region: 'North India' | 'South India' | 'East India' | 'West India' | 'Central India';
-}): Promise<ApiResponse<{ id: string; city: string; state: string; is_popular: boolean }>> {
-  const res = await apiClient.post<{ id: string; city: string; state: string; is_popular: boolean }>(
+  state?: string;
+  region: LocationRegion;
+  country?: string;
+}): Promise<ApiResponse<{ id: string; city: string; state: string | null; is_popular: boolean }>> {
+  const res = await apiClient.post<{ id: string; city: string; state: string | null; is_popular: boolean }>(
     '/vendor/locations',
     input,
   );

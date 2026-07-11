@@ -27,7 +27,7 @@ export interface User {
 export interface Location {
   id: string;
   city: string;
-  state: string;
+  state: string | null;
   region: string;
   country: string;
   latitude: number | null;
@@ -74,6 +74,8 @@ export interface Company {
  */
 export type PackageStatus = 'draft' | 'pending' | 'active' | 'rejected';
 
+export type TripType = 'domestic' | 'international';
+
 /**
  * Core package entity as stored in the database.
  */
@@ -93,6 +95,7 @@ export interface Package {
   inclusions: string[];
   exclusions: string[];
   amenities: string[];
+  trip_type: TripType;
   status: PackageStatus;
   is_featured: boolean;
   is_bestseller: boolean;
@@ -160,7 +163,7 @@ export interface PackageDetail extends Package {
     Company,
     'id' | 'name' | 'slug' | 'logo_url' | 'is_verified' | 'avg_rating' | 'total_reviews' | 'owner_id'
   >;
-  location: Pick<Location, 'id' | 'city' | 'state' | 'region'>;
+  location: Pick<Location, 'id' | 'city' | 'state' | 'region' | 'country'>;
   category: Pick<Category, 'id' | 'name' | 'label' | 'icon'>;
 }
 
@@ -178,7 +181,7 @@ export interface Badge {
 export interface PackageListItem extends Package {
   cover_image: string | null;
   company: Pick<Company, 'id' | 'name' | 'logo_url' | 'is_verified'>;
-  location: Pick<Location, 'id' | 'city' | 'state'>;
+  location: Pick<Location, 'id' | 'city' | 'state' | 'country'>;
   category: Pick<Category, 'id' | 'name' | 'label' | 'icon'>;
   pricing: Pick<PackagePricing, 'base_price' | 'discounted_price' | 'currency'>[];
   badges: Badge[];
@@ -190,6 +193,8 @@ export interface PackageListItem extends Package {
 export interface SearchFilters {
   destination?: string;
   state?: string;
+  country?: string;
+  trip_type?: TripType;
   category?: string;
   min_price?: number;
   max_price?: number;

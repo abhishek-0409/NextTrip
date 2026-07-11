@@ -30,7 +30,8 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { useCreatePackage } from '../../../hooks/useVendorPackages';
 import { useVendorCompany } from '../../../hooks/useVendorCompany';
-import { listLocations, listCategories, createLocation } from '../../../lib/api/vendor';
+import { listLocations, listCategories, createLocation, DOMESTIC_REGIONS, INTERNATIONAL_REGIONS } from '../../../lib/api/vendor';
+import type { LocationRegion } from '../../../lib/api/vendor';
 import { Header } from '../../../components/ui/Header';
 import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
@@ -40,10 +41,10 @@ import { Shadows } from '../../../constants/shadows';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-interface LocationItem { id: string; city: string; state: string; is_popular: boolean }
+interface LocationItem { id: string; city: string; state: string | null; is_popular: boolean }
 interface CategoryItem { id: string; name: string; label: string; icon: string }
 
-const REGION_OPTIONS = ['North India', 'South India', 'East India', 'West India', 'Central India'] as const;
+type TripType = 'domestic' | 'international';
 
 // ── Main screen ───────────────────────────────────────────────────────────────
 
@@ -63,6 +64,7 @@ export default function NewPackageScreen(): React.ReactElement {
 
   // Form fields
   const [title, setTitle] = useState('');
+  const [tripType, setTripType] = useState<TripType>('domestic');
   const [durationDays, setDurationDays] = useState('');
   const [durationNights, setDurationNights] = useState('');
   const [selectedLocationId, setSelectedLocationId] = useState('');
@@ -82,9 +84,12 @@ export default function NewPackageScreen(): React.ReactElement {
   const [addLocationVisible, setAddLocationVisible] = useState(false);
   const [newCity, setNewCity] = useState('');
   const [newState, setNewState] = useState('');
-  const [newRegion, setNewRegion] = useState<typeof REGION_OPTIONS[number] | ''>('');
+  const [newCountry, setNewCountry] = useState('');
+  const [newRegion, setNewRegion] = useState<LocationRegion | ''>('');
   const [newLocationError, setNewLocationError] = useState('');
   const [addingLocation, setAddingLocation] = useState(false);
+
+  const regionOptions = tripType === 'domestic' ? DOMESTIC_REGIONS : INTERNATIONAL_REGIONS;
 
   // Validation errors
   const [titleError, setTitleError] = useState('');
@@ -112,18 +117,30 @@ export default function NewPackageScreen(): React.ReactElement {
     return () => { cancelled = true; };
   }, []);
 
-  // Filtered location list for the search modal
-  const filteredLocations = useMemo(() => {
-    const q = locationSearch.toLowerCase().trim();
-    if (!q) return locations;
-    return locations.filter(
-      (l) => l.city.toLowerCase().includes(q) || l.state.toLowerCase().includes(q),
-    );
-  }, [locations, locationSearch]);
+  // When trip type changes, clear the selected location
+  useEffect(() => {
+    setSelectedLocationId('');
+    setSelectedLocationLabel('');
+    setNewRegion('');
+  }, [tripType]);
 
-  const handleSelectLocation = useCallback((loc: LocationItem) => {
+  // Filtered location list for the search modal — scoped to trip type
+  const filteredLocations = useMemo(() => {
+    const byType = locations.filter((l) =>
+      tripType === 'domestic' ? l.state != null && (l as any).country === 'India' || (l as any).country == null || (l as any).country === 'India'
+        : (l as any).country !== 'India',
+    );
+    const q = locationSearch.toLowerCase().trim();
+    if (!q) return byType;
+    return byType.filter(
+      (l) => l.city.toLowerCase().includes(q) || (l.state ?? '').toLowerCase().includes(q),
+    );
+  }, [locations, locationSearch, tripType]);
+
+  const handleSelectLocation = useCallback((loc: LocationItem & { country?: string }) => {
     setSelectedLocationId(loc.id);
-    setSelectedLocationLabel(`${loc.city}, ${loc.state}`);
+    const parts = [loc.city, loc.state, loc.country !== 'India' ? loc.country : null].filter(Boolean);
+    setSelectedLocationLabel(parts.join(', '));
     setLocationError('');
     setLocationModalVisible(false);
     setLocationSearch('');
@@ -136,6 +153,7 @@ export default function NewPackageScreen(): React.ReactElement {
     setAddLocationVisible(false);
     setNewCity('');
     setNewState('');
+    setNewCountry('');
     setNewRegion('');
     setNewLocationError('');
   }, []);
@@ -146,8 +164,12 @@ export default function NewPackageScreen(): React.ReactElement {
       setNewLocationError('Enter a valid city name.');
       return;
     }
-    if (!newState.trim() || newState.trim().length < 2) {
+    if (tripType === 'domestic' && (!newState.trim() || newState.trim().length < 2)) {
       setNewLocationError('Enter a valid state name.');
+      return;
+    }
+    if (tripType === 'international' && (!newCountry.trim() || newCountry.trim().length < 2)) {
+      setNewLocationError('Enter a valid country name.');
       return;
     }
     if (!newRegion) {
@@ -159,8 +181,9 @@ export default function NewPackageScreen(): React.ReactElement {
     try {
       const res = await createLocation({
         city: newCity.trim(),
-        state: newState.trim(),
-        region: newRegion,
+        state: newState.trim() || undefined,
+        region: newRegion as LocationRegion,
+        country: tripType === 'international' ? newCountry.trim() : 'India',
       });
       if (res.error || !res.data) {
         setNewLocationError(res.error ?? 'Failed to add destination.');
@@ -168,18 +191,19 @@ export default function NewPackageScreen(): React.ReactElement {
       }
       const created = res.data;
       setLocations((prev) =>
-        prev.some((l) => l.id === created.id) ? prev : [...prev, created],
+        prev.some((l) => l.id === created.id) ? prev : [...prev, created as LocationItem],
       );
-      handleSelectLocation(created);
+      handleSelectLocation(created as LocationItem & { country?: string });
       setNewCity('');
       setNewState('');
+      setNewCountry('');
       setNewRegion('');
     } catch (err) {
       setNewLocationError(err instanceof Error ? err.message : 'Failed to add destination.');
     } finally {
       setAddingLocation(false);
     }
-  }, [newCity, newState, newRegion, handleSelectLocation]);
+  }, [newCity, newState, newCountry, newRegion, tripType, handleSelectLocation]);
 
   // Show approval gate if company isn't approved yet
   if (!companyLoading && company != null && company.status !== 'approved') {
@@ -255,6 +279,7 @@ export default function NewPackageScreen(): React.ReactElement {
         title: title.trim(),
         location_id: selectedLocationId,
         category_id: selectedCategoryId,
+        trip_type: tripType,
         duration_days: durationDays ? parseInt(durationDays, 10) : undefined,
         duration_nights: durationNights ? parseInt(durationNights, 10) : undefined,
       });
@@ -308,6 +333,29 @@ export default function NewPackageScreen(): React.ReactElement {
             hint="Choose a descriptive title that will attract travelers."
             leftIcon={<Ionicons name="briefcase-outline" size={18} color={Colors.textSecondary} />}
           />
+        </View>
+
+        {/* ── Trip Type ── */}
+        <View style={[styles.card, Shadows.sm]}>
+          <Text style={styles.fieldLabel}>Trip Type <Text style={styles.required}>*</Text></Text>
+          <View style={styles.tripTypeRow}>
+            {(['domestic', 'international'] as TripType[]).map((type) => (
+              <Pressable
+                key={type}
+                style={[styles.tripTypeBtn, tripType === type && styles.tripTypeBtnActive]}
+                onPress={() => setTripType(type)}
+              >
+                <Ionicons
+                  name={type === 'domestic' ? 'flag-outline' : 'earth-outline'}
+                  size={18}
+                  color={tripType === type ? Colors.primary : Colors.textSecondary}
+                />
+                <Text style={[styles.tripTypeBtnText, tripType === type && styles.tripTypeBtnTextActive]}>
+                  {type === 'domestic' ? 'Domestic (India)' : 'International'}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
         </View>
 
         {/* ── Location ── */}
@@ -424,21 +472,32 @@ export default function NewPackageScreen(): React.ReactElement {
                 required
                 value={newCity}
                 onChangeText={setNewCity}
-                placeholder="e.g. Pondicherry"
+                placeholder={tripType === 'domestic' ? 'e.g. Pondicherry' : 'e.g. Paris'}
                 autoCapitalize="words"
               />
-              <Input
-                label="State"
-                required
-                value={newState}
-                onChangeText={setNewState}
-                placeholder="e.g. Puducherry"
-                autoCapitalize="words"
-              />
+              {tripType === 'domestic' ? (
+                <Input
+                  label="State"
+                  required
+                  value={newState}
+                  onChangeText={setNewState}
+                  placeholder="e.g. Puducherry"
+                  autoCapitalize="words"
+                />
+              ) : (
+                <Input
+                  label="Country"
+                  required
+                  value={newCountry}
+                  onChangeText={setNewCountry}
+                  placeholder="e.g. France"
+                  autoCapitalize="words"
+                />
+              )}
 
               <Text style={styles.fieldLabel}>Region <Text style={styles.required}>*</Text></Text>
               <View style={styles.categoryGrid}>
-                {REGION_OPTIONS.map((region) => {
+                {regionOptions.map((region) => {
                   const isSelected = newRegion === region;
                   return (
                     <Pressable
@@ -511,7 +570,9 @@ export default function NewPackageScreen(): React.ReactElement {
                     />
                     <View style={styles.locationRowText}>
                       <Text style={styles.locationCity}>{item.city}</Text>
-                      <Text style={styles.locationState}>{item.state}</Text>
+                      <Text style={styles.locationState}>
+                        {[item.state, (item as any).country !== 'India' ? (item as any).country : null].filter(Boolean).join(', ')}
+                      </Text>
                     </View>
                     {selectedLocationId === item.id && (
                       <Ionicons name="checkmark-circle" size={18} color={Colors.primary} />
@@ -641,6 +702,27 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
   categoryChipTextActive: { color: Colors.primary, fontWeight: '700' },
+
+  // ── Trip type toggle ──────────────────────────────────────────
+  tripTypeRow: { flexDirection: 'row', gap: 10 },
+  tripTypeBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: Colors.border,
+    backgroundColor: Colors.backgroundSoft,
+  },
+  tripTypeBtnActive: {
+    borderColor: Colors.primary,
+    backgroundColor: Colors.primaryLight,
+  },
+  tripTypeBtnText: { fontSize: 13, fontWeight: '600', color: Colors.textSecondary },
+  tripTypeBtnTextActive: { color: Colors.primary },
 
   // ── Duration ─────────────────────────────────────────────────
   durationRow: { flexDirection: 'row', gap: 12 },

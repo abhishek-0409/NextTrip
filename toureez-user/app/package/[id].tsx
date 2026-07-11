@@ -77,10 +77,12 @@ function buildCompareItem(pkg: PackageDetail): PackageListItem {
       logo_url: pkg.company.logo_url,
       is_verified: pkg.company.is_verified,
     },
+    trip_type: pkg.trip_type,
     location: {
       id: pkg.location.id,
       city: pkg.location.city,
       state: pkg.location.state,
+      country: pkg.location.country,
     },
     category: {
       id: pkg.category.id,

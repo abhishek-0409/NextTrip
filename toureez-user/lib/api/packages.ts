@@ -256,10 +256,11 @@ export async function getPackageDetail(
  * Fetches featured/promoted packages for the home screen.
  */
 // FIXED: 6 - Featured packages now use the backend API.
-export async function getFeaturedPackages(): Promise<ApiResponse<Package[]>> {
+export async function getFeaturedPackages(tripType?: 'domestic' | 'international'): Promise<ApiResponse<Package[]>> {
+  const params = tripType ? { trip_type: tripType } : undefined;
   const response = await apiClient.get<PackageListItem[]>(
     '/packages/featured',
-    undefined,
+    params,
     false
   );
 

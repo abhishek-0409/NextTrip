@@ -151,6 +151,7 @@ export const CreatePackageSchema = z
     title: trimmedString(3, 200),
     location_id: z.string().uuid('Invalid location ID'),
     category_id: z.string().uuid('Invalid category ID'),
+    trip_type: z.enum(['domestic', 'international']).optional().default('domestic'),
     description: optionalTrimmed(20, 5000),
     highlights: stringArrayFromBody(),
     duration_days: optionalNumberFromQuery(z.coerce.number().int().min(1).max(365)),
@@ -174,6 +175,7 @@ export const UpdatePackageSchema = z
     title: optionalTrimmed(3, 200),
     location_id: z.string().uuid('Invalid location ID').optional(),
     category_id: z.string().uuid('Invalid category ID').optional(),
+    trip_type: z.enum(['domestic', 'international']).optional(),
     description: optionalTrimmed(20, 5000),
     highlights: z.array(z.string().trim().min(1)).optional(),
     duration_days: optionalNumberFromQuery(z.coerce.number().int().min(1).max(365)),
@@ -294,11 +296,27 @@ export type VendorPackageImageSaveInput = z.infer<typeof VendorPackageImageSaveS
  * Validates the body for POST /api/v1/vendor/locations.
  * Lets a vendor add a destination that isn't yet in the saved locations list.
  */
+export const DOMESTIC_REGIONS = [
+  'North India', 'South India', 'East India', 'West India', 'Central India',
+] as const;
+
+export const INTERNATIONAL_REGIONS = [
+  'Southeast Asia', 'East Asia', 'South Asia',
+  'Middle East', 'Central Asia',
+  'Europe', 'Eastern Europe',
+  'Africa', 'North Africa',
+  'North America', 'South America', 'Central America',
+  'Oceania', 'Arctic / Antarctica',
+] as const;
+
+export const ALL_REGIONS = [...DOMESTIC_REGIONS, ...INTERNATIONAL_REGIONS] as const;
+
 export const CreateLocationSchema = z
   .object({
     city: trimmedString(2, 80),
-    state: trimmedString(2, 80),
-    region: z.enum(['North India', 'South India', 'East India', 'West India', 'Central India']),
+    state: trimmedString(2, 80).optional(),
+    region: z.enum(ALL_REGIONS),
+    country: trimmedString(2, 80).optional(),
   })
   .strict();
 

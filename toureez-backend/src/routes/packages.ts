@@ -55,9 +55,14 @@ packagesRouter.get('/compare', async (req, res, next) => {
   }
 });
 
-packagesRouter.get('/featured', async (_req, res, next) => {
+packagesRouter.get('/featured', async (req, res, next) => {
   try {
-    const packages = await getFeaturedPackages();
+    const rawTripType = req.query.trip_type;
+    const tripType =
+      rawTripType === 'domestic' || rawTripType === 'international'
+        ? rawTripType
+        : undefined;
+    const packages = await getFeaturedPackages(tripType);
     return success(res, packages);
   } catch (caughtError) {
     return next(caughtError);

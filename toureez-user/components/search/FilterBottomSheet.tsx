@@ -419,6 +419,10 @@ export function FilterBottomSheet({
     }));
   }, []);
 
+  const setTripType = useCallback((type: 'domestic' | 'international' | undefined) => {
+    setDraft((prev) => ({ ...prev, trip_type: prev.trip_type === type ? undefined : type }));
+  }, []);
+
   const toggleCategory = useCallback((categoryName: string) => {
     setDraft((prev) => ({
       ...prev,
@@ -577,7 +581,26 @@ export function FilterBottomSheet({
               })}
             </View>
 
-            {/* ── 3. Category ── */}
+            {/* ── 3. Trip Type ── */}
+            <SectionLabel label="Trip Type" />
+            <View style={styles.tripTypeRow}>
+              {([
+                { value: 'domestic', label: '🇮🇳 Domestic' },
+                { value: 'international', label: '🌍 International' },
+              ] as const).map(({ value, label }) => (
+                <Pressable
+                  key={value}
+                  style={[styles.tripTypeBtn, draft.trip_type === value && styles.tripTypeBtnSelected]}
+                  onPress={() => setTripType(value)}
+                >
+                  <Text style={[styles.pillText, draft.trip_type === value && styles.pillTextSelected]}>
+                    {label}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+
+            {/* ── 4. Category ── */}
             <SectionLabel label="Category" />
             {categories && categories.length > 0 ? (
               <View style={styles.categoryGrid}>
@@ -832,6 +855,20 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 8,
     elevation: 4,
+  },
+  tripTypeRow: { flexDirection: 'row', gap: 10, marginBottom: 4 },
+  tripTypeBtn: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: Colors.surfaceBorderStrong,
+    backgroundColor: Colors.backgroundLayer2,
+  },
+  tripTypeBtnSelected: {
+    borderColor: Colors.accent,
+    backgroundColor: Colors.accent,
   },
   pillText: {
     color: Colors.textSecondary,

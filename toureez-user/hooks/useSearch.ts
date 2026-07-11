@@ -73,9 +73,12 @@ export function durationBucketToRange(bucket: DurationBucket): {
  * Mirrors the backend SearchFiltersSchema exactly so params can be
  * forwarded as-is to apiClient.get().
  */
+export type TripType = 'domestic' | 'international';
+
 export interface SearchScreenFilters {
   destination?: string;
   state?: string;
+  trip_type?: TripType;
   category?: string;
   min_price?: number;
   max_price?: number;
@@ -108,6 +111,10 @@ export function filtersToQueryParams(
 
   if (filters.state?.trim()) {
     params.state = filters.state.trim();
+  }
+
+  if (filters.trip_type) {
+    params.trip_type = filters.trip_type;
   }
 
   if (filters.category?.trim()) {
@@ -233,6 +240,7 @@ export function countActiveFilters(filters: SearchScreenFilters): number {
 
   if (filters.destination?.trim()) count += 1;
   if (filters.state?.trim()) count += 1;
+  if (filters.trip_type) count += 1;
   if (filters.category?.trim()) count += 1;
   if (filters.min_price !== undefined || filters.max_price !== undefined) count += 1;
   if (filters.duration_bucket) count += 1;

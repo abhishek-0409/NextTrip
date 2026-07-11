@@ -100,6 +100,8 @@ export const SearchFiltersSchema = z
   .object({
     destination: optionalTrimmedString(1, 120),
     state: optionalTrimmedString(1, 120),
+    country: optionalTrimmedString(1, 80),
+    trip_type: z.enum(['domestic', 'international']).optional(),
     category: optionalTrimmedString(1, 120),
     min_price: optionalNumberFromQuery(z.coerce.number().min(0)),
     max_price: optionalNumberFromQuery(z.coerce.number().min(0)),

@@ -140,8 +140,8 @@ export interface Package {
   highlights: string[];
   /** Primary destination name derived from locations.city */
   destination: string;
-  /** Indian state derived from locations.state */
-  state: string;
+  /** State/province derived from locations.state (null for international locations without a state) */
+  state: string | null;
   /** Package category derived from categories.name */
   category: PackageCategory | null;
   /** Human label derived from categories.label */
@@ -354,7 +354,7 @@ export interface CompareState {
 export interface Location {
   id: string;
   city: string;
-  state: string;
+  state: string | null;
   region: string;
   country: string;
   latitude: number | null;
@@ -409,6 +409,7 @@ export interface PackageListItem {
   inclusions: string[];
   exclusions: string[];
   amenities: string[];
+  trip_type: 'domestic' | 'international';
   status: 'draft' | 'pending' | 'active' | 'rejected';
   is_featured: boolean;
   is_bestseller: boolean;
@@ -428,7 +429,8 @@ export interface PackageListItem {
   location: {
     id: string;
     city: string;
-    state: string;
+    state: string | null;
+    country: string;
   };
   category: {
     id: string;
@@ -536,11 +538,13 @@ export interface PackageDetail {
     /** UUID of the Supabase auth user who owns this company. Used for "Manage Photos" visibility. */
     owner_id: string;
   };
+  trip_type: 'domestic' | 'international';
   location: {
     id: string;
     city: string;
-    state: string;
+    state: string | null;
     region: string;
+    country: string;
   };
   category: {
     id: string;

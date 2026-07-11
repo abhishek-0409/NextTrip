@@ -32,8 +32,9 @@ export async function getCategories(): Promise<BackendApiResponse<Category[]>> {
 /**
  * Fetches featured packages from GET /packages/featured
  */
-export async function getFeaturedPackagesFromBackend(): Promise<
+export async function getFeaturedPackagesFromBackend(tripType?: 'domestic' | 'international'): Promise<
   BackendApiResponse<PackageListItem[]>
 > {
-  return apiClient.get<PackageListItem[]>('/packages/featured');
+  const params = tripType ? { trip_type: tripType } : undefined;
+  return apiClient.get<PackageListItem[]>('/packages/featured', params);
 }

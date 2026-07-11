@@ -18,14 +18,14 @@ import type {
 const PACKAGE_LIST_SELECT = `
   *,
   company:companies(id, name, logo_url, is_verified),
-  location:locations(id, city, state),
+  location:locations(id, city, state, country),
   category:categories(id, name, label, icon)
 `;
 
 const PACKAGE_DETAIL_SELECT = `
   *,
   company:companies(id, name, slug, logo_url, is_verified, avg_rating, total_reviews, owner_id),
-  location:locations(id, city, state, region),
+  location:locations(id, city, state, region, country),
   category:categories(id, name, label, icon)
 `;
 
@@ -138,6 +138,7 @@ const mapPackage = (record: Record<string, unknown>): Package => ({
   inclusions: readStringArray(record, 'inclusions'),
   exclusions: readStringArray(record, 'exclusions'),
   amenities: readStringArray(record, 'amenities'),
+  trip_type: readString(record, 'trip_type') === 'international' ? 'international' : 'domestic',
   status: readPackageStatus(record),
   is_featured: readBoolean(record, 'is_featured'),
   is_bestseller: readBoolean(record, 'is_bestseller'),
@@ -165,7 +166,8 @@ const mapListLocation = (value: unknown): PackageListItem['location'] => {
   return {
     id: readString(record, 'id'),
     city: readString(record, 'city'),
-    state: readString(record, 'state'),
+    state: readNullableString(record, 'state'),
+    country: readString(record, 'country', 'India'),
   };
 };
 
@@ -201,8 +203,9 @@ const mapDetailLocation = (value: unknown): PackageDetail['location'] => {
   return {
     id: readString(record, 'id'),
     city: readString(record, 'city'),
-    state: readString(record, 'state'),
+    state: readNullableString(record, 'state'),
     region: readString(record, 'region'),
+    country: readString(record, 'country', 'India'),
   };
 };
 
@@ -503,6 +506,10 @@ export const searchPackages = async (filters: SearchFilters): Promise<PaginatedR
     query = query.in('id', pricePackageIds);
   }
 
+  if (filters.trip_type !== undefined) {
+    query = query.eq('trip_type', filters.trip_type);
+  }
+
   if (filters.duration_days !== undefined) {
     query = query.eq('duration_days', filters.duration_days);
   }
@@ -709,15 +716,18 @@ export const getPackagesForCompare = async (ids: string[]): Promise<PackageListI
 /**
  * Fetches featured active packages ordered by rating for the home screen.
  */
-export const getFeaturedPackages = async (): Promise<PackageListItem[]> => {
-  const { data, error } = await supabasePublic
+export const getFeaturedPackages = async (tripType?: 'domestic' | 'international'): Promise<PackageListItem[]> => {
+  let query = supabasePublic
     .from('packages')
     .select(PACKAGE_LIST_SELECT)
     .eq('status', 'active')
-    .eq('is_featured', true)
-    // Order by most recently featured first — ordering by avg_rating pushed
-    // newly-featured packages with no reviews yet past the limit of 6,
-    // so they never showed up in Trending Packages right after being featured.
+    .eq('is_featured', true);
+
+  if (tripType !== undefined) {
+    query = query.eq('trip_type', tripType);
+  }
+
+  const { data, error } = await query
     .order('updated_at', { ascending: false })
     .limit(6);
 

@@ -199,7 +199,7 @@ export function PackageCard({
           <View style={styles.locationRow}>
             <Ionicons name="location" size={12} color={Colors.primary} />
             <Text style={styles.locationText} numberOfLines={1}>
-              {item.location.city}, {item.location.state}
+              {[item.location.city, item.location.state, (item.location as any).country !== 'India' ? (item.location as any).country : null].filter(Boolean).join(', ')}
             </Text>
           </View>
 

@@ -123,6 +123,7 @@ const mapPackage = (row: Record<string, unknown>): Package => ({
   inclusions: readArray(row, 'inclusions') as string[],
   exclusions: readArray(row, 'exclusions') as string[],
   amenities: readArray(row, 'amenities') as string[],
+  trip_type: readString(row, 'trip_type') === 'international' ? 'international' : 'domestic',
   status: readString(row, 'status', 'draft') as Package['status'],
   is_featured: readBoolean(row, 'is_featured'),
   is_bestseller: readBoolean(row, 'is_bestseller'),

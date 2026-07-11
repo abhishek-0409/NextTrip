@@ -18,7 +18,7 @@ interface PackageImageCandidate {
   title: string;
   location?: {
     city?: string;
-    state?: string;
+    state?: string | null;
   };
   category?: {
     name?: string;

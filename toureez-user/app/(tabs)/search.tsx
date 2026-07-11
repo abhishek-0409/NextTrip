@@ -64,8 +64,10 @@ function paramsToFilters(params: Record<string, string | string[]>): SearchScree
   const minRating = get('min_rating');
   const sort = get('sort') as SortOption | undefined;
 
+  const tripType = get('trip_type');
   if (destination) filters.destination = destination;
   if (state) filters.state = state;
+  if (tripType === 'domestic' || tripType === 'international') filters.trip_type = tripType;
   if (category) filters.category = category;
   if (isFeatured === 'true') filters.is_featured = true;
   if (minPrice && !Number.isNaN(Number(minPrice))) filters.min_price = Number(minPrice);

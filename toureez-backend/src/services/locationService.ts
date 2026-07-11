@@ -29,6 +29,11 @@ const readNullableNumber = (record: Record<string, unknown>, key: string): numbe
   return null;
 };
 
+const readNullableString = (record: Record<string, unknown>, key: string): string | null => {
+  const value = record[key];
+  return typeof value === 'string' ? value : null;
+};
+
 const readBoolean = (record: Record<string, unknown>, key: string): boolean => {
   const value = record[key];
   return typeof value === 'boolean' ? value : false;
@@ -45,7 +50,7 @@ const mapLocation = (value: unknown): Location => {
   return {
     id: readString(record, 'id'),
     city: readString(record, 'city'),
-    state: readString(record, 'state'),
+    state: readNullableString(record, 'state'),
     region: readString(record, 'region'),
     country: readString(record, 'country', 'India'),
     latitude: readNullableNumber(record, 'latitude'),
@@ -87,13 +92,15 @@ export const getLocations = async (popular?: boolean): Promise<Location[]> => {
  * of erroring, since the vendor's intent is just "make sure this destination is selectable".
  */
 export const createLocation = async (input: CreateLocationInput): Promise<Location> => {
+  const country = input.country ?? 'India';
+
   const { data, error } = await supabaseAdmin
     .from('locations')
     .insert({
       city: input.city,
-      state: input.state,
+      state: input.state ?? null,
       region: input.region,
-      country: 'India',
+      country,
       is_popular: false,
       is_active: true,
     })
@@ -102,13 +109,15 @@ export const createLocation = async (input: CreateLocationInput): Promise<Locati
 
   if (error !== null) {
     if (error.code === '23505') {
-      const { data: existing, error: fetchError } = await supabasePublic
+      let dupQuery = supabasePublic
         .from('locations')
         .select('id, city, state, region, country, latitude, longitude, is_popular, is_active, created_at')
         .eq('city', input.city)
-        .eq('state', input.state)
-        .eq('country', 'India')
-        .maybeSingle();
+        .eq('country', country);
+
+      if (input.state) dupQuery = dupQuery.eq('state', input.state);
+
+      const { data: existing, error: fetchError } = await dupQuery.maybeSingle();
 
       if (fetchError === null && existing !== null) {
         return mapLocation(existing);

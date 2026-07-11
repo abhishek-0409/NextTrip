@@ -255,7 +255,8 @@ export default function HomeScreen(): React.ReactElement {
   const firstName = user?.full_name?.trim().split(' ')[0] ?? 'Traveller';
   const { data: locations, isLoading: locationsLoading, refetch: refetchLocations } = useLocations(true);
   const { refetch: refetchCategories } = useCategories();
-  const { data: packages, isLoading: packagesLoading, refetch: refetchFeaturedPackages } = useFeaturedPackages();
+  const [activeTripType, setActiveTripType] = useState<'domestic' | 'international'>('domestic');
+  const { data: packages, isLoading: packagesLoading, refetch: refetchFeaturedPackages } = useFeaturedPackages(activeTripType);
   const [refreshing, setRefreshing] = useState(false);
   const [greeting, setGreeting] = useState(getGreeting);
 
@@ -403,9 +404,29 @@ export default function HomeScreen(): React.ReactElement {
             />
           )}
 
+          {/* ── Domestic / International toggle ── */}
+          <View style={styles.tripTypeToggle}>
+            {(['domestic', 'international'] as const).map((type) => (
+              <Pressable
+                key={type}
+                style={[styles.tripTypeTab, activeTripType === type && styles.tripTypeTabActive]}
+                onPress={() => setActiveTripType(type)}
+              >
+                <Ionicons
+                  name={type === 'domestic' ? 'flag-outline' : 'earth-outline'}
+                  size={15}
+                  color={activeTripType === type ? Colors.primary : Colors.textSecondary}
+                />
+                <Text style={[styles.tripTypeTabText, activeTripType === type && styles.tripTypeTabTextActive]}>
+                  {type === 'domestic' ? 'Domestic' : 'International'}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+
           <HomeSectionHeader
-            title="Trending Packages"
-            onSeeAll={handleSearchPress}
+            title={activeTripType === 'domestic' ? 'Trending India Packages' : 'International Packages'}
+            onSeeAll={() => router.push({ pathname: '/(tabs)/search', params: { trip_type: activeTripType } })}
           />
           {packagesLoading ? (
             <PackageSkeleton />
@@ -520,6 +541,39 @@ const styles = StyleSheet.create({
   categoryList: {
     paddingHorizontal: 20,
   },
+  tripTypeToggle: {
+    flexDirection: 'row',
+    marginHorizontal: 20,
+    marginTop: 8,
+    marginBottom: 4,
+    backgroundColor: Colors.backgroundSoft,
+    borderRadius: 12,
+    padding: 4,
+    gap: 4,
+  },
+  tripTypeTab: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 8,
+    borderRadius: 10,
+  },
+  tripTypeTabActive: {
+    backgroundColor: Colors.backgroundWhite,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 2,
+  },
+  tripTypeTabText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: Colors.textSecondary,
+  },
+  tripTypeTabTextActive: { color: Colors.primary },
   pillSeparator: {
     width: 8,
   },

@@ -430,6 +430,7 @@ export async function createVendorPackage(
     title: input.title,
     slug,
     status: 'draft',
+    trip_type: input.trip_type ?? 'domestic',
     description: input.description ?? null,
     location_id: input.location_id,
     category_id: input.category_id,

@@ -13,7 +13,7 @@ import type { Category, Location, PackageListItem } from '../types';
 export const homeQueryKeys = {
   locations: (popular?: boolean) => ['locations', { popular }] as const,
   categories: ['categories'] as const,
-  featuredPackages: ['packages', 'featured'] as const,
+  featuredPackages: (tripType?: 'domestic' | 'international') => ['packages', 'featured', tripType] as const,
 } as const;
 
 function assertData<T>(data: T | null, error: string | null): T {
@@ -54,17 +54,17 @@ export function useCategories(): UseQueryResult<Category[], Error> {
   });
 }
 
-export function useFeaturedPackages(): UseQueryResult<
+export function useFeaturedPackages(tripType?: 'domestic' | 'international'): UseQueryResult<
   PackageListItem[],
   Error
 > {
   return useQuery({
-    queryKey: homeQueryKeys.featuredPackages,
+    queryKey: homeQueryKeys.featuredPackages(tripType),
     queryFn: async () => {
-      const response = await getFeaturedPackagesFromBackend();
+      const response = await getFeaturedPackagesFromBackend(tripType);
       return assertData(response.data, response.error);
     },
-    staleTime: 5 * 60 * 1000, // 5 min — featured packages
+    staleTime: 5 * 60 * 1000,
     gcTime: Config.queryCacheTimeMs,
   });
 }

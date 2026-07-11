@@ -121,6 +121,7 @@ interface CreatePackageVars {
   inclusions?: string[];
   exclusions?: string[];
   amenities?: string[];
+  trip_type?: 'domestic' | 'international';
 }
 
 export function useCreatePackage(): UseMutationResult<VendorPackageDetail, Error, CreatePackageVars> {
