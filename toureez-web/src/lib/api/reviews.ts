@@ -41,6 +41,10 @@ export async function getPackageReviews(packageId: string) {
   return unwrapItems<Review>(apiClient.get(`/reviews/package/${packageId}`));
 }
 
+export async function getRecentReviews(limit = 5) {
+  return unwrapItems<Review>(apiClient.get('/reviews/recent', { limit }));
+}
+
 export async function getReviewEligibility(packageId: string) {
   return apiClient.get<{ eligible: boolean; booking_id?: string }>(`/reviews/eligible/${packageId}`, undefined, true);
 }

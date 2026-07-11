@@ -241,6 +241,10 @@ h2 { font-size: 1.2rem; margin: 0 0 12px; }
 .ribbon-top-rated { background: var(--success); }
 .ribbon-local-exclusive { background: #6B46C1; }
 .trust-badge { display: inline-flex; align-items: center; gap: 4px; font-size: .7rem; font-weight: 700; color: var(--success); background: rgba(56,161,105,.1); border-radius: 100px; padding: 2px 8px; }
+.trust-badge-tooltip { position: relative; cursor: default; }
+.trust-badge-tooltip .trust-badge-tip { display: none; position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: #1A1A2E; color: #fff; font-size: .68rem; font-weight: 500; white-space: nowrap; padding: 6px 10px; border-radius: 8px; pointer-events: none; z-index: 10; }
+.trust-badge-tooltip .trust-badge-tip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: #1A1A2E; }
+.trust-badge-tooltip:hover .trust-badge-tip { display: block; }
 .category-tag { font-size: .7rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
 .trip-card-category-row { display: flex; align-items: center; justify-content: space-between; }
 

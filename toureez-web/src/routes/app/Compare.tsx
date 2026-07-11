@@ -56,6 +56,7 @@ export default function Compare() {
             <tr><td>Duration</td>{query.data.data.map((p) => <td key={p.id}>{p.duration_days} days</td>)}</tr>
             <tr><td>Rating</td>{query.data.data.map((p) => <td key={p.id}>★ {p.avg_rating}</td>)}</tr>
             <tr><td>Location</td>{query.data.data.map((p) => <td key={p.id}>{packageLocationLabel(p)}</td>)}</tr>
+            <tr><td>Book</td>{query.data.data.map((p) => <td key={p.id}><Link to={`/app/booking/${p.id}`} className="btn btn-primary">Book Now</Link></td>)}</tr>
           </tbody>
         </table>
       )}

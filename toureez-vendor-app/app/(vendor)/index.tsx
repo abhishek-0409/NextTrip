@@ -268,6 +268,33 @@ export default function DashboardScreen(): React.ReactElement {
         </TouchableOpacity>
       </View>
 
+      {!isLoading && activePackages === 0 && (
+        <View style={styles.onboardCard}>
+          <View style={styles.onboardHeader}>
+            <Ionicons name="rocket-outline" size={20} color={D.primary} />
+            <Text style={styles.onboardTitle}>Get Started — 3 steps to your first booking</Text>
+          </View>
+          {[
+            { done: !!company, icon: 'business-outline' as const, label: 'Complete company profile', route: '/(vendor)/company' as const },
+            { done: false, icon: 'add-circle-outline' as const, label: 'Create your first package', route: '/(vendor)/packages/new' as const },
+            { done: false, icon: 'pricetag-outline' as const, label: 'Set pricing & submit for review', route: '/(vendor)/packages/new' as const },
+          ].map((step) => (
+            <TouchableOpacity
+              key={step.label}
+              style={styles.onboardStep}
+              onPress={() => router.push({ pathname: step.route, params: { from: 'dashboard' } })}
+              activeOpacity={0.8}
+            >
+              <View style={[styles.onboardStepIcon, { backgroundColor: step.done ? D.successDim : D.primaryDim }]}>
+                <Ionicons name={step.done ? 'checkmark-circle' : step.icon} size={16} color={step.done ? D.success : D.primary} />
+              </View>
+              <Text style={[styles.onboardStepLabel, step.done && { textDecorationLine: 'line-through', color: D.textMuted }]}>{step.label}</Text>
+              {!step.done && <Ionicons name="chevron-forward" size={14} color={D.textMuted} />}
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+
       {}
       <View style={styles.statGrid}>
         <StatCard
@@ -637,6 +664,14 @@ const styles = StyleSheet.create({
   growSub:     { fontSize: 12, color: D.textSec, lineHeight: 17, marginBottom: 12 },
   growBtn:     { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: D.primary, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 9, alignSelf: 'flex-start' },
   growBtnTxt:  { color: '#fff', fontWeight: '700', fontSize: 13 },
+
+  // Onboarding
+  onboardCard:      { backgroundColor: D.card, borderRadius: 16, borderWidth: 1, borderColor: D.primary + '44', padding: 16, marginBottom: 16, gap: 12 },
+  onboardHeader:    { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  onboardTitle:     { fontSize: 13, fontWeight: '700', color: D.text, flex: 1 },
+  onboardStep:      { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  onboardStepIcon:  { width: 32, height: 32, borderRadius: 9, alignItems: 'center', justifyContent: 'center' },
+  onboardStepLabel: { flex: 1, fontSize: 13, color: D.textSec, fontWeight: '500' },
 
   // Help card
   helpCard:  { backgroundColor: D.card, borderRadius: 16, borderWidth: 1, borderColor: D.cardBorder, padding: 14, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 8 },

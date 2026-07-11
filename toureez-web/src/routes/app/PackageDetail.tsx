@@ -86,7 +86,15 @@ export default function PackageDetail() {
           <div className="pd-vendor-row">
             <div className="pd-vendor-avatar">{packageVendorName(pkg).slice(0, 1) || 'V'}</div>
             <div>
-              <div className="pd-vendor-name">{packageVendorName(pkg)} {pkg.company?.is_verified && <span className="trust-badge">Verified Operator</span>}</div>
+              <div className="pd-vendor-name">
+                {packageVendorName(pkg)}
+                {pkg.company?.is_verified && (
+                  <span className="trust-badge trust-badge-tooltip">
+                    Verified Operator
+                    <span className="trust-badge-tip">Reviewed by Toureez · GST registered · Trade licence verified</span>
+                  </span>
+                )}
+              </div>
               <div className="pd-vendor-meta">
                 {pkg.avg_rating !== undefined && <>★ {pkg.avg_rating} Ratings ({pkg.review_count ?? 0} reviews)</>}
               </div>

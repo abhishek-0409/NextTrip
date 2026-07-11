@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getCategories } from '../../lib/api/categories';
 import { getLocations } from '../../lib/api/locations';
 import { getFeaturedPackages, packageLocationLabel, packagePrice, packageCoverImage, type TripType } from '../../lib/api/packages';
+import { getRecentReviews } from '../../lib/api/reviews';
 import { LoadingState, ErrorState } from '../../components/ui';
 import { useAuthStore } from '../../store/authStore';
 
@@ -96,6 +97,7 @@ export default function Home() {
 
   const categoriesQuery = useQuery({ queryKey: ['categories'], queryFn: getCategories });
   const locationsQuery = useQuery({ queryKey: ['locations', 'popular'], queryFn: () => getLocations(true) });
+  const reviewsQuery = useQuery({ queryKey: ['reviews', 'recent'], queryFn: () => getRecentReviews(6) });
   const featuredQuery = useQuery({
     queryKey: ['packages', 'featured', activeTripType],
     queryFn: () => getFeaturedPackages(activeTripType),
@@ -363,10 +365,19 @@ export default function Home() {
           <h2 className="section-heading">Moments that made every journey unforgettable</h2>
 
           <div className="testimonial-strip">
-            {TESTIMONIALS.map((t) => (
+            {(reviewsQuery.data?.data && reviewsQuery.data.data.length > 0
+              ? reviewsQuery.data.data.map((r) => ({
+                  name: r.user.display_name,
+                  quote: r.body ?? r.title ?? '',
+                  image: r.user.avatar_url ?? TESTIMONIALS[0].image,
+                  rating: r.overall_rating,
+                }))
+              : TESTIMONIALS
+            ).map((t) => (
               <div className="testimonial-photo" key={t.name}>
                 <img src={t.image} alt={t.name} />
                 <span className="testimonial-photo-name">{t.name}</span>
+                {'rating' in t && <span className="testimonial-photo-rating">{'★'.repeat(Math.round(t.rating as number))}</span>}
                 <span className="testimonial-photo-quote">{t.quote}</span>
               </div>
             ))}

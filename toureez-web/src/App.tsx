@@ -117,6 +117,8 @@ export default function App() {
             <Route path="/auth/reset-password" element={<ResetPassword />} />
             <Route path="/auth/callback" element={<Callback />} />
 
+            <Route path="/package/:id" element={<PackageDetail />} />
+
             <Route path="/app" element={<TravelerLayout />}>
               {}
               <Route index element={<Home />} />
