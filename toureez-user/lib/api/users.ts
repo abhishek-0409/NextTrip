@@ -7,6 +7,7 @@
 import * as Linking from 'expo-linking';
 import { supabase } from '../supabase';
 import { apiClient } from './client';
+import { friendlyError, friendlyThrown } from '../errors';
 import type { ApiResponse, User } from '../../types';
 
 // FIXED: 7 - Role changes must go through PATCH /api/v1/admin/users/:id/role, never frontend profile writes.
@@ -26,16 +27,6 @@ export interface OAuthCallbackParams {
 
 // ── Internal helpers ──────────────────────────────────────────────────────────
 
-/**
- * Extracts a human-readable message from an unknown error value.
- */
-function extractErrorMessage(error: unknown): string {
-  if (error instanceof Error) return error.message;
-  if (typeof error === 'object' && error !== null && 'message' in error) {
-    return String((error as { message: unknown }).message);
-  }
-  return 'An unexpected error occurred. Please try again.';
-}
 
 /**
  * Normalizes auth metadata into the shape expected by public.users.
@@ -89,7 +80,7 @@ async function fetchOrCreateProfile(
   if (profileResponse.error) {
     return {
       data: null,
-      error: `Failed to fetch profile: ${profileResponse.error.message}`,
+      error: friendlyError(profileResponse.error.message),
     };
   }
 
@@ -109,7 +100,7 @@ async function fetchOrCreateProfile(
   if (createProfileResponse.error) {
     return {
       data: null,
-      error: `Failed to create missing profile: ${createProfileResponse.error.message}`,
+      error: friendlyError(createProfileResponse.error.message),
     };
   }
 
@@ -142,7 +133,7 @@ export async function getProfile(): Promise<ApiResponse<User>> {
   } catch (err) {
     return {
       data: null,
-      error: `getProfile: ${extractErrorMessage(err)}`,
+      error: friendlyThrown(err),
     };
   }
 }
@@ -193,7 +184,7 @@ export async function updateProfile(
     if (updateProfileResponse.error) {
       return {
         data: null,
-        error: `Failed to update profile: ${updateProfileResponse.error.message}`,
+        error: friendlyError(updateProfileResponse.error.message),
       };
     }
 
@@ -201,7 +192,7 @@ export async function updateProfile(
   } catch (err) {
     return {
       data: null,
-      error: `updateProfile: ${extractErrorMessage(err)}`,
+      error: friendlyThrown(err),
     };
   }
 }
@@ -227,7 +218,7 @@ export async function signOut(): Promise<ApiResponse<null>> {
   } catch (err) {
     return {
       data: null,
-      error: `signOut: ${extractErrorMessage(err)}`,
+      error: friendlyThrown(err),
     };
   }
 }
@@ -256,12 +247,12 @@ export async function signIn(
     if (authError) {
       return {
         data: null,
-        error: `Sign in failed: ${authError.message}`,
+        error: friendlyError(authError.message),
       };
     }
 
     if (!authData.user) {
-      return { data: null, error: 'Sign in failed: no user returned.' };
+      return { data: null, error: 'Sign in failed. Please try again.' };
     }
 
     // Try to fetch the public profile row.
@@ -301,7 +292,7 @@ export async function signIn(
   } catch (err) {
     return {
       data: null,
-      error: `signIn: ${extractErrorMessage(err)}`,
+      error: friendlyThrown(err),
     };
   }
 }
@@ -355,12 +346,12 @@ export async function signUp(
     if (authError) {
       return {
         data: null,
-        error: `Sign up failed: ${authError.message}`,
+        error: friendlyError(authError.message),
       };
     }
 
     if (!authData.user) {
-      return { data: null, error: 'Sign up failed: no user returned.' };
+      return { data: null, error: 'Sign up failed. Please try again.' };
     }
 
     // FIXED: 7 - The DB trigger creates the profile row; this fallback upsert self-heals if a session exists.
@@ -401,7 +392,7 @@ export async function signUp(
   } catch (err) {
     return {
       data: null,
-      error: `signUp: ${extractErrorMessage(err)}`,
+      error: friendlyThrown(err),
     };
   }
 }
@@ -450,7 +441,7 @@ export async function getGoogleOAuthUrl(
   } catch (err) {
     return {
       data: null,
-      error: `getGoogleOAuthUrl: ${extractErrorMessage(err)}`,
+      error: friendlyThrown(err),
     };
   }
 }
@@ -501,7 +492,7 @@ export async function completeOAuthSignIn(
   } catch (err) {
     return {
       data: null,
-      error: `completeOAuthSignIn: ${extractErrorMessage(err)}`,
+      error: friendlyThrown(err),
     };
   }
 }
@@ -535,7 +526,7 @@ export async function resetPassword(
   } catch (err) {
     return {
       data: null,
-      error: `resetPassword: ${extractErrorMessage(err)}`,
+      error: friendlyThrown(err),
     };
   }
 }

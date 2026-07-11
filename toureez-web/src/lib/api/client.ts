@@ -1,6 +1,7 @@
 import { Config } from '../../constants/config';
 import { useAuthStore } from '../../store/authStore';
 import { supabase } from '../supabase';
+import { friendlyError, friendlyThrown } from '../errors';
 import type { BackendApiResponse } from '../../types';
 
 export type QueryParams = Record<string, string | number | boolean | null | undefined>;
@@ -29,10 +30,6 @@ function getAuthHeader(): Record<string, string> {
   return {};
 }
 
-function extractErrorMessage(error: unknown): string {
-  if (error instanceof Error) return error.message;
-  return 'An unexpected error occurred.';
-}
 
 async function request<T>(
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
@@ -63,7 +60,7 @@ async function request<T>(
     }
 
     if (!response.ok) {
-      const message =
+      const raw =
         typeof parsed === 'object' && parsed !== null && 'error' in parsed &&
         typeof (parsed as Record<string, unknown>).error === 'string'
           ? (parsed as { error: string }).error
@@ -75,12 +72,12 @@ async function request<T>(
         });
       }
 
-      return { success: false, data: null, error: message };
+      return { success: false, data: null, error: friendlyError(raw) };
     }
 
     return parsed as BackendApiResponse<T>;
   } catch (err) {
-    return { success: false, data: null, error: extractErrorMessage(err) };
+    return { success: false, data: null, error: friendlyThrown(err) };
   }
 }
 

@@ -16,6 +16,7 @@
 import { Config } from '../../constants/config';
 import { useAuthStore } from '../../store/authStore';
 import { supabase } from '../supabase';
+import { friendlyError, friendlyThrown } from '../errors';
 import type { BackendApiResponse } from '../../types';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -48,10 +49,7 @@ function getAuthHeader(): Record<string, string> {
   return {};
 }
 
-function extractErrorMessage(error: unknown): string {
-  if (error instanceof Error) return error.message;
-  return 'An unexpected error occurred.';
-}
+
 
 // ── Token refresh on 401 ──────────────────────────────────────────────────────
 
@@ -144,19 +142,13 @@ async function request<T>(
     }
 
     if (!response.ok) {
-      const message =
+      const raw =
         typeof parsed === 'object' &&
         parsed !== null &&
         'error' in parsed &&
         typeof (parsed as Record<string, unknown>).error === 'string'
           ? (parsed as { error: string }).error
           : `Request failed with status ${response.status}`;
-
-      let fullMessage = message;
-      if (typeof parsed === 'object' && parsed !== null && 'details' in parsed) {
-        const details = (parsed as Record<string, unknown>).details;
-        fullMessage = `${message}\n\n${JSON.stringify(details, null, 2)}`;
-      }
 
       if (response.status === 401) {
         // Attempt one silent token refresh before signing out
@@ -165,7 +157,7 @@ async function request<T>(
         return { success: false, data: null, error: 'Session expired. Please sign in again.' };
       }
 
-      return { success: false, data: null, error: fullMessage };
+      return { success: false, data: null, error: friendlyError(raw) };
     }
 
     const envelope = parsed as BackendApiResponse<T>;
@@ -174,7 +166,7 @@ async function request<T>(
     return {
       success: false,
       data: null,
-      error: extractErrorMessage(err),
+      error: friendlyThrown(err),
     };
   }
 }

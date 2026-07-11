@@ -6,6 +6,7 @@
 import { Config } from '../../constants/config';
 import { useAuthStore } from '../../store/authStore';
 import { supabase } from '../supabase';
+import { friendlyError, friendlyThrown } from '../errors';
 import type { BackendApiResponse } from '../../types';
 
 export type QueryParams = Record<string, string | number | boolean | null | undefined>;
@@ -99,7 +100,7 @@ async function request<T>(
     try { parsed = text.trim() ? JSON.parse(text) : undefined; } catch { parsed = text; }
 
     if (!response.ok) {
-      const message =
+      const raw =
         typeof parsed === 'object' && parsed !== null && 'error' in parsed &&
         typeof (parsed as Record<string, unknown>).error === 'string'
           ? (parsed as { error: string }).error
@@ -112,12 +113,12 @@ async function request<T>(
         return { success: false, data: null, error: 'Session expired. Please sign in again.' };
       }
 
-      return { success: false, data: null, error: message };
+      return { success: false, data: null, error: friendlyError(raw) };
     }
 
     return parsed as BackendApiResponse<T>;
   } catch (err) {
-    return { success: false, data: null, error: err instanceof Error ? err.message : 'Unexpected error' };
+    return { success: false, data: null, error: friendlyThrown(err) };
   }
 }
 
