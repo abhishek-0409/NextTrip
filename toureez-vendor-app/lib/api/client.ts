@@ -3,7 +3,6 @@
 import { Config } from '../../constants/config';
 import { useAuthStore } from '../../store/authStore';
 import { supabase } from '../supabase';
-import { friendlyError, friendlyThrown } from '../errors';
 import type { BackendApiResponse } from '../../types';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -137,7 +136,7 @@ async function request<T>(
         return { success: false, data: null, error: 'Session expired. Please sign in again.' };
       }
 
-      return { success: false, data: null, error: friendlyError(raw) };
+      return { success: false, data: null, error: raw };
     }
 
     const envelope = parsed as BackendApiResponse<T>;
@@ -146,7 +145,7 @@ async function request<T>(
     return {
       success: false,
       data: null,
-      error: friendlyThrown(err),
+      error: err instanceof Error ? err.message : 'Something went wrong.',
     };
   }
 }

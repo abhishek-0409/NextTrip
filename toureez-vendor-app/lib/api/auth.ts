@@ -1,7 +1,6 @@
 
 
 import { supabase } from '../supabase';
-import { friendlyError, friendlyThrown } from '../errors';
 import type { ApiResponse, User } from '../../types';
 import { VENDOR_ROLE } from '../../types';
 
@@ -46,7 +45,7 @@ export async function signIn(
     });
 
     if (authError !== null || authData.user === null) {
-      return { data: null, error: friendlyError(authError?.message ?? 'Sign in failed.') };
+      return { data: null, error: authError?.message ?? 'Sign in failed.' };
     }
 
     // Fetch profile to get the database role
@@ -72,7 +71,7 @@ export async function signIn(
 
     return { data: user, error: null };
   } catch (err) {
-    return { data: null, error: friendlyThrown(err) };
+    return { data: null, error: err instanceof Error ? err.message : 'Something went wrong.' };
   }
 }
 
@@ -95,7 +94,7 @@ export async function signUpAsVendor(
     });
 
     if (error !== null) {
-      return { data: null, error: friendlyError(error.message) };
+      return { data: null, error: error.message };
     }
 
     if (data.user === null) {
@@ -109,7 +108,7 @@ export async function signUpAsVendor(
   } catch (err) {
     return {
       data: null,
-      error: friendlyThrown(err),
+      error: err instanceof Error ? err.message : 'Something went wrong.',
     };
   }
 }
@@ -118,10 +117,10 @@ export async function signUpAsVendor(
 export async function signOut(): Promise<ApiResponse<null>> {
   try {
     const { error } = await supabase.auth.signOut();
-    if (error !== null) return { data: null, error: friendlyError(error.message) };
+    if (error !== null) return { data: null, error: error.message };
     return { data: null, error: null };
   } catch (err) {
-    return { data: null, error: friendlyThrown(err) };
+    return { data: null, error: err instanceof Error ? err.message : 'Something went wrong.' };
   }
 }
 
@@ -147,9 +146,9 @@ export async function updateProfile(updates: {
       .select(PROFILE_SELECT)
       .single();
 
-    if (error !== null) return { data: null, error: friendlyError(error.message) };
+    if (error !== null) return { data: null, error: error.message };
     return { data: data as User, error: null };
   } catch (err) {
-    return { data: null, error: friendlyThrown(err) };
+    return { data: null, error: err instanceof Error ? err.message : 'Something went wrong.' };
   }
 }

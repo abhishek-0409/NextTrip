@@ -1,5 +1,4 @@
 import { supabase } from '../supabase';
-import { friendlyError, friendlyThrown } from '../errors';
 import type { AuthUser, UserRole } from '../../types';
 
 const PROFILE_SELECT = 'id, full_name, avatar_url, phone, city, state, role, created_at';
@@ -35,7 +34,7 @@ export async function getProfile(): Promise<{ data: AuthUser | null; error: stri
       .maybeSingle();
 
     if (profileResponse.error) {
-      return { data: null, error: friendlyError(profileResponse.error.message) };
+      return { data: null, error: profileResponse.error.message };
     }
 
     if (profileResponse.data) {
@@ -52,20 +51,20 @@ export async function getProfile(): Promise<{ data: AuthUser | null; error: stri
       error: null,
     };
   } catch (err) {
-    return { data: null, error: friendlyThrown(err) };
+    return { data: null, error: err instanceof Error ? err.message : 'Something went wrong.' };
   }
 }
 
 export async function signIn(email: string, password: string) {
   try {
     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({ email, password });
-    if (authError) return { data: null, error: friendlyError(authError.message) };
+    if (authError) return { data: null, error: authError.message };
     if (!authData.user) return { data: null, error: 'Sign in failed. Please try again.' };
 
     const profileResponse = await getProfile();
     return profileResponse;
   } catch (err) {
-    return { data: null, error: friendlyThrown(err) };
+    return { data: null, error: err instanceof Error ? err.message : 'Something went wrong.' };
   }
 }
 
@@ -88,7 +87,7 @@ export async function signUp(
       options: { data: { full_name: fullName } },
     });
 
-    if (authError) return { data: null, error: friendlyError(authError.message) };
+    if (authError) return { data: null, error: authError.message };
     if (!authData.user) return { data: null, error: 'Sign up failed. Please try again.' };
 
     const upsertResponse = await supabase
@@ -124,13 +123,13 @@ export async function signUp(
       error: null,
     };
   } catch (err) {
-    return { data: null, error: friendlyThrown(err) };
+    return { data: null, error: err instanceof Error ? err.message : 'Something went wrong.' };
   }
 }
 
 export async function signOut() {
   const { error } = await supabase.auth.signOut();
-  if (error) return { error: friendlyError(error.message) };
+  if (error) return { error: error.message };
   return { error: null };
 }
 
@@ -139,16 +138,16 @@ export async function resetPassword(email: string) {
     const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
       redirectTo: `${window.location.origin}/auth/reset-password`,
     });
-    if (error) return { error: friendlyError(error.message) };
+    if (error) return { error: error.message };
     return { error: null };
   } catch (err) {
-    return { error: friendlyThrown(err) };
+    return { error: err instanceof Error ? err.message : 'Something went wrong.' };
   }
 }
 
 export async function updatePassword(newPassword: string) {
   const { error } = await supabase.auth.updateUser({ password: newPassword });
-  if (error) return { error: friendlyError(error.message) };
+  if (error) return { error: error.message };
   return { error: null };
 }
 
@@ -157,6 +156,6 @@ export async function signInWithGoogle() {
     provider: 'google',
     options: { redirectTo: `${window.location.origin}/auth/callback` },
   });
-  if (error) return { error: friendlyError(error.message) };
+  if (error) return { error: error.message };
   return { error: null };
 }

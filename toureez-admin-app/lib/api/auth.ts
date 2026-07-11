@@ -1,6 +1,5 @@
 
 import { supabase } from '../supabase';
-import { friendlyError } from '../errors';
 import type { User } from '../../types';
 
 
@@ -15,7 +14,7 @@ export async function signInWithEmail(
   });
 
   if (authError || !authData.session) {
-    throw new Error(friendlyError(authError?.message ?? 'Sign in failed'));
+    throw new Error(authError?.message ?? 'Sign in failed');
   }
 
   const userId = authData.user.id;

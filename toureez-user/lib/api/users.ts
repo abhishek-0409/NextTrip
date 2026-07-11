@@ -3,7 +3,6 @@
 import * as Linking from 'expo-linking';
 import { supabase } from '../supabase';
 import { apiClient } from './client';
-import { friendlyError, friendlyThrown } from '../errors';
 import type { ApiResponse, User } from '../../types';
 const PROFILE_SELECT = 'id, full_name, avatar_url, phone, city, state, role, created_at';
 
@@ -66,7 +65,7 @@ async function fetchOrCreateProfile(
   if (profileResponse.error) {
     return {
       data: null,
-      error: friendlyError(profileResponse.error.message),
+      error: profileResponse.error.message,
     };
   }
 
@@ -85,7 +84,7 @@ async function fetchOrCreateProfile(
   if (createProfileResponse.error) {
     return {
       data: null,
-      error: friendlyError(createProfileResponse.error.message),
+      error: createProfileResponse.error.message,
     };
   }
 
@@ -110,7 +109,7 @@ export async function getProfile(): Promise<ApiResponse<User>> {
   } catch (err) {
     return {
       data: null,
-      error: friendlyThrown(err),
+      error: err instanceof Error ? err.message : 'Something went wrong.',
     };
   }
 }
@@ -148,7 +147,7 @@ export async function updateProfile(
     if (updateProfileResponse.error) {
       return {
         data: null,
-        error: friendlyError(updateProfileResponse.error.message),
+        error: updateProfileResponse.error.message,
       };
     }
 
@@ -156,7 +155,7 @@ export async function updateProfile(
   } catch (err) {
     return {
       data: null,
-      error: friendlyThrown(err),
+      error: err instanceof Error ? err.message : 'Something went wrong.',
     };
   }
 }
@@ -177,7 +176,7 @@ export async function signOut(): Promise<ApiResponse<null>> {
   } catch (err) {
     return {
       data: null,
-      error: friendlyThrown(err),
+      error: err instanceof Error ? err.message : 'Something went wrong.',
     };
   }
 }
@@ -198,7 +197,7 @@ export async function signIn(
     if (authError) {
       return {
         data: null,
-        error: friendlyError(authError.message),
+        error: authError.message,
       };
     }
 
@@ -242,7 +241,7 @@ export async function signIn(
   } catch (err) {
     return {
       data: null,
-      error: friendlyThrown(err),
+      error: err instanceof Error ? err.message : 'Something went wrong.',
     };
   }
 }
@@ -284,7 +283,7 @@ export async function signUp(
     if (authError) {
       return {
         data: null,
-        error: friendlyError(authError.message),
+        error: authError.message,
       };
     }
 
@@ -326,7 +325,7 @@ export async function signUp(
   } catch (err) {
     return {
       data: null,
-      error: friendlyThrown(err),
+      error: err instanceof Error ? err.message : 'Something went wrong.',
     };
   }
 }
@@ -367,7 +366,7 @@ export async function getGoogleOAuthUrl(
   } catch (err) {
     return {
       data: null,
-      error: friendlyThrown(err),
+      error: err instanceof Error ? err.message : 'Something went wrong.',
     };
   }
 }
@@ -416,7 +415,7 @@ export async function completeOAuthSignIn(
   } catch (err) {
     return {
       data: null,
-      error: friendlyThrown(err),
+      error: err instanceof Error ? err.message : 'Something went wrong.',
     };
   }
 }
@@ -445,7 +444,7 @@ export async function resetPassword(
   } catch (err) {
     return {
       data: null,
-      error: friendlyThrown(err),
+      error: err instanceof Error ? err.message : 'Something went wrong.',
     };
   }
 }
