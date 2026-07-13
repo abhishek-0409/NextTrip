@@ -10,50 +10,70 @@ export default function ForgotPassword() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
-    setLoading(true);
+    setError(null); setLoading(true);
     const { error: resetError } = await resetPassword(email);
     setLoading(false);
-    if (resetError) {
-      setError(resetError);
-      return;
-    }
+    if (resetError) { setError(resetError); return; }
     setSent(true);
   }
 
+  const PanelContent = (
+    <div className="auth-split-brand">
+      <div className="auth-split-brand-logo">
+        <div className="auth-split-brand-logo-mark">T</div>
+        <span className="auth-split-brand-name">Toureez</span>
+      </div>
+      <h2 className="auth-split-brand-title">Reset your<br />password</h2>
+      <p className="auth-split-brand-tagline">We'll send you a secure link to get back into your account.</p>
+    </div>
+  );
+
   if (sent) {
     return (
-      <div className="auth-page">
-        <div className="auth-card">
-          <h1>Check your email</h1>
-          <p className="auth-sub">We sent a password reset link to {email}.</p>
-          <Link to="/auth/login" className="btn btn-primary">Back to login</Link>
+      <div className="auth-split">
+        {PanelContent}
+        <div className="auth-split-form">
+          <div className="auth-split-form-inner" style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '3rem', marginBottom: 16 }}>📧</div>
+            <h1 className="auth-form-title">Check your inbox</h1>
+            <p className="auth-form-sub" style={{ marginBottom: 28 }}>
+              We sent a password reset link to <strong>{email}</strong>. Check your spam folder if you don't see it.
+            </p>
+            <Link to="/auth/login" className="btn btn-primary w-full" style={{ justifyContent: 'center' }}>
+              Back to Sign In
+            </Link>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="auth-page">
-      <div className="auth-card">
-        <h1>Forgot password</h1>
-        <p className="auth-sub">Enter your email and we'll send you a reset link.</p>
+    <div className="auth-split">
+      {PanelContent}
+      <div className="auth-split-form">
+        <div className="auth-split-form-inner">
+          <div style={{ marginBottom: 32 }}>
+            <h1 className="auth-form-title">Forgot password?</h1>
+            <p className="auth-form-sub">Enter your email and we'll send you a reset link.</p>
+          </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <label>
-            Email
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          </label>
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="form-group">
+              <label className="form-label">Email address</label>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required autoComplete="email" />
+            </div>
 
-          {error && <div className="auth-error">{error}</div>}
+            {error && <div className="auth-error">{error}</div>}
 
-          <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? 'Sending…' : 'Send reset link'}
-          </button>
-        </form>
+            <button type="submit" className="btn btn-primary w-full" disabled={loading} style={{ justifyContent: 'center' }}>
+              {loading ? 'Sending…' : 'Send Reset Link'}
+            </button>
+          </form>
 
-        <div className="auth-links">
-          <Link to="/auth/login">Back to login</Link>
+          <p className="auth-footer-link" style={{ marginTop: 16 }}>
+            Remember your password? <Link to="/auth/login">Sign in</Link>
+          </p>
         </div>
       </div>
     </div>

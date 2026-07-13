@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import { Colors } from '../../../constants/colors';
-import { FontWeight, Spacing } from '../../../constants/theme';
+import { FontWeight, Radius, Spacing } from '../../../constants/theme';
 import { StatusFilterTabs } from '../../../components/dashboard/StatusFilterTabs';
 import { ScreenLayout } from '../../../components/ui/ScreenLayout';
 import { SearchBar } from '../../../components/ui/SearchBar';
@@ -35,12 +35,13 @@ const STATUS_TABS = [
 function BookingRow({ booking }: { booking: AdminBooking }): React.ReactElement {
   return (
     <TouchableOpacity
-      style={styles.row}
+      style={styles.card}
       onPress={() => router.push(`/(admin)/bookings/${booking.id}`)}
       activeOpacity={0.78}
       accessibilityRole="button"
       accessibilityLabel={`Open booking ${booking.booking_reference}`}
     >
+      <View style={styles.cardAccent} />
       <View style={styles.rowMain}>
         <View style={styles.refRow}>
           <Text style={styles.ref} numberOfLines={1}>{booking.booking_reference}</Text>
@@ -50,22 +51,18 @@ function BookingRow({ booking }: { booking: AdminBooking }): React.ReactElement 
           {booking.package?.title ?? 'Package'}
         </Text>
         <Text style={styles.meta} numberOfLines={1}>
-          {booking.user?.full_name ?? 'Unknown customer'} / {booking.num_travelers} pax / {new Date(booking.travel_date).toLocaleDateString('en-IN')}
+          {booking.user?.full_name ?? 'Unknown'} · {booking.num_travelers} pax · {new Date(booking.travel_date).toLocaleDateString('en-IN')}
         </Text>
         <View style={styles.bottomRow}>
           <Text style={styles.amount}>
             {INR}{booking.total_amount.toLocaleString('en-IN')}
           </Text>
-          <Badge status={booking.payment_status} label={`Payment: ${booking.payment_status}`} size="sm" />
+          <Badge status={booking.payment_status} size="sm" />
         </View>
       </View>
-      <Text style={styles.chevron}>{'>'}</Text>
+      <Text style={styles.chevron}>›</Text>
     </TouchableOpacity>
   );
-}
-
-function ItemSeparator(): React.ReactElement {
-  return <View style={styles.separator} />;
 }
 
 export default function AdminBookingsScreen(): React.ReactElement {
@@ -108,7 +105,6 @@ export default function AdminBookingsScreen(): React.ReactElement {
         windowSize={5}
         maxToRenderPerBatch={10}
         removeClippedSubviews
-        ItemSeparatorComponent={ItemSeparator}
         ListEmptyComponent={
           <EmptyState
             icon="!"
@@ -141,18 +137,34 @@ const styles = StyleSheet.create({
   },
   listContent: {
     flexGrow: 1,
-    backgroundColor: Colors.surface,
+    paddingTop: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.xxxl,
+    backgroundColor: Colors.background,
+    gap: Spacing.sm,
   },
-  row: {
+  card: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.surface,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-    minHeight: 96,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    overflow: 'hidden',
     gap: Spacing.md,
+    paddingRight: Spacing.md,
+    shadowColor: '#1F2328',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
   },
-  rowMain: { flex: 1, minWidth: 0, gap: 4 },
+  cardAccent: {
+    width: 4,
+    alignSelf: 'stretch',
+    backgroundColor: Colors.primary,
+  },
+  rowMain: { flex: 1, minWidth: 0, gap: 4, paddingVertical: Spacing.md },
   refRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -161,10 +173,11 @@ const styles = StyleSheet.create({
   },
   ref: {
     flex: 1,
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: FontWeight.bold,
-    color: Colors.navy,
+    color: Colors.primary,
     fontFamily: 'monospace',
+    letterSpacing: 0.5,
   },
   pkg: { fontSize: 14, color: Colors.text, fontWeight: FontWeight.semibold },
   meta: { fontSize: 12, color: Colors.textSecondary },
@@ -175,16 +188,10 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
     marginTop: 2,
   },
-  amount: { fontSize: 14, fontWeight: FontWeight.bold, color: Colors.primary },
+  amount: { fontSize: 15, fontWeight: FontWeight.bold, color: Colors.primary },
   chevron: {
-    fontSize: 17,
+    fontSize: 22,
     color: Colors.textLight,
-    fontWeight: FontWeight.bold,
-  },
-  separator: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: Colors.divider,
-    marginLeft: Spacing.lg,
   },
   footer: {
     paddingVertical: Spacing.xl,

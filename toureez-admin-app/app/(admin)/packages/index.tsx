@@ -44,7 +44,7 @@ function PackageRow({
 }): React.ReactElement {
   return (
     <TouchableOpacity
-      style={styles.row}
+      style={styles.card}
       onPress={() => router.push(`/(admin)/packages/${pkg.id}`)}
       activeOpacity={0.78}
     >
@@ -52,26 +52,28 @@ function PackageRow({
         <Image source={{ uri: pkg.cover_image }} style={styles.thumb} />
       ) : (
         <View style={[styles.thumb, styles.thumbPlaceholder]}>
-          <MaterialCommunityIcons name="image-off-outline" size={22} color={Colors.textLight} />
+          <MaterialCommunityIcons name="image-off-outline" size={24} color={Colors.textLight} />
         </View>
       )}
       <View style={styles.rowMain}>
-        <Text style={styles.rowTitle} numberOfLines={1}>
+        <Text style={styles.rowTitle} numberOfLines={2}>
           {pkg.title}
         </Text>
         <Text style={styles.rowSub} numberOfLines={1}>
-          {pkg.company.name} · {pkg.location.city}, {pkg.location.state}
+          {pkg.location.city}, {pkg.location.state}
         </Text>
         <Text style={styles.rowMeta} numberOfLines={1}>
-          {pkg.duration_days}D / {pkg.duration_nights}N · ★ {pkg.avg_rating.toFixed(1)} · {pkg.total_bookings} bookings
+          {pkg.duration_days}D / {pkg.duration_nights}N · ★ {pkg.avg_rating.toFixed(1)} · {pkg.total_bookings} bkgs
         </Text>
+        <View style={styles.cardBadges}>
+          <Badge status={pkg.status} size="sm" />
+          {pkg.is_featured && (
+            <Badge status="featured" size="sm" />
+          )}
+        </View>
       </View>
       <View style={styles.rowRight}>
-        <Badge status={pkg.status} size="sm" />
-        {pkg.is_featured && (
-          <Badge status="featured" size="sm" style={styles.featuredBadge} />
-        )}
-        <Text style={styles.chevron}>›</Text>
+        <MaterialCommunityIcons name="chevron-right" size={20} color={Colors.textLight} />
       </View>
     </TouchableOpacity>
   );
@@ -79,22 +81,16 @@ function PackageRow({
 
 function PackageRowSkeleton(): React.ReactElement {
   return (
-    <View style={styles.row}>
-      <Skeleton width={52} height={52} radius={Radius.sm} />
+    <View style={styles.card}>
+      <Skeleton width={68} height={68} radius={Radius.md} />
       <View style={styles.rowMain}>
         <Skeleton width={'80%'} height={14} />
         <Skeleton width={'55%'} height={11} style={{ marginTop: 6 }} />
         <Skeleton width={'70%'} height={11} style={{ marginTop: 6 }} />
-      </View>
-      <View style={styles.rowRight}>
-        <Skeleton width={56} height={20} radius={10} />
+        <Skeleton width={56} height={20} radius={10} style={{ marginTop: 8 }} />
       </View>
     </View>
   );
-}
-
-function ItemSeparator(): React.ReactElement {
-  return <View style={styles.separator} />;
 }
 
 const PKG_STATUS_VALUES: PkgStatus[] = ['draft', 'pending', 'active', 'rejected'];
@@ -141,11 +137,9 @@ export default function AdminPackagesScreen(): React.ReactElement {
       />
 
       {isLoading ? (
-        <View>
+        <View style={{ paddingTop: Spacing.md, paddingHorizontal: Spacing.lg, gap: Spacing.sm }}>
           <PackageRowSkeleton />
-          <ItemSeparator />
           <PackageRowSkeleton />
-          <ItemSeparator />
           <PackageRowSkeleton />
         </View>
       ) : (
@@ -156,7 +150,6 @@ export default function AdminPackagesScreen(): React.ReactElement {
           windowSize={5}
           maxToRenderPerBatch={10}
           removeClippedSubviews
-          ItemSeparatorComponent={ItemSeparator}
           ListEmptyComponent={
             <EmptyState
               icon="—"
@@ -192,33 +185,43 @@ const styles = StyleSheet.create({
   },
   listContent: {
     flexGrow: 1,
+    paddingTop: Spacing.md,
+    paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.xxxl,
-    backgroundColor: Colors.surface,
+    backgroundColor: Colors.background,
+    gap: Spacing.sm,
   },
-  row: {
+  card: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
+    padding: Spacing.md,
     backgroundColor: Colors.surface,
-    minHeight: 80,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
     gap: Spacing.md,
+    shadowColor: '#1F2328',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
   },
   thumb: {
-    width: 52,
-    height: 52,
-    borderRadius: Radius.sm,
+    width: 68,
+    height: 68,
+    borderRadius: Radius.md,
     backgroundColor: Colors.borderLight,
   },
   thumbPlaceholder: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  rowMain: { flex: 1, minWidth: 0, gap: 2 },
+  rowMain: { flex: 1, minWidth: 0, gap: 3 },
   rowTitle: {
     fontSize: 14,
     fontWeight: FontWeight.semibold,
     color: Colors.text,
+    lineHeight: 20,
   },
   rowSub: {
     fontSize: 12,
@@ -227,21 +230,16 @@ const styles = StyleSheet.create({
   rowMeta: {
     fontSize: 11,
     color: Colors.textLight,
+  },
+  cardBadges: {
+    flexDirection: 'row',
+    gap: Spacing.xs,
     marginTop: 2,
   },
   rowRight: {
-    alignItems: 'flex-end',
-    gap: 6,
-  },
-  featuredBadge: { marginTop: 0 },
-  chevron: {
-    fontSize: 22,
-    color: Colors.textLight,
-  },
-  separator: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: Colors.divider,
-    marginLeft: Spacing.lg + 52 + Spacing.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingLeft: Spacing.xs,
   },
   footer: {
     paddingVertical: Spacing.xl,

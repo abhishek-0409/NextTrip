@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 import { Colors } from '../../../constants/colors';
-import { FontWeight, Spacing } from '../../../constants/theme';
+import { FontWeight, Radius, Spacing } from '../../../constants/theme';
 import { ScreenLayout } from '../../../components/ui/ScreenLayout';
 import { SearchBar } from '../../../components/ui/SearchBar';
 import { Badge } from '../../../components/ui/Badge';
@@ -46,7 +46,7 @@ function VendorAvatar({
 function VendorRow({ vendor }: { vendor: AdminVendor }): React.ReactElement {
   return (
     <TouchableOpacity
-      style={styles.row}
+      style={styles.card}
       onPress={() => router.push(`/(admin)/vendors/${vendor.id}`)}
       activeOpacity={0.78}
     >
@@ -62,11 +62,13 @@ function VendorRow({ vendor }: { vendor: AdminVendor }): React.ReactElement {
           {vendor.owner?.full_name ?? vendor.owner?.email ?? '—'}
         </Text>
         <Text style={styles.rowMeta} numberOfLines={1}>
-          {vendor.total_packages} packages · ★ {vendor.avg_rating.toFixed(1)} ({vendor.total_reviews})
+          {vendor.total_packages} pkgs · ★ {vendor.avg_rating.toFixed(1)} ({vendor.total_reviews})
         </Text>
+        <View style={{ marginTop: 4 }}>
+          <Badge status={vendor.status} size="sm" />
+        </View>
       </View>
       <View style={styles.rowRight}>
-        <Badge status={vendor.status} size="sm" />
         <Text style={styles.chevron}>›</Text>
       </View>
     </TouchableOpacity>
@@ -75,22 +77,16 @@ function VendorRow({ vendor }: { vendor: AdminVendor }): React.ReactElement {
 
 function VendorRowSkeleton(): React.ReactElement {
   return (
-    <View style={styles.row}>
-      <Skeleton width={40} height={40} radius={20} />
+    <View style={styles.card}>
+      <Skeleton width={48} height={48} radius={24} />
       <View style={styles.rowMain}>
         <Skeleton width={'70%'} height={14} />
         <Skeleton width={'40%'} height={11} style={{ marginTop: 6 }} />
         <Skeleton width={'55%'} height={11} style={{ marginTop: 6 }} />
-      </View>
-      <View style={styles.rowRight}>
-        <Skeleton width={64} height={20} radius={10} />
+        <Skeleton width={64} height={20} radius={10} style={{ marginTop: 8 }} />
       </View>
     </View>
   );
-}
-
-function ItemSeparator(): React.ReactElement {
-  return <View style={styles.separator} />;
 }
 
 const VENDOR_STATUS_VALUES: VendorStatus[] = ['pending', 'approved', 'rejected'];
@@ -138,13 +134,10 @@ export default function AdminVendorsScreen(): React.ReactElement {
       />
 
       {isLoading ? (
-        <View>
+        <View style={{ paddingTop: Spacing.md, paddingHorizontal: Spacing.lg, gap: Spacing.sm }}>
           <VendorRowSkeleton />
-          <ItemSeparator />
           <VendorRowSkeleton />
-          <ItemSeparator />
           <VendorRowSkeleton />
-          <ItemSeparator />
           <VendorRowSkeleton />
         </View>
       ) : (
@@ -155,7 +148,6 @@ export default function AdminVendorsScreen(): React.ReactElement {
           windowSize={5}
           maxToRenderPerBatch={10}
           removeClippedSubviews
-          ItemSeparatorComponent={ItemSeparator}
           ListEmptyComponent={
             <EmptyState
               icon="—"
@@ -193,28 +185,37 @@ const styles = StyleSheet.create({
   },
   listContent: {
     flexGrow: 1,
+    paddingTop: Spacing.md,
+    paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.xxxl,
-    backgroundColor: Colors.surface,
+    backgroundColor: Colors.background,
+    gap: Spacing.sm,
   },
-  row: {
+  card: {
     flexDirection: 'row',
     alignItems: 'center',
+    padding: Spacing.md,
     backgroundColor: Colors.surface,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-    minHeight: 72,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
     gap: Spacing.md,
+    shadowColor: '#1F2328',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
   },
   avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: Colors.primaryLight,
     alignItems: 'center',
     justifyContent: 'center',
   },
   avatarText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: FontWeight.bold,
     color: Colors.primary,
   },
@@ -238,18 +239,13 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   rowRight: {
-    alignItems: 'flex-end',
-    flexDirection: 'row',
-    gap: Spacing.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingLeft: Spacing.xs,
   },
   chevron: {
     fontSize: 22,
     color: Colors.textLight,
-  },
-  separator: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: Colors.divider,
-    marginLeft: Spacing.lg + 40 + Spacing.md,
   },
   footer: {
     paddingVertical: Spacing.xl,

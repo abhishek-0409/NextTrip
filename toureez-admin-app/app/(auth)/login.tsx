@@ -130,7 +130,7 @@ export default function LoginScreen(): React.ReactElement {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#0B1426' },
+  safe: { flex: 1, backgroundColor: Colors.background },
   flex: { flex: 1 },
   scroll: {
     flexGrow: 1,

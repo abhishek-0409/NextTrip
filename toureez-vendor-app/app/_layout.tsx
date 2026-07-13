@@ -139,7 +139,7 @@ function AppLayout(): React.ReactElement {
 
   return (
     <>
-      <StatusBar style="light" backgroundColor={Colors.backgroundBase} />
+      <StatusBar style="dark" backgroundColor={Colors.background} />
       <Stack screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="(auth)" />

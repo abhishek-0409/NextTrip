@@ -5,7 +5,6 @@ import { searchPackages, packageCoverImage, packageLocationLabel, packagePrice, 
 import { LoadingState, ErrorState, EmptyState } from '../../components/ui';
 import { Config } from '../../constants/config';
 
-const RIBBONS = ['ribbon-best-price', 'ribbon-top-rated', 'ribbon-local-exclusive'] as const;
 const RIBBON_LABELS = ['Best Price', 'Top Rated', 'Local Exclusive'];
 const RATING_BUCKETS = [5, 4, 3, 2] as const;
 const DURATIONS = ['Any', '0-1 Day', '2-3 Days', '4-7 Days', '7+ Days'] as const;
@@ -19,22 +18,20 @@ export default function Search() {
   const [tripType, setTripType] = useState<TripType | ''>(
     rawTripType === 'domestic' || rawTripType === 'international' ? rawTripType : ''
   );
-  const [minPrice, setMinPrice] = useState(1000);
   const [maxPrice, setMaxPrice] = useState(15000);
   const [minRating, setMinRating] = useState<number | null>(null);
   const [duration, setDuration] = useState<typeof DURATIONS[number]>('Any');
-  const [difficulty, setDifficulty] = useState<typeof DIFFICULTIES[number] | null>('Moderate');
+  const [difficulty, setDifficulty] = useState<typeof DIFFICULTIES[number] | null>(null);
   const [sort, setSort] = useState<'best_match' | 'price_asc' | 'price_desc' | 'rating' | 'newest'>('best_match');
   const [page, setPage] = useState(1);
   const [compareIds, setCompareIds] = useState<string[]>([]);
 
   const query = useQuery({
-    queryKey: ['packages', 'search', destination, category, minPrice, maxPrice, minRating, tripType, sort, page],
+    queryKey: ['packages', 'search', destination, category, maxPrice, minRating, tripType, sort, page],
     queryFn: () =>
       searchPackages({
         destination: destination || undefined,
         category: category || undefined,
-        minPrice: minPrice || undefined,
         maxPrice: maxPrice || undefined,
         minRating: minRating ?? undefined,
         trip_type: tripType || undefined,
@@ -50,14 +47,8 @@ export default function Search() {
   }
 
   function clearFilters() {
-    setDestination('');
-    setCategory('');
-    setTripType('');
-    setMinPrice(1000);
-    setMaxPrice(15000);
-    setMinRating(null);
-    setDuration('Any');
-    setDifficulty(null);
+    setDestination(''); setCategory(''); setTripType('');
+    setMaxPrice(15000); setMinRating(null); setDuration('Any'); setDifficulty(null);
   }
 
   function toggleCompare(id: string) {
@@ -67,172 +58,195 @@ export default function Search() {
   }
 
   const items = query.data?.data?.items ?? [];
-  const maxReviewCount = Math.max(1, ...items.map((p) => p.review_count ?? 0));
 
   return (
-    <div className="site-content" style={{ paddingBottom: compareIds.length > 0 ? 96 : 64 }}>
-      <h1>Search Packages</h1>
-
-      <div className="search-bar-row">
-        <span className="search-bar-pill">📍 {destination || 'Anywhere'} ✏️</span>
-        <span className="search-bar-pill">🧭 {category || 'All Experiences'}</span>
-        <span className="search-bar-pill">📅 Any Date</span>
-        <span className="search-bar-pill">👥 2 Travellers</span>
-        <button className="btn btn-primary" onClick={applyFilters}>Modify Search</button>
+    <div className="site-content" style={{ paddingTop: 'var(--nav-h)', paddingBottom: compareIds.length > 0 ? 96 : 64 }}>
+      {/* Search bar row */}
+      <div style={{ padding: '24px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--heading)', letterSpacing: '-.02em' }}>
+          {destination ? `Trips in ${destination}` : 'Explore Packages'}
+        </h1>
+        <div style={{ display: 'flex', align: 'center', gap: 8 }}>
+          <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)} className="search-sort">
+            <option value="best_match">Recommended</option>
+            <option value="price_asc">Price: Low to High</option>
+            <option value="price_desc">Price: High to Low</option>
+            <option value="rating">Top Rated</option>
+            <option value="newest">Newest</option>
+          </select>
+        </div>
       </div>
 
       <div className="search-layout">
+        {/* Filters sidebar */}
         <aside className="filters-panel">
-          <div className="filters-panel-head">
-            <strong>Filters</strong>
-            <button onClick={clearFilters}>Clear All</button>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+            <span className="filters-panel-title" style={{ marginBottom: 0 }}>Filters</span>
+            <button
+              onClick={clearFilters}
+              style={{ fontSize: '.78rem', color: 'var(--primary)', fontWeight: 600, cursor: 'pointer', background: 'none', border: 'none' }}
+            >
+              Clear all
+            </button>
           </div>
 
-          <h3>Trip Type</h3>
-          <div className="filter-btn-group">
-            {([
-              { value: '', label: 'All' },
-              { value: 'domestic', label: '🇮🇳 Domestic' },
-              { value: 'international', label: '🌍 International' },
-            ] as const).map((opt) => (
-              <button
-                key={opt.value}
-                className={`filter-btn ${tripType === opt.value ? 'active' : ''}`}
-                onClick={() => setTripType(opt.value as TripType | '')}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-
-          <h3>Destination</h3>
-          <input placeholder="City or region" value={destination} onChange={(e) => setDestination(e.target.value)} />
-
-          <h3>Category</h3>
-          <select value={category} onChange={(e) => setCategory(e.target.value)} style={{ width: '100%' }}>
-            <option value="">All categories</option>
-            {Config.packageCategories.map((c) => (
-              <option key={c.value} value={c.value}>{c.label}</option>
-            ))}
-          </select>
-
-          <h3>Price Range</h3>
-          <input
-            type="range"
-            min={500}
-            max={50000}
-            step={500}
-            value={maxPrice}
-            onChange={(e) => setMaxPrice(Number(e.target.value))}
-            style={{ width: '100%', padding: 0 }}
-          />
-          <div className="filter-price-avg">₹{minPrice.toLocaleString()} – ₹{maxPrice.toLocaleString()}+</div>
-
-          <h3>Minimum Rating</h3>
-          {RATING_BUCKETS.map((r) => (
-            <div key={r} className="filter-rating-bar" onClick={() => setMinRating(minRating === r ? null : r)}>
-              <input type="checkbox" readOnly checked={minRating === r} />
-              <span>{r.toFixed(1)}+ ★</span>
-              <div className="filter-rating-bar-track">
-                <div className="filter-rating-bar-fill" style={{ width: `${(r / 5) * 100}%` }} />
-              </div>
+          <div className="filter-group">
+            <div className="filter-group-label">Trip Type</div>
+            <div className="filter-btn-group">
+              {([{ value: '', label: 'All' }, { value: 'domestic', label: '🇮🇳 Domestic' }, { value: 'international', label: '🌍 International' }] as const).map((opt) => (
+                <button
+                  key={opt.value}
+                  className={`filter-btn ${tripType === opt.value ? 'active' : ''}`}
+                  onClick={() => setTripType(opt.value as TripType | '')}
+                >
+                  {opt.label}
+                </button>
+              ))}
             </div>
-          ))}
-
-          <h3>Duration</h3>
-          <div className="filter-btn-group">
-            {DURATIONS.map((d) => (
-              <button key={d} className={`filter-btn ${duration === d ? 'active' : ''}`} onClick={() => setDuration(d)}>{d}</button>
-            ))}
           </div>
 
-          <h3>Difficulty Level</h3>
-          <div className="filter-btn-group">
-            {DIFFICULTIES.map((d) => (
-              <button
-                key={d}
-                className={`filter-btn ${difficulty === d ? 'active' : ''}`}
-                onClick={() => setDifficulty(difficulty === d ? null : d)}
-              >
-                {d}
-              </button>
-            ))}
+          <div className="filter-group">
+            <div className="filter-group-label">Destination</div>
+            <input
+              placeholder="City or region"
+              value={destination}
+              onChange={(e) => setDestination(e.target.value)}
+              style={{ fontSize: '.85rem' }}
+            />
           </div>
 
-          <button className="btn btn-primary" style={{ width: '100%', marginTop: 16 }} onClick={applyFilters}>Apply Filters</button>
-        </aside>
-
-        <div>
-          <div className="results-toolbar">
-            <span className="results-count">{query.data?.data?.total ?? 0} results</span>
-            <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)}>
-              <option value="best_match">Recommended</option>
-              <option value="price_asc">Price: Low to High</option>
-              <option value="price_desc">Price: High to Low</option>
-              <option value="rating">Rating</option>
-              <option value="newest">Newest</option>
+          <div className="filter-group">
+            <div className="filter-group-label">Category</div>
+            <select value={category} onChange={(e) => setCategory(e.target.value)}>
+              <option value="">All categories</option>
+              {Config.packageCategories.map((c) => (
+                <option key={c.value} value={c.value}>{c.label}</option>
+              ))}
             </select>
           </div>
 
+          <div className="filter-group">
+            <div className="filter-group-label">Max Price</div>
+            <input type="range" min={500} max={50000} step={500} value={maxPrice} onChange={(e) => setMaxPrice(Number(e.target.value))} style={{ width: '100%' }} />
+            <div className="filter-range-row"><span>₹500</span><span>₹{maxPrice.toLocaleString()}</span></div>
+          </div>
+
+          <div className="filter-group">
+            <div className="filter-group-label">Minimum Rating</div>
+            {RATING_BUCKETS.map((r) => (
+              <div
+                key={r}
+                className="checkbox-row"
+                onClick={() => setMinRating(minRating === r ? null : r)}
+                style={{ marginBottom: 8 }}
+              >
+                <input type="checkbox" readOnly checked={minRating === r} style={{ width: 16, height: 16, accentColor: 'var(--primary)' }} />
+                <span style={{ fontSize: '.85rem', color: 'var(--body)' }}>{r}.0+ ★</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="filter-group">
+            <div className="filter-group-label">Duration</div>
+            <div className="filter-btn-group">
+              {DURATIONS.map((d) => (
+                <button key={d} className={`filter-btn ${duration === d ? 'active' : ''}`} onClick={() => setDuration(d)}>{d}</button>
+              ))}
+            </div>
+          </div>
+
+          <div className="filter-group">
+            <div className="filter-group-label">Difficulty</div>
+            <div className="filter-btn-group">
+              {DIFFICULTIES.map((d) => (
+                <button key={d} className={`filter-btn ${difficulty === d ? 'active' : ''}`} onClick={() => setDifficulty(difficulty === d ? null : d)}>{d}</button>
+              ))}
+            </div>
+          </div>
+
+          <button className="btn btn-primary w-full" onClick={applyFilters} style={{ justifyContent: 'center' }}>
+            Apply Filters
+          </button>
+        </aside>
+
+        {/* Results */}
+        <div>
+          {!query.isLoading && (
+            <div className="search-results-header">
+              <span className="search-results-count">
+                <strong>{query.data?.data?.total ?? 0}</strong> packages found
+              </span>
+            </div>
+          )}
+
           {query.isLoading && <LoadingState />}
           {query.isError && <ErrorState message="Failed to load packages" onRetry={() => query.refetch()} />}
-          {items.length === 0 && !query.isLoading && <EmptyState message="No packages match your filters." />}
+          {items.length === 0 && !query.isLoading && (
+            <EmptyState
+              icon="🔍"
+              title="No packages found"
+              message="Try adjusting your filters or search for a different destination."
+              action={<button className="btn btn-outline btn-sm" onClick={clearFilters} style={{ marginTop: 8 }}>Clear filters</button>}
+            />
+          )}
 
           <div className="results-list">
             {items.map((pkg, i) => {
-              const trustScore = Math.min(99, Math.round(((pkg.review_count ?? 0) / maxReviewCount) * 30 + 65));
+              const img = packageCoverImage(pkg);
+              const price = packagePrice(pkg);
+              const isCompared = compareIds.includes(pkg.id);
               return (
-                <div className="trip-card" key={pkg.id}>
-                  <Link to={`/app/package/${pkg.id}`}>
-                    <div className="trip-card-img">
-                      <span className={`ribbon ${RIBBONS[i % RIBBONS.length]}`}>{RIBBON_LABELS[i % RIBBON_LABELS.length]}</span>
-                      <span className="trip-card-save">♡</span>
-                      {packageCoverImage(pkg) ? (
-                        <img src={packageCoverImage(pkg)!} alt={pkg.title} />
+                <div className="trip-card" key={pkg.id} style={{ position: 'relative' }}>
+                  <Link to={`/app/package/${pkg.id}`} style={{ display: 'block' }}>
+                    <div style={{ position: 'relative', aspectRatio: '4/3', overflow: 'hidden', background: 'var(--border)' }}>
+                      {img ? (
+                        <img src={img} alt={pkg.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       ) : (
-                        <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg,#FFE8D9,#FFD2B0)' }} />
+                        <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg,var(--primary-light),var(--border))' }} />
                       )}
+                      <span className="ribbon">{RIBBON_LABELS[i % RIBBON_LABELS.length]}</span>
                     </div>
                     <div className="trip-card-body">
-                      <div className="trip-card-category-row">
-                        <span className="category-tag">{typeof pkg.category === 'string' ? pkg.category : pkg.category?.label ?? pkg.category?.name}</span>
-                        <span className="trust-badge">Trust {trustScore}</span>
+                      <div style={{ fontSize: '.72rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '.06em' }}>
+                        {typeof pkg.category === 'string' ? pkg.category : pkg.category?.label ?? pkg.category?.name ?? ''}
                       </div>
-                      <span className="trip-card-title">{pkg.title}</span>
-                      <span className="trip-card-meta">📍 {packageLocationLabel(pkg)}</span>
-                      <span className="trip-card-meta">By {packageVendorName(pkg)}</span>
-                      {pkg.avg_rating !== undefined && <span className="trip-card-rating">★ {pkg.avg_rating} ({pkg.review_count ?? 0} reviews)</span>}
+                      <div className="trip-card-title">{pkg.title}</div>
+                      <div className="trip-card-meta">
+                        <span>📍 {packageLocationLabel(pkg)}</span>
+                        {pkg.duration_days && <span>· {pkg.duration_days}D</span>}
+                      </div>
+                      <div style={{ fontSize: '.78rem', color: 'var(--muted)' }}>By {packageVendorName(pkg)}</div>
+                      {pkg.avg_rating !== undefined && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
+                          <span style={{ color: '#F59E0B', fontSize: '.85rem' }}>★</span>
+                          <span style={{ fontSize: '.8rem', fontWeight: 600, color: 'var(--heading)' }}>{pkg.avg_rating.toFixed(1)}</span>
+                          <span style={{ fontSize: '.75rem', color: 'var(--muted)' }}>({pkg.review_count ?? 0})</span>
+                        </div>
+                      )}
                       <div className="trip-card-price">
-                        <span>From</span>
-                        <strong>₹{packagePrice(pkg)?.toLocaleString()}</strong>
-                        <span>/person</span>
+                        {price ? <>From <strong>₹{price.toLocaleString()}</strong> /person</> : <span className="muted">Price on request</span>}
                       </div>
                     </div>
                   </Link>
-                  <div style={{ display: 'flex', gap: 8, margin: '0 14px 14px' }}>
-                    <button className="btn btn-outline" style={{ flex: 1 }} onClick={() => toggleCompare(pkg.id)}>
-                      {compareIds.includes(pkg.id) ? '✓ Added' : 'View & Compare →'}
+                  <div style={{ padding: '0 14px 14px' }}>
+                    <button
+                      className={`btn btn-sm w-full ${isCompared ? 'btn-primary' : 'btn-outline'}`}
+                      style={{ justifyContent: 'center' }}
+                      onClick={() => toggleCompare(pkg.id)}
+                    >
+                      {isCompared ? '✓ Added to Compare' : 'Compare'}
                     </button>
                   </div>
                 </div>
               );
             })}
-
-            {items.length > 4 && (
-              <div className="promo-banner">
-                <span>🔥 <strong>Limited Time:</strong> Book any trip this week and get free gear rental included.</span>
-                <Link to="/app/search" className="btn btn-primary">Explore Offers →</Link>
-              </div>
-            )}
           </div>
 
           {query.data?.data && (
-            <div className="pagination" style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 24 }}>
-              <button className="btn btn-outline" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>Previous</button>
-              <span>Page {page}</span>
-              <button className="btn btn-outline" disabled={!query.data.data.has_more} onClick={() => setPage((p) => p + 1)}>
-                Next
-              </button>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 32 }}>
+              <button className="btn btn-outline" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>← Previous</button>
+              <span style={{ fontSize: '.875rem', color: 'var(--muted)' }}>Page {page}</span>
+              <button className="btn btn-outline" disabled={!query.data.data.has_more} onClick={() => setPage((p) => p + 1)}>Next →</button>
             </div>
           )}
         </div>
@@ -240,21 +254,17 @@ export default function Search() {
 
       {compareIds.length > 0 && (
         <div className="compare-tray">
-          <div className="compare-tray-chips">
-            <span>Compare Selected ({compareIds.length})</span>
-            {compareIds.map((id) => (
-              <span key={id} className="compare-chip">
-                {items.find((p) => p.id === id)?.title ?? id}
-                <button onClick={() => toggleCompare(id)}>×</button>
-              </span>
-            ))}
-          </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <Link to={`/app/compare?ids=${compareIds.join(',')}`} className="btn btn-primary">Compare Now →</Link>
-            <button className="btn btn-outline" style={{ color: '#fff', borderColor: 'rgba(255,255,255,.4)' }} onClick={() => setCompareIds([])}>
-              Clear All
-            </button>
-          </div>
+          <span className="compare-tray-label">Compare ({compareIds.length} selected)</span>
+          <Link to={`/app/compare?ids=${compareIds.join(',')}`} className="btn btn-primary btn-sm">
+            Compare Now →
+          </Link>
+          <button
+            className="btn btn-sm"
+            style={{ color: 'rgba(255,255,255,.7)', borderColor: 'rgba(255,255,255,.3)', border: '1px solid' }}
+            onClick={() => setCompareIds([])}
+          >
+            Clear
+          </button>
         </div>
       )}
     </div>

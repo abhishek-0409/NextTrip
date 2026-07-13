@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { adminApi } from '../../lib/api/admin';
 import { bookingPackageTitle } from '../../lib/api/bookings';
-import { Card, LoadingState, ErrorState, EmptyState, StatusBadge, PaymentStatusBadge, PageHeader } from '../../components/ui';
+import { LoadingState, ErrorState, EmptyState, StatusBadge, PaymentStatusBadge, PageHeader } from '../../components/ui';
 
 const STATUSES = ['all', 'confirmed', 'pending', 'cancelled', 'completed'] as const;
 
@@ -16,9 +16,9 @@ export default function Bookings() {
 
   return (
     <div>
-      <PageHeader title="Bookings" />
+      <PageHeader title="Bookings" subtitle="All platform bookings" />
 
-      <div className="tab-row">
+      <div className="tab-row" style={{ marginBottom: 20 }}>
         {STATUSES.map((s) => (
           <button key={s} className={`tab ${status === s ? 'active' : ''}`} onClick={() => setStatus(s)}>
             {s[0].toUpperCase() + s.slice(1)}
@@ -28,23 +28,34 @@ export default function Bookings() {
 
       {query.isLoading && <LoadingState />}
       {query.isError && <ErrorState message="Failed to load bookings" onRetry={() => query.refetch()} />}
-      {query.data?.data && query.data.data.length === 0 && <EmptyState message="No bookings found." />}
+      {query.data?.data && query.data.data.length === 0 && !query.isLoading && (
+        <EmptyState icon="📋" title="No bookings" message={`No ${status === 'all' ? '' : status + ' '}bookings found.`} />
+      )}
 
-      {query.data?.data?.map((b) => (
-        <Link key={b.id} to={`/admin/bookings/${b.id}`}>
-          <Card className="list-card">
-            <div>
-              <strong>{bookingPackageTitle(b)}</strong>
-              <p className="muted">Travel date: {b.travel_date}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {query.data?.data?.map((b) => (
+          <Link key={b.id} to={`/admin/bookings/${b.id}`} style={{ textDecoration: 'none' }}>
+            <div className="list-card">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14, flex: 1 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', flexShrink: 0 }}>
+                  📋
+                </div>
+                <div>
+                  <div style={{ fontWeight: 700, color: 'var(--heading)', fontSize: '.92rem' }}>{bookingPackageTitle(b)}</div>
+                  <div style={{ fontSize: '.78rem', color: 'var(--muted)', marginTop: 2 }}>
+                    Travel: {b.travel_date ? new Date(b.travel_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
+                  </div>
+                </div>
+              </div>
+              <div className="list-card-meta">
+                <StatusBadge status={b.status} />
+                <PaymentStatusBadge status={b.payment_status} />
+                <span style={{ fontWeight: 700, color: 'var(--heading)', fontSize: '.9rem' }}>₹{Number(b.total_amount).toLocaleString()}</span>
+              </div>
             </div>
-            <div className="list-card-meta">
-              <StatusBadge status={b.status} />
-              <PaymentStatusBadge status={b.payment_status} />
-              <span>₹{b.total_amount}</span>
-            </div>
-          </Card>
-        </Link>
-      ))}
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }

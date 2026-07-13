@@ -108,7 +108,7 @@ export default function RootLayout(): React.ReactElement {
       {}
       <ErrorBoundary>
         <AuthBootstrap />
-        <StatusBar style="light" backgroundColor="#0B1426" />
+        <StatusBar style="dark" backgroundColor="#F7F5F0" />
         <Stack screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="(auth)" />

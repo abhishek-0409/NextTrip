@@ -87,6 +87,7 @@ function MenuSection({ title, children }: MenuSectionProps): React.ReactElement 
 export default function AccountScreen(): React.ReactElement {
   const insets = useSafeAreaInsets();
   const user = useAuthStore((s) => s.user);
+  const session = useAuthStore((s) => s.session);
   const { data: company } = useVendorCompany();
   const unreadCount = useUnreadNotificationCount();
   const unreadEnquiryCount = useUnreadEnquiryCount();
@@ -113,31 +114,32 @@ export default function AccountScreen(): React.ReactElement {
       showsVerticalScrollIndicator={false}
     >
       {}
-      <View style={[styles.profileCard, Shadows.card]}>
-        <View style={styles.avatarContainer}>
-          <Text style={styles.avatarInitials}>
-            {user?.full_name
-              ? user.full_name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()
-              : 'V'}
-          </Text>
+      <View style={styles.heroBanner}>
+        <View style={styles.heroTop}>
+          <View style={styles.avatarContainer}>
+            <Text style={styles.avatarInitials}>
+              {user?.full_name
+                ? user.full_name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()
+                : 'V'}
+            </Text>
+          </View>
+          <Pressable
+            style={styles.settingsBtn}
+            onPress={() => router.push({ pathname: '/(vendor)/settings', params: { from: 'account' } })}
+            accessibilityRole="button"
+            accessibilityLabel="Settings"
+          >
+            <Ionicons name="settings-outline" size={20} color="rgba(255,255,255,0.85)" />
+          </Pressable>
         </View>
-        <View style={styles.profileInfo}>
-          <Text style={styles.profileName}>{user?.full_name ?? 'Vendor'}</Text>
-          <View style={styles.roleRow}>
-            <View style={styles.roleBadge}>
-              <Ionicons name="briefcase" size={10} color={Colors.primary} />
-              <Text style={styles.roleText}>Vendor</Text>
-            </View>
+        <Text style={styles.profileName}>{user?.full_name ?? 'Vendor'}</Text>
+        <Text style={styles.profileEmail}>{session?.user?.email ?? ''}</Text>
+        <View style={styles.roleRow}>
+          <View style={styles.roleBadge}>
+            <Ionicons name="briefcase" size={10} color="#FFFFFF" />
+            <Text style={styles.roleText}>Vendor Portal</Text>
           </View>
         </View>
-        <Pressable
-          style={styles.settingsBtn}
-          onPress={() => router.push({ pathname: '/(vendor)/settings', params: { from: 'account' } })}
-          accessibilityRole="button"
-          accessibilityLabel="Settings"
-        >
-          <Ionicons name="settings-outline" size={20} color={Colors.textSecondary} />
-        </Pressable>
       </View>
 
       {}
@@ -274,61 +276,68 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     gap: 0,
   },
-  profileCard: {
-    backgroundColor: Colors.backgroundWhite,
+  heroBanner: {
+    backgroundColor: Colors.primary,
     borderRadius: 20,
     padding: 20,
+    marginBottom: 16,
+  },
+  heroTop: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-    borderWidth: 1,
-    borderColor: Colors.borderLight,
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
     marginBottom: 12,
   },
   avatarContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: Colors.primary,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: 'rgba(255,255,255,0.25)',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.4)',
   },
   avatarInitials: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#FFFFFF',
+  },
+  profileName: {
     fontSize: 20,
     fontWeight: '800',
-    color: Colors.textWhite,
+    color: '#FFFFFF',
+    marginBottom: 2,
   },
-  profileInfo: { flex: 1 },
-  profileName: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: Colors.navy,
+  profileEmail: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.75)',
+    marginBottom: 10,
   },
   roleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
     gap: 6,
   },
   roleBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: Colors.primaryLight,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 20,
   },
   roleText: {
     fontSize: 11,
     fontWeight: '700',
-    color: Colors.primary,
+    color: '#FFFFFF',
   },
   settingsBtn: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: Colors.backgroundSoft,
+    backgroundColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center',
     justifyContent: 'center',
   },

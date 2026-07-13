@@ -5,6 +5,6 @@ export interface ChatMessage {
   content: string;
 }
 
-export async function sendChatMessage(messages: ChatMessage[]) {
-  return apiClient.post<{ reply: string }>('/chat', { messages }, false);
+export async function sendChatMessage(message: string, history: ChatMessage[]) {
+  return apiClient.post<{ reply: string }>('/chat', { message, history }, false);
 }

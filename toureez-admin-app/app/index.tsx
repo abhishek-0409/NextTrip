@@ -1,12 +1,12 @@
 
-
 import React from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { Colors } from '../constants/colors';
 
 export default function Index(): React.ReactElement {
   return (
     <View style={styles.container}>
-      <ActivityIndicator size="large" color="#E8631A" />
+      <ActivityIndicator size="large" color={Colors.primary} />
     </View>
   );
 }
@@ -16,6 +16,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFF8F0',
+    backgroundColor: Colors.background,
   },
 });

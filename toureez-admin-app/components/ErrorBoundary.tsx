@@ -140,12 +140,12 @@ export class ErrorBoundary extends React.Component<Props, State> {
 // ── Styles ────────────────────────────────────────────────────────────────────
 
 const COLORS = {
-  background: '#F8F9FA',
+  background: '#F7F5F0',
   surface: '#FFFFFF',
-  border: '#E5E7EB',
-  text: '#111827',
-  textSecondary: '#6B7280',
-  error: '#DC2626',
+  border: '#DDD7CF',
+  text: '#1F2328',
+  textSecondary: '#68737A',
+  error: '#D64C4C',
   errorLight: '#FEF2F2',
   primary: '#1D4ED8',
   primaryLight: '#EFF6FF',

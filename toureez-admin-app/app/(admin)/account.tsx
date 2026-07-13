@@ -85,6 +85,7 @@ function MenuSection({ title, children }: MenuSectionProps): React.ReactElement 
 
 export default function AdminAccountScreen(): React.ReactElement {
   const user = useAuthStore((s) => s.user);
+  const session = useAuthStore((s) => s.session);
   const clearUser = useAuthStore((s) => s.clearUser);
   const unreadCount = useAdminUnreadCount();
   const queryClient = useQueryClient();
@@ -142,16 +143,15 @@ export default function AdminAccountScreen(): React.ReactElement {
         showsVerticalScrollIndicator={false}
       >
         {}
-        <View style={styles.profileCard}>
+        <View style={styles.heroBanner}>
           <View style={styles.avatar}>
             <Text style={styles.avatarInitials}>{initials}</Text>
           </View>
-          <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>{user?.full_name ?? 'Admin'}</Text>
-            <View style={styles.roleBadge}>
-              <MaterialCommunityIcons name="shield-check" size={11} color={Colors.primary} />
-              <Text style={styles.roleText}>Administrator</Text>
-            </View>
+          <Text style={styles.profileName}>{user?.full_name ?? 'Admin'}</Text>
+          <Text style={styles.profileEmail}>{session?.user?.email ?? ''}</Text>
+          <View style={styles.roleBadge}>
+            <MaterialCommunityIcons name="shield-check" size={11} color="#FFFFFF" />
+            <Text style={styles.roleText}>Administrator</Text>
           </View>
         </View>
 
@@ -236,50 +236,53 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.xxxxl,
     gap: 0,
   },
-  profileCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.surface,
-    borderRadius: Radius.lg,
+  heroBanner: {
+    backgroundColor: Colors.primary,
+    borderRadius: Radius.xl,
     padding: Spacing.xl,
-    gap: Spacing.md,
-    borderWidth: 1,
-    borderColor: Colors.border,
+    alignItems: 'center',
     marginBottom: Spacing.xxl,
   },
   avatar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: Colors.primary,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: 'rgba(255,255,255,0.25)',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.4)',
+    marginBottom: Spacing.md,
   },
   avatarInitials: {
-    fontSize: 20,
+    fontSize: 26,
     fontWeight: FontWeight.extrabold,
-    color: Colors.textWhite,
+    color: '#FFFFFF',
   },
-  profileInfo: { flex: 1, gap: 6 },
   profileName: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: FontWeight.bold,
-    color: Colors.text,
+    color: '#FFFFFF',
+    marginBottom: 2,
+  },
+  profileEmail: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.75)',
+    marginBottom: Spacing.md,
   },
   roleBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    alignSelf: 'flex-start',
-    backgroundColor: Colors.primaryLight,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: Radius.sm,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: Radius.full,
   },
   roleText: {
     fontSize: 11,
     fontWeight: FontWeight.bold,
-    color: Colors.primary,
+    color: '#FFFFFF',
   },
   section: {
     marginBottom: Spacing.xl,

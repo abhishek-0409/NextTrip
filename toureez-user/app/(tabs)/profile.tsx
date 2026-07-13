@@ -232,15 +232,21 @@ export default function ProfileScreen(): React.ReactElement {
           {!isEditing ? (
             <>
               <View style={styles.heroCard}>
-                <Avatar
-                  uri={user?.avatar_url}
-                  name={displayName}
-                  size={80}
-                  onPress={() => void uploadAvatar()}
-                  loading={uploading}
-                />
-                <Text style={styles.name}>{displayName}</Text>
-                <Text style={styles.email}>{email || 'Add your email'}</Text>
+                <View style={styles.heroBg} />
+                <View style={styles.heroContent}>
+                  <Avatar
+                    uri={user?.avatar_url}
+                    name={displayName}
+                    size={80}
+                    onPress={() => void uploadAvatar()}
+                    loading={uploading}
+                  />
+                  <Text style={styles.name}>{displayName}</Text>
+                  <Text style={styles.email}>{email || 'Add your email'}</Text>
+                  <View style={styles.heroPill}>
+                    <Text style={styles.heroPillText}>Traveler</Text>
+                  </View>
+                </View>
               </View>
 
               <MenuSection label="GENERAL">
@@ -406,24 +412,47 @@ const styles = StyleSheet.create({
     paddingBottom: 48,
   },
   heroCard: {
+    marginHorizontal: 20,
+    marginTop: 20,
+    marginBottom: 10,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  heroBg: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: Colors.primary,
+    borderRadius: 20,
+  },
+  heroContent: {
     alignItems: 'center',
-    backgroundColor: Colors.background,
-    margin: 20,
     paddingHorizontal: 24,
-    paddingVertical: 18,
+    paddingTop: 28,
+    paddingBottom: 24,
   },
   name: {
-    color: Colors.navy,
+    color: '#FFFFFF',
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: '800',
     marginTop: 14,
     textAlign: 'center',
   },
   email: {
-    color: Colors.textSecondary,
+    color: 'rgba(255,255,255,0.75)',
     fontSize: 13,
     marginTop: 4,
     textAlign: 'center',
+  },
+  heroPill: {
+    marginTop: 10,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 4,
+  },
+  heroPillText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
   },
   menuSection: {
     marginHorizontal: 20,

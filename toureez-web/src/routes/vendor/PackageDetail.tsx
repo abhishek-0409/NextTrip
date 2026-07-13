@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { vendorApi } from '../../lib/api/vendor';
 import { packagePrice } from '../../lib/api/packages';
-import { Card, LoadingState, ErrorState, StatusBadge } from '../../components/ui';
+import { LoadingState, ErrorState, StatusBadge } from '../../components/ui';
 
 export default function PackageDetail() {
   const { id } = useParams<{ id: string }>();
@@ -22,22 +22,18 @@ export default function PackageDetail() {
     setInitialized(true);
   }
 
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: ['vendor', 'package', id] });
+
   const updateMutation = useMutation({
     mutationFn: async () => {
       const result = await vendorApi.updatePackage(id!, { title, description });
-      await vendorApi.updatePricing(id!, [
-        { label: 'Standard', min_people: 1, max_people: 20, base_price: basePrice, currency: 'INR' },
-      ]);
+      await vendorApi.updatePricing(id!, [{ label: 'Standard', min_people: 1, max_people: 20, base_price: basePrice, currency: 'INR' }]);
       return result;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['vendor', 'package', id] }),
+    onSuccess: invalidate,
   });
 
-  const submitMutation = useMutation({
-    mutationFn: () => vendorApi.submitPackage(id!),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['vendor', 'package', id] }),
-  });
-
+  const submitMutation = useMutation({ mutationFn: () => vendorApi.submitPackage(id!), onSuccess: invalidate });
   const duplicateMutation = useMutation({ mutationFn: () => vendorApi.duplicatePackage(id!) });
   const deleteMutation = useMutation({ mutationFn: () => vendorApi.deletePackage(id!) });
 
@@ -47,36 +43,69 @@ export default function PackageDetail() {
   const pkg = query.data.data;
 
   return (
-    <div>
-      <div className="detail-header">
-        <h1>{pkg.title}</h1>
-        {pkg.status && <StatusBadge status={pkg.status} />}
+    <div style={{ maxWidth: 720 }}>
+      <div style={{ marginBottom: 24 }}>
+        <Link to="/vendor/packages" style={{ fontSize: '.82rem', color: 'var(--primary)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 12, textDecoration: 'none' }}>
+          ← All Packages
+        </Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <h1 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--heading)', margin: 0, flex: 1 }}>{pkg.title}</h1>
+          {pkg.status && <StatusBadge status={pkg.status} />}
+        </div>
       </div>
 
-      <Card className="detail-section">
-        <h2>General Info</h2>
-        <label>Title<input value={title} onChange={(e) => setTitle(e.target.value)} /></label>
-        <label>Description<textarea value={description} onChange={(e) => setDescription(e.target.value)} /></label>
-        <label>Base price (₹)<input type="number" value={basePrice} onChange={(e) => setBasePrice(Number(e.target.value))} /></label>
-        <button className="btn btn-primary" disabled={updateMutation.isPending} onClick={() => updateMutation.mutate()}>
-          {updateMutation.isPending ? 'Saving…' : 'Save Changes'}
-        </button>
-      </Card>
+      {/* Edit form */}
+      <div className="card" style={{ padding: 24, marginBottom: 16 }}>
+        <div style={{ fontSize: '.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)', marginBottom: 16 }}>General Info</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div className="form-group">
+            <label className="form-label">Package title</label>
+            <input value={title} onChange={(e) => setTitle(e.target.value)} />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Description</label>
+            <textarea value={description} onChange={(e) => setDescription(e.target.value)} style={{ minHeight: 100 }} />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Base price per person (₹)</label>
+            <input type="number" value={basePrice} onChange={(e) => setBasePrice(Number(e.target.value))} />
+          </div>
+          <div>
+            <button
+              className="btn btn-primary"
+              disabled={updateMutation.isPending}
+              onClick={() => updateMutation.mutate()}
+            >
+              {updateMutation.isPending ? 'Saving…' : 'Save Changes'}
+            </button>
+            {updateMutation.isSuccess && <span style={{ marginLeft: 12, color: 'var(--success)', fontSize: '.85rem', fontWeight: 600 }}>✓ Saved</span>}
+          </div>
+        </div>
+      </div>
 
-      <div className="detail-actions">
-        {pkg.status === 'draft' && (
-          <button className="btn btn-primary" disabled={submitMutation.isPending} onClick={() => submitMutation.mutate()}>
-            Submit for Approval
+      {/* Actions */}
+      <div className="card" style={{ padding: 20 }}>
+        <div style={{ fontSize: '.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--muted)', marginBottom: 14 }}>Actions</div>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          {pkg.status === 'draft' && (
+            <button className="btn btn-primary" disabled={submitMutation.isPending} onClick={() => submitMutation.mutate()}>
+              {submitMutation.isPending ? 'Submitting…' : '✓ Submit for Approval'}
+            </button>
+          )}
+          <button className="btn btn-outline" disabled={duplicateMutation.isPending} onClick={() => duplicateMutation.mutate()}>
+            {duplicateMutation.isPending ? 'Duplicating…' : 'Duplicate'}
           </button>
-        )}
-        <button className="btn btn-outline" disabled={duplicateMutation.isPending} onClick={() => duplicateMutation.mutate()}>
-          Duplicate
-        </button>
-        {pkg.status === 'draft' && (
-          <button className="btn btn-outline" disabled={deleteMutation.isPending} onClick={() => deleteMutation.mutate()}>
-            Delete
-          </button>
-        )}
+          {pkg.status === 'draft' && (
+            <button
+              className="btn btn-outline"
+              style={{ color: 'var(--danger)', borderColor: 'var(--danger)' }}
+              disabled={deleteMutation.isPending}
+              onClick={() => deleteMutation.mutate()}
+            >
+              {deleteMutation.isPending ? 'Deleting…' : 'Delete'}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

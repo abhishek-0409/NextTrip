@@ -48,7 +48,7 @@ function UserRow({ user }: { user: AdminUser }): React.ReactElement {
 
   return (
     <TouchableOpacity
-      style={styles.row}
+      style={styles.card}
       onPress={() => router.push(`/(admin)/users/${user.id}`)}
       activeOpacity={0.78}
       accessibilityRole="button"
@@ -64,20 +64,15 @@ function UserRow({ user }: { user: AdminUser }): React.ReactElement {
           {user.full_name ?? 'No name'}
         </Text>
         <Text style={styles.rowSub} numberOfLines={1}>{location}</Text>
-        <Text style={styles.rowDate}>
-          Joined {new Date(user.created_at).toLocaleDateString('en-IN')}
-        </Text>
+        <View style={{ marginTop: 4, flexDirection: 'row', gap: 6 }}>
+          <Badge status={user.role} label={ROLE_LABEL[user.role] ?? user.role} size="sm" />
+        </View>
       </View>
       <View style={styles.rowRight}>
-        <Badge status={user.role} label={ROLE_LABEL[user.role] ?? user.role} size="sm" />
-        <Text style={styles.chevron}>{'>'}</Text>
+        <Text style={styles.chevron}>›</Text>
       </View>
     </TouchableOpacity>
   );
-}
-
-function ItemSeparator(): React.ReactElement {
-  return <View style={styles.separator} />;
 }
 
 export default function AdminUsersScreen(): React.ReactElement {
@@ -120,7 +115,6 @@ export default function AdminUsersScreen(): React.ReactElement {
         windowSize={5}
         maxToRenderPerBatch={10}
         removeClippedSubviews
-        ItemSeparatorComponent={ItemSeparator}
         ListEmptyComponent={
           <EmptyState
             icon="!"
@@ -153,26 +147,36 @@ const styles = StyleSheet.create({
   },
   listContent: {
     flexGrow: 1,
-    backgroundColor: Colors.surface,
+    paddingTop: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.xxxl,
+    backgroundColor: Colors.background,
+    gap: Spacing.sm,
   },
-  row: {
+  card: {
     flexDirection: 'row',
     alignItems: 'center',
+    padding: Spacing.md,
     backgroundColor: Colors.surface,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md,
-    minHeight: 76,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
     gap: Spacing.md,
+    shadowColor: '#1F2328',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
   },
   avatar: {
-    width: 42,
-    height: 42,
+    width: 48,
+    height: 48,
     borderRadius: Radius.full,
     alignItems: 'center',
     justifyContent: 'center',
   },
   avatarText: {
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: FontWeight.bold,
   },
   rowMeta: { flex: 1, minWidth: 0, gap: 2 },
@@ -190,19 +194,13 @@ const styles = StyleSheet.create({
     color: Colors.textLight,
   },
   rowRight: {
-    alignItems: 'flex-end',
-    flexDirection: 'row',
-    gap: Spacing.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingLeft: Spacing.xs,
   },
   chevron: {
-    fontSize: 17,
+    fontSize: 22,
     color: Colors.textLight,
-    fontWeight: FontWeight.bold,
-  },
-  separator: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: Colors.divider,
-    marginLeft: Spacing.lg + 42 + Spacing.md,
   },
   footer: {
     paddingVertical: Spacing.xl,

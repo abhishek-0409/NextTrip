@@ -128,7 +128,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#FFF8F0' },
+  safe: { flex: 1, backgroundColor: '#F7F5F0' },
   container: {
     flexGrow: 1,
     alignItems: 'center',
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: '#FEF2F2',
+    backgroundColor: 'rgba(214,76,76,0.10)',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
@@ -149,13 +149,13 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#1A1A2E',
+    color: '#1F2328',
     textAlign: 'center',
     marginBottom: 8,
   },
   subheading: {
     fontSize: 14,
-    color: '#5C5C7A',
+    color: '#3A4149',
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: 24,
@@ -163,9 +163,9 @@ const styles = StyleSheet.create({
   },
   messageBox: {
     width: '100%',
-    backgroundColor: '#FEF2F2',
+    backgroundColor: 'rgba(214,76,76,0.08)',
     borderWidth: 1,
-    borderColor: '#FECACA',
+    borderColor: 'rgba(214,76,76,0.20)',
     borderRadius: 10,
     padding: 14,
     marginBottom: 16,
@@ -173,14 +173,14 @@ const styles = StyleSheet.create({
   messageLabel: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#DC2626',
+    color: '#D64C4C',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     marginBottom: 6,
   },
   messageText: {
     fontSize: 13,
-    color: '#DC2626',
+    color: '#D64C4C',
     fontFamily: Platform.select({ ios: 'Menlo', android: 'monospace' }),
     lineHeight: 18,
   },
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: '#DDD7CF',
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,
@@ -196,25 +196,25 @@ const styles = StyleSheet.create({
   },
   stackText: {
     fontSize: 10,
-    color: '#6B7280',
+    color: '#68737A',
     fontFamily: Platform.select({ ios: 'Menlo', android: 'monospace' }),
     lineHeight: 15,
   },
   actions: { width: '100%', gap: 12, marginTop: 8 },
   primaryBtn: {
-    backgroundColor: '#E8631A',
+    backgroundColor: '#25584B',
     borderRadius: 10,
     paddingVertical: 14,
     alignItems: 'center',
   },
   primaryBtnText: { color: '#FFFFFF', fontWeight: '700', fontSize: 15 },
   secondaryBtn: {
-    backgroundColor: '#FEF0E8',
+    backgroundColor: '#EAF2EF',
     borderWidth: 1,
-    borderColor: '#E8631A',
+    borderColor: '#25584B',
     borderRadius: 10,
     paddingVertical: 14,
     alignItems: 'center',
   },
-  secondaryBtnText: { color: '#E8631A', fontWeight: '700', fontSize: 15 },
+  secondaryBtnText: { color: '#25584B', fontWeight: '700', fontSize: 15 },
 });

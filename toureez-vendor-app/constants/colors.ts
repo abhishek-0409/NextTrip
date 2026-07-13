@@ -1,93 +1,87 @@
 
-
 export const Colors = {
-  // ── Primary Brand ──────────────────────────────────────────
-  primary:          '#E8631A',
-  primaryDark:      '#C85412',
-  primaryLight:     'rgba(232,99,26,0.15)',
-  primaryUltraLight:'rgba(232,99,26,0.07)',
+  // ── Primary brand (forest green) ────────────────────────────
+  primary:          '#25584B',
+  primaryDark:      '#1B463B',
+  primaryLight:     '#EAF2EF',
+  primaryUltraLight:'#F4FAF8',
 
-  // ── Secondary / blue ───────────────────────────────────────
-  secondary:        '#3B82F6',
-  secondaryDark:    '#2563EB',
-  secondaryLight:   'rgba(59,130,246,0.15)',
+  // ── Accent (terracotta) ──────────────────────────────────────
+  secondary:        '#C86A3D',
+  secondaryDark:    '#A8552F',
+  secondaryLight:   '#FAF0EB',
 
-  // ── Accent / amber ─────────────────────────────────────────
-  accent:           '#F59E0B',
-  accentDark:       '#D97706',
-  accentLight:      'rgba(245,158,11,0.15)',
+  // ── Accent / gold ────────────────────────────────────────────
+  accent:           '#C89A35',
+  accentDark:       '#A87E28',
+  accentLight:      '#FBF5E4',
 
-  // ── Navy (heading / emphasis text in dark mode) ────────────
-  navy:             '#E2E8F0',
-  navyMedium:       '#94A3B8',
-  navyLight:        '#64748B',
+  // ── Neutral dark ────────────────────────────────────────────
+  navy:             '#1F2328',
+  navyMedium:       '#3A4149',
+  navyLight:        '#68737A',
 
-  // ── Backgrounds ────────────────────────────────────────────
-  background:       '#0B1426',
-  backgroundWhite:  '#111827',
-  backgroundSoft:   '#0D1830',
-  surface:          '#111827',
+  // ── Backgrounds ─────────────────────────────────────────────
+  background:       '#F7F5F0',
+  backgroundWhite:  '#FFFFFF',
+  backgroundSoft:   '#EDE9E4',
+  surface:          '#FFFFFF',
 
-  // ── Text ───────────────────────────────────────────────────
-  text:             '#F1F5F9',
-  textSecondary:    '#94A3B8',
-  textLight:        '#64748B',
+  // ── Text ────────────────────────────────────────────────────
+  text:             '#1F2328',
+  textSecondary:    '#3A4149',
+  textLight:        '#68737A',
   textWhite:        '#FFFFFF',
-  textOrange:       '#E8631A',
-  textBlue:         '#3B82F6',
+  textOrange:       '#C86A3D',
+  textBlue:         '#25584B',
 
-  // ── Borders / dividers ─────────────────────────────────────
-  border:           '#1E2D40',
-  borderLight:      '#1A2535',
-  divider:          '#1E2D40',
+  // ── Borders ─────────────────────────────────────────────────
+  border:           '#DDD7CF',
+  borderLight:      '#EDE9E4',
+  divider:          '#EDE9E4',
 
-  // ── Semantic ───────────────────────────────────────────────
-  star:             '#F59E0B',
-  error:            '#EF4444',
-  errorLight:       'rgba(239,68,68,0.15)',
-  success:          '#10B981',
-  successLight:     'rgba(16,185,129,0.15)',
-  warning:          '#F59E0B',
-  warningLight:     'rgba(245,158,11,0.15)',
-  info:             '#3B82F6',
-  infoLight:        'rgba(59,130,246,0.15)',
+  // ── Semantic ────────────────────────────────────────────────
+  star:             '#C89A35',
+  error:            '#D64C4C',
+  errorLight:       'rgba(214,76,76,0.10)',
+  success:          '#2E8B57',
+  successLight:     'rgba(46,139,87,0.10)',
+  warning:          '#D99A2B',
+  warningLight:     'rgba(217,154,43,0.10)',
+  info:             '#25584B',
+  infoLight:        '#EAF2EF',
 
-  // ── Package status ─────────────────────────────────────────
-  statusDraft:      '#94A3B8',
-  statusDraftBg:    'rgba(148,163,184,0.12)',
-  statusPending:    '#F59E0B',
-  statusPendingBg:  'rgba(245,158,11,0.12)',
-  statusActive:     '#10B981',
-  statusActiveBg:   'rgba(16,185,129,0.12)',
-  statusRejected:   '#EF4444',
-  statusRejectedBg: 'rgba(239,68,68,0.12)',
+  // ── Package status ───────────────────────────────────────────
+  statusDraft:      '#68737A',
+  statusDraftBg:    'rgba(104,115,122,0.10)',
+  statusPending:    '#D99A2B',
+  statusPendingBg:  'rgba(217,154,43,0.10)',
+  statusActive:     '#2E8B57',
+  statusActiveBg:   'rgba(46,139,87,0.10)',
+  statusRejected:   '#D64C4C',
+  statusRejectedBg: 'rgba(214,76,76,0.10)',
 
-  // ── Booking status ─────────────────────────────────────────
-  bookingPending:   '#F59E0B',
-  bookingConfirmed: '#10B981',
-  bookingCancelled: '#EF4444',
-  bookingCompleted: '#3B82F6',
+  // ── Booking status ───────────────────────────────────────────
+  bookingPending:   '#D99A2B',
+  bookingConfirmed: '#2E8B57',
+  bookingCancelled: '#D64C4C',
+  bookingCompleted: '#25584B',
 
-  // ── Shadows / overlays ─────────────────────────────────────
-  shadowOrange:    'rgba(232,99,26,0.20)',
-  shadowNavy:      'rgba(0,0,0,0.30)',
-  shadowDark:      'rgba(0,0,0,0.20)',
-  overlay:         'rgba(0,0,0,0.70)',
-  overlayLight:    'rgba(0,0,0,0.40)',
+  // ── Shadows / overlays ───────────────────────────────────────
+  shadowOrange:     'rgba(37,88,75,0.18)',
+  shadowNavy:       'rgba(31,35,40,0.10)',
+  shadowDark:       'rgba(0,0,0,0.06)',
+  overlay:          'rgba(31,35,40,0.55)',
+  overlayLight:     'rgba(31,35,40,0.28)',
 
-  // ── Tab bar ────────────────────────────────────────────────
-  tabActive:       '#E8631A',
-  tabInactive:     '#64748B',
-  tabBackground:   '#0D1830',
+  // ── Tab ─────────────────────────────────────────────────────
+  tabActive:        '#25584B',
+  tabInactive:      '#68737A',
+  tabBackground:    '#FFFFFF',
 
-  // ── Compatibility aliases ──────────────────────────────────
-  backgroundBase:   '#0B1426',
-  backgroundDeep:   '#0D1830',
-  backgroundLayer1: '#111827',
-  backgroundLayer2: '#0D1830',
-  backgroundLayer3: '#1A2535',
-  muted:            '#64748B',
-  white:            '#111827',
+  // ── Misc ─────────────────────────────────────────────────────
+  muted:            '#68737A',
+  white:            '#FFFFFF',
   transparent:      'transparent',
 } as const;
 

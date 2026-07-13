@@ -1,60 +1,62 @@
 
 export const Colors = {
-  // ── Brand ──────────────────────────────────────────────────────────────────
-  primary:          '#E8631A',
-  primaryDark:      '#C85412',
-  primaryLight:     'rgba(232,99,26,0.15)',
-  primaryUltraLight:'rgba(232,99,26,0.07)',
+  // ── Primary brand (forest green) ────────────────────────────
+  primary:          '#25584B',
+  primaryDark:      '#1B463B',
+  primaryLight:     '#EAF2EF',
+  primaryUltraLight:'#F4FAF8',
 
-  // ── Blue / secondary ───────────────────────────────────────────────────────
-  secondary:        '#3B82F6',
-  secondaryDark:    '#2563EB',
-  secondaryLight:   'rgba(59,130,246,0.15)',
+  // ── Accent (terracotta) ──────────────────────────────────────
+  secondary:        '#C86A3D',
+  secondaryDark:    '#A8552F',
+  secondaryLight:   '#FAF0EB',
 
-  // ── Amber / accent ─────────────────────────────────────────────────────────
-  accent:           '#F59E0B',
-  accentLight:      'rgba(245,158,11,0.15)',
+  // ── Gold / accent ────────────────────────────────────────────
+  accent:           '#C89A35',
+  accentLight:      '#FBF5E4',
 
-  // ── Purple ─────────────────────────────────────────────────────────────────
-  purple:           '#8B5CF6',
-  purpleLight:      'rgba(139,92,246,0.15)',
+  // ── Purple (kept for admin moderation badges) ─────────────────
+  purple:           '#7C5CBA',
+  purpleLight:      'rgba(124,92,186,0.10)',
 
-  // ── Navy (used as emphasis text on dark surfaces) ──────────────────────────
-  navy:             '#E2E8F0',
-  navyLight:        '#94A3B8',
+  // ── Neutral dark ────────────────────────────────────────────
+  navy:             '#1F2328',
+  navyLight:        '#3A4149',
 
-  // ── Backgrounds ────────────────────────────────────────────────────────────
-  background:       '#0B1426',
-  backgroundSoft:   '#0D1830',
-  backgroundWhite:  '#111827',
+  // ── Backgrounds ─────────────────────────────────────────────
+  background:       '#F7F5F0',
+  backgroundSoft:   '#EDE9E4',
+  backgroundWhite:  '#FFFFFF',
 
-  // ── Surfaces / cards ───────────────────────────────────────────────────────
-  surface:          '#111827',
-  surfaceRaised:    '#1A2535',
+  // ── Surfaces ────────────────────────────────────────────────
+  surface:          '#FFFFFF',
+  surfaceRaised:    '#F7F5F0',
 
-  // ── Text ───────────────────────────────────────────────────────────────────
-  text:             '#F1F5F9',
-  textSecondary:    '#94A3B8',
-  textLight:        '#64748B',
+  // ── Text ────────────────────────────────────────────────────
+  text:             '#1F2328',
+  textSecondary:    '#3A4149',
+  textLight:        '#68737A',
   textWhite:        '#FFFFFF',
 
-  // ── Borders / dividers ─────────────────────────────────────────────────────
-  border:           '#1E2D40',
-  borderLight:      '#1A2535',
-  divider:          '#1E2D40',
+  // ── Borders ─────────────────────────────────────────────────
+  border:           '#DDD7CF',
+  borderLight:      '#EDE9E4',
+  divider:          '#EDE9E4',
 
-  // ── Semantic ───────────────────────────────────────────────────────────────
-  star:             '#F59E0B',
-  error:            '#EF4444',
-  errorLight:       'rgba(239,68,68,0.15)',
-  success:          '#10B981',
-  successLight:     'rgba(16,185,129,0.15)',
-  warning:          '#F59E0B',
-  warningLight:     'rgba(245,158,11,0.15)',
-  info:             '#3B82F6',
-  infoLight:        'rgba(59,130,246,0.15)',
+  // ── Semantic ────────────────────────────────────────────────
+  star:             '#C89A35',
+  error:            '#D64C4C',
+  errorLight:       'rgba(214,76,76,0.10)',
+  success:          '#2E8B57',
+  successLight:     'rgba(46,139,87,0.10)',
+  warning:          '#D99A2B',
+  warningLight:     'rgba(217,154,43,0.10)',
+  info:             '#25584B',
+  infoLight:        '#EAF2EF',
 
-  // ── Overlays ───────────────────────────────────────────────────────────────
-  overlay:          'rgba(0,0,0,0.70)',
-  overlayLight:     'rgba(0,0,0,0.30)',
+  // ── Overlays ─────────────────────────────────────────────────
+  overlay:          'rgba(31,35,40,0.55)',
+  overlayLight:     'rgba(31,35,40,0.28)',
 } as const;
+
+export type ColorKey = keyof typeof Colors;
