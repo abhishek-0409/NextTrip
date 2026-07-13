@@ -17,8 +17,13 @@ function toApiResponse<T>(response: BackendApiResponse<T>): ApiResponse<T> {
 
 export async function sendChatMessage(
   message: string,
-  history: ChatMessage[]
+  history: ChatMessage[],
+  bookingId?: string
 ): Promise<ApiResponse<{ reply: string }>> {
-  const response = await apiClient.post<{ reply: string }>('/chat', { message, history });
+  const response = await apiClient.post<{ reply: string }>('/chat', {
+    message,
+    history,
+    ...(bookingId !== undefined ? { booking_id: bookingId } : {}),
+  });
   return toApiResponse(response);
 }

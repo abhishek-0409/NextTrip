@@ -109,10 +109,19 @@ export const parseSearchQuery = async (query: string): Promise<ParsedSearchFilte
   return filters;
 };
 
-export const getChatReply = async (message: string, history: ChatMessage[]): Promise<string> => {
+export const getChatReply = async (
+  message: string,
+  history: ChatMessage[],
+  tripContext?: string,
+): Promise<string> => {
+  const systemInstruction =
+    tripContext === undefined || tripContext.trim() === ''
+      ? SYSTEM_PROMPT
+      : `${SYSTEM_PROMPT}\n\nThe traveler is asking about this specific upcoming/ongoing trip:\n${tripContext}`;
+
   const model = getClient().getGenerativeModel({
     model: 'gemini-2.5-flash',
-    systemInstruction: SYSTEM_PROMPT,
+    systemInstruction,
   });
 
   const chat = model.startChat({

@@ -238,5 +238,6 @@ export const ChatRequestSchema = z
       )
       .max(20)
       .optional(),
+    booking_id: z.string().uuid().optional(),
   })
   .strict();

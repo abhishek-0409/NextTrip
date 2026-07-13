@@ -147,6 +147,118 @@ function PackageCard({ booking }: { booking: Booking }): React.ReactElement {
   );
 }
 
+function isTripActive(booking: Booking): boolean {
+  if (!booking.package || booking.status !== 'confirmed') return false;
+  const start = new Date(`${booking.travel_date.slice(0, 10)}T00:00:00`);
+  const today = new Date(`${new Date().toISOString().slice(0, 10)}T00:00:00`);
+  const dayIndex = Math.round((today.getTime() - start.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+  return dayIndex >= 1 && dayIndex <= booking.package.duration_days;
+}
+
+function AskAiCard({ booking }: { booking: Booking }): React.ReactElement | null {
+  if (booking.status !== 'confirmed' && booking.status !== 'completed') return null;
+
+  const handlePress = (): void => {
+    router.push({
+      pathname: '/chat' as never,
+      params: {
+        bookingId: booking.id,
+        prompt: `What should I know about my trip to ${booking.package?.location.city ?? 'my destination'}?`,
+      },
+    });
+  };
+
+  return (
+    <Pressable
+      style={({ pressed }) => [askAiStyles.card, pressed ? styles.pressed : null]}
+      onPress={handlePress}
+      accessibilityRole="button"
+      accessibilityLabel="Ask AI about this trip"
+    >
+      <Ionicons name="sparkles-outline" size={18} color={Colors.primary} />
+      <Text style={askAiStyles.text}>Ask AI about this trip</Text>
+      <Ionicons name="chevron-forward" size={16} color={Colors.primary} />
+    </Pressable>
+  );
+}
+
+const askAiStyles = StyleSheet.create({
+  card: {
+    alignItems: 'center',
+    borderColor: Colors.primary,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  text: {
+    color: Colors.primary,
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '800',
+  },
+});
+
+function LiveJourneyCard({ booking }: { booking: Booking }): React.ReactElement | null {
+  if (!isTripActive(booking)) return null;
+
+  return (
+    <Pressable
+      style={({ pressed }) => [journeyStyles.card, pressed ? styles.pressed : null]}
+      onPress={() => router.push(`/booking/journey/${booking.id}` as never)}
+      accessibilityRole="button"
+      accessibilityLabel="View live journey"
+    >
+      <View style={journeyStyles.iconWrap}>
+        <Ionicons name="navigate-outline" size={20} color={Colors.white} />
+      </View>
+      <View style={journeyStyles.textWrap}>
+        <Text style={journeyStyles.title}>Your trip is live!</Text>
+        <Text style={journeyStyles.subtitle}>View today's itinerary</Text>
+      </View>
+      <Ionicons name="chevron-forward" size={18} color={Colors.white} />
+    </Pressable>
+  );
+}
+
+const journeyStyles = StyleSheet.create({
+  card: {
+    alignItems: 'center',
+    backgroundColor: Colors.primary,
+    borderRadius: 12,
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 14,
+    padding: 16,
+  },
+  iconWrap: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 10,
+    height: 40,
+    justifyContent: 'center',
+    width: 40,
+  },
+  textWrap: {
+    flex: 1,
+  },
+  title: {
+    color: Colors.white,
+    fontSize: 15,
+    fontWeight: '900',
+  },
+  subtitle: {
+    color: Colors.white,
+    fontSize: 12,
+    fontWeight: '600',
+    marginTop: 2,
+    opacity: 0.9,
+  },
+});
+
 function TravelInfoCard({ booking }: { booking: Booking }): React.ReactElement {
   return (
     <View style={styles.travelCard}>
@@ -483,6 +595,8 @@ export default function BookingDetailScreen(): React.ReactElement {
               style={styles.statusBadge}
             />
 
+            <LiveJourneyCard booking={booking} />
+            <AskAiCard booking={booking} />
             <PackageCard booking={booking} />
             <TravelInfoCard booking={booking} />
             <TravelerDetailsCard travelers={booking.traveler_details} />

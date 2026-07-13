@@ -31,6 +31,7 @@ import {
   useLocations,
 } from '../../hooks/useHomeData';
 import { useReviewFeed } from '../../hooks/useReviews';
+import { useMyBookings } from '../../hooks/useBookings';
 import { useWishlistIds } from '../../hooks/useWishlist';
 import { useWishlistStore } from '../../store/wishlistStore';
 import { useAuthStore } from '../../store/authStore';
@@ -260,12 +261,23 @@ export default function HomeScreen(): React.ReactElement {
   const { data: packages, isLoading: packagesLoading, refetch: refetchFeaturedPackages } = useFeaturedPackages(activeTripType);
   const { data: homeFeed, isLoading: homeFeedLoading, refetch: refetchHomeFeed } = useHomeFeed();
   const { reviews: communityReviews, isLoading: communityLoading } = useReviewFeed();
+  const { data: myBookings } = useMyBookings();
   const [refreshing, setRefreshing] = useState(false);
   const [greeting, setGreeting] = useState(getGreeting);
   const [smartQuery, setSmartQuery] = useState('');
 
   const forYouSection = homeFeed?.sections.find((section) => section.key === 'for_you');
   const communityPreview = communityReviews.slice(0, 3);
+
+  const activeTripBooking = useMemo(() => {
+    return (myBookings ?? []).find((booking) => {
+      if (booking.status !== 'confirmed') return false;
+      const start = new Date(`${booking.travel_date.slice(0, 10)}T00:00:00`);
+      const today = new Date(`${new Date().toISOString().slice(0, 10)}T00:00:00`);
+      const dayIndex = Math.round((today.getTime() - start.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+      return dayIndex >= 1 && dayIndex <= booking.package.duration_days;
+    });
+  }, [myBookings]);
 
   useEffect(() => {
     const id = setInterval(() => setGreeting(getGreeting()), 60_000);
@@ -315,6 +327,12 @@ export default function HomeScreen(): React.ReactElement {
   const handleCommunityPress = useCallback(() => {
     router.push('/community' as never);
   }, []);
+
+  const handleLiveJourneyPress = useCallback(() => {
+    if (activeTripBooking) {
+      router.push(`/booking/journey/${activeTripBooking.id}` as never);
+    }
+  }, [activeTripBooking]);
 
   const handleDestinationPress = useCallback((location: Location) => {
     router.push({
@@ -419,6 +437,22 @@ export default function HomeScreen(): React.ReactElement {
             />
           }
         >
+          {activeTripBooking ? (
+            <Pressable
+              style={[styles.liveJourneyBanner, Shadows.soft]}
+              onPress={handleLiveJourneyPress}
+              accessibilityRole="button"
+              accessibilityLabel="View your live journey"
+            >
+              <Ionicons name="navigate-outline" size={20} color={Colors.textWhite} />
+              <View style={styles.liveJourneyTextWrap}>
+                <Text style={styles.liveJourneyTitle}>Your trip is live!</Text>
+                <Text style={styles.liveJourneySubtitle}>Tap to view today's itinerary</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={Colors.textWhite} />
+            </Pressable>
+          ) : null}
+
           <FlatList
             data={CATEGORY_PILLS}
             horizontal
@@ -632,6 +666,31 @@ const styles = StyleSheet.create({
   communityList: {
     marginTop: 12,
     paddingHorizontal: 20,
+  },
+  liveJourneyBanner: {
+    alignItems: 'center',
+    backgroundColor: Colors.primary,
+    borderRadius: 14,
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 16,
+    marginHorizontal: 20,
+    padding: 14,
+  },
+  liveJourneyTextWrap: {
+    flex: 1,
+  },
+  liveJourneyTitle: {
+    color: Colors.textWhite,
+    fontSize: 14,
+    fontWeight: '800',
+  },
+  liveJourneySubtitle: {
+    color: Colors.textWhite,
+    fontSize: 12,
+    fontWeight: '600',
+    marginTop: 2,
+    opacity: 0.9,
   },
   contentWrap: {
     flex: 1,

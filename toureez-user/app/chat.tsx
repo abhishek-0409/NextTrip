@@ -12,7 +12,7 @@ import {
   type ListRenderItem,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Input } from '../components/ui/Input';
@@ -49,8 +49,10 @@ function ChatBubble({ message }: { message: ChatBubbleData }): React.ReactElemen
 }
 
 export default function ChatScreen(): React.ReactElement {
+  const params = useLocalSearchParams<{ bookingId?: string; prompt?: string }>();
+  const bookingId = params.bookingId;
   const [messages, setMessages] = useState<ChatBubbleData[]>([WELCOME_MESSAGE]);
-  const [draft, setDraft] = useState('');
+  const [draft, setDraft] = useState(params.prompt ?? '');
   const [isSending, setIsSending] = useState(false);
   const listRef = useRef<FlatList<ChatBubbleData>>(null);
 
@@ -84,7 +86,7 @@ export default function ChatScreen(): React.ReactElement {
         .slice(-MAX_HISTORY)
         .map((item) => ({ role: item.role, content: item.content }));
 
-      void sendChatMessage(trimmed, history)
+      void sendChatMessage(trimmed, history, bookingId)
         .then((response) => {
           const replyContent =
             response.data?.reply ?? response.error ?? "Sorry, I couldn't get a response. Please try again.";
@@ -100,7 +102,7 @@ export default function ChatScreen(): React.ReactElement {
 
       return prev;
     });
-  }, [draft, isSending]);
+  }, [bookingId, draft, isSending]);
 
   const renderMessage: ListRenderItem<ChatBubbleData> = useCallback(
     ({ item }) => <ChatBubble message={item} />,
