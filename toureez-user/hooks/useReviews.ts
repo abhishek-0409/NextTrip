@@ -16,6 +16,7 @@ import { router } from 'expo-router';
 import {
   submitReview,
   getPackageReviews,
+  getReviewFeed,
   checkReviewEligibility,
 } from '../lib/api/reviews';
 import { Config } from '../constants/config';
@@ -36,6 +37,8 @@ export const reviewQueryKeys = {
   package: (packageId: string) => ['reviews', packageId] as const,
 
   eligible: (packageId: string) => ['review-eligible', packageId] as const,
+
+  feed: ['reviews', 'feed'] as const,
 } as const;
 
 // ── usePackageReviews ─────────────────────────────────────────────────────────
@@ -83,6 +86,52 @@ export function usePackageReviews(packageId: string): UsePackageReviewsReturn {
   const reviews =
     query.data?.pages.flatMap((page) => page.items) ?? [];
 
+  const totalCount = query.data?.pages[0]?.total ?? 0;
+
+  return {
+    reviews,
+    totalCount,
+    isLoading: query.isLoading,
+    isError: query.isError,
+    isFetchingNextPage: query.isFetchingNextPage,
+    hasNextPage: query.hasNextPage ?? false,
+    fetchNextPage: () => { void query.fetchNextPage(); },
+    refetch: () => { void query.refetch(); },
+  };
+}
+
+// ── useReviewFeed (community feed) ───────────────────────────────────────────
+
+const REVIEW_FEED_PAGE_LIMIT = 10;
+
+export interface UseReviewFeedReturn {
+  reviews: Review[];
+  totalCount: number;
+  isLoading: boolean;
+  isError: boolean;
+  isFetchingNextPage: boolean;
+  hasNextPage: boolean;
+  fetchNextPage: () => void;
+  refetch: () => void;
+}
+
+export function useReviewFeed(): UseReviewFeedReturn {
+  const query = useInfiniteQuery<PaginatedResponse<Review>, Error>({
+    queryKey: reviewQueryKeys.feed,
+    queryFn: async ({ pageParam }) => {
+      const page = typeof pageParam === 'number' ? pageParam : 1;
+      const { data, error } = await getReviewFeed(page, REVIEW_FEED_PAGE_LIMIT);
+      if (error || !data) throw new Error(error ?? 'Failed to load the community feed.');
+      return data;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => (lastPage.has_more ? lastPage.page + 1 : undefined),
+    staleTime: Config.queryStaleTimeMs,
+    gcTime: Config.queryCacheTimeMs,
+    retry: 1,
+  });
+
+  const reviews = query.data?.pages.flatMap((page) => page.items) ?? [];
   const totalCount = query.data?.pages[0]?.total ?? 0;
 
   return {

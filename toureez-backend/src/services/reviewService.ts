@@ -268,6 +268,42 @@ export async function getPackageReviews(
 }
 
 
+export async function getReviewFeed(
+  page: number,
+  limit: number
+): Promise<PaginatedResponse<Review>> {
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+
+  const { data, error: fetchError, count } = await supabaseAdmin
+    .from('reviews')
+    .select(
+      `
+      *,
+      user:users(full_name, avatar_url)
+    `,
+      { count: 'exact' }
+    )
+    .eq('is_published', true)
+    .eq('is_verified', true)
+    .order('created_at', { ascending: false })
+    .range(from, to);
+
+  if (fetchError !== null) throwDatabaseError('getReviewFeed', fetchError);
+
+  const rows = (data as unknown[] | null) ?? [];
+  const total = count ?? 0;
+
+  return {
+    items: rows.map((row) => mapReview(toRecord(row))),
+    total,
+    page,
+    limit,
+    has_more: from + rows.length < total,
+  };
+}
+
+
 export async function getReviewEligibility(
   userId: string,
   packageId: string

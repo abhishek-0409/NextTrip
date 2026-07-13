@@ -37,6 +37,21 @@ export async function getPackageReviews(
   return { data: response.data, error: null };
 }
 
+export async function getReviewFeed(
+  page = 1,
+  limit = 10,
+): Promise<ApiResponse<PaginatedResponse<Review>>> {
+  const response = await apiClient.get<PaginatedResponse<Review>>(
+    '/reviews/feed',
+    { page, limit },
+    false,
+  );
+  if (response.error || !response.data) {
+    return { data: null, error: response.error ?? 'Failed to load the community feed.' };
+  }
+  return { data: response.data, error: null };
+}
+
 export async function checkReviewEligibility(
   packageId: string,
 ): Promise<ApiResponse<ReviewEligibility>> {

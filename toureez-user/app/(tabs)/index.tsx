@@ -11,6 +11,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -22,11 +23,14 @@ import { Avatar } from '../../components/ui/Avatar';
 import { Chip } from '../../components/ui/Chip';
 import { PackageCard } from '../../components/home/PackageCard';
 import { SkeletonLoader } from '../../components/ui/SkeletonLoader';
+import { ReviewCard } from '../../components/reviews/ReviewCard';
 import {
   useCategories,
   useFeaturedPackages,
+  useHomeFeed,
   useLocations,
 } from '../../hooks/useHomeData';
+import { useReviewFeed } from '../../hooks/useReviews';
 import { useWishlistIds } from '../../hooks/useWishlist';
 import { useWishlistStore } from '../../store/wishlistStore';
 import { useAuthStore } from '../../store/authStore';
@@ -254,8 +258,14 @@ export default function HomeScreen(): React.ReactElement {
   const { refetch: refetchCategories } = useCategories();
   const [activeTripType, setActiveTripType] = useState<'domestic' | 'international'>('domestic');
   const { data: packages, isLoading: packagesLoading, refetch: refetchFeaturedPackages } = useFeaturedPackages(activeTripType);
+  const { data: homeFeed, isLoading: homeFeedLoading, refetch: refetchHomeFeed } = useHomeFeed();
+  const { reviews: communityReviews, isLoading: communityLoading } = useReviewFeed();
   const [refreshing, setRefreshing] = useState(false);
   const [greeting, setGreeting] = useState(getGreeting);
+  const [smartQuery, setSmartQuery] = useState('');
+
+  const forYouSection = homeFeed?.sections.find((section) => section.key === 'for_you');
+  const communityPreview = communityReviews.slice(0, 3);
 
   useEffect(() => {
     const id = setInterval(() => setGreeting(getGreeting()), 60_000);
@@ -278,14 +288,32 @@ export default function HomeScreen(): React.ReactElement {
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      await Promise.all([refetchLocations(), refetchCategories(), refetchFeaturedPackages()]);
+      await Promise.all([
+        refetchLocations(),
+        refetchCategories(),
+        refetchFeaturedPackages(),
+        refetchHomeFeed(),
+      ]);
     } finally {
       setRefreshing(false);
     }
-  }, [refetchCategories, refetchFeaturedPackages, refetchLocations]);
+  }, [refetchCategories, refetchFeaturedPackages, refetchHomeFeed, refetchLocations]);
 
   const handleSearchPress = useCallback(() => {
     router.push('/(tabs)/search');
+  }, []);
+
+  const handleSmartSearchSubmit = useCallback(() => {
+    const trimmed = smartQuery.trim();
+    if (trimmed.length === 0) {
+      router.push('/(tabs)/search');
+      return;
+    }
+    router.push({ pathname: '/(tabs)/search', params: { q: trimmed } });
+  }, [smartQuery]);
+
+  const handleCommunityPress = useCallback(() => {
+    router.push('/community' as never);
   }, []);
 
   const handleDestinationPress = useCallback((location: Location) => {
@@ -357,6 +385,24 @@ export default function HomeScreen(): React.ReactElement {
             onPress={() => router.push('/(tabs)/profile' as never)}
           />
         </View>
+
+        <Pressable
+          style={[styles.smartSearchBar, Shadows.soft]}
+          onPress={handleSearchPress}
+          accessibilityRole="button"
+          accessibilityLabel="Search for an escape"
+        >
+          <Ionicons name="search" size={18} color={Colors.textSecondary} />
+          <TextInput
+            style={styles.smartSearchInput}
+            value={smartQuery}
+            onChangeText={setSmartQuery}
+            onSubmitEditing={handleSmartSearchSubmit}
+            placeholder="Try 'cheap adventure trips in Himachal'"
+            placeholderTextColor={Colors.textTertiary}
+            returnKeyType="search"
+          />
+        </Pressable>
       </View>
 
       <Animated.View style={[styles.contentWrap, slideUp.animatedStyle]}>
@@ -382,6 +428,30 @@ export default function HomeScreen(): React.ReactElement {
             contentContainerStyle={styles.categoryList}
             ItemSeparatorComponent={PillSeparator}
           />
+
+          {forYouSection && forYouSection.packages.length > 0 ? (
+            <>
+              <HomeSectionHeader
+                title={forYouSection.title}
+                onSeeAll={handleSearchPress}
+              />
+              {homeFeedLoading ? (
+                <PackageSkeleton />
+              ) : (
+                <FlatList
+                  data={forYouSection.packages}
+                  horizontal
+                  renderItem={renderPackage}
+                  keyExtractor={(item) => item.id}
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.packageList}
+                  ItemSeparatorComponent={PackageSeparator}
+                  snapToInterval={PACKAGE_CARD_WIDTH + PACKAGE_CARD_GAP}
+                  decelerationRate="fast"
+                />
+              )}
+            </>
+          ) : null}
 
           <HomeSectionHeader
             title="Popular Destinations"
@@ -440,6 +510,24 @@ export default function HomeScreen(): React.ReactElement {
               decelerationRate="fast"
             />
           )}
+
+          {communityLoading || communityPreview.length > 0 ? (
+            <>
+              <HomeSectionHeader
+                title="From the Community"
+                onSeeAll={handleCommunityPress}
+              />
+              {communityLoading ? (
+                <PackageSkeleton />
+              ) : (
+                <View style={styles.communityList}>
+                  {communityPreview.map((review) => (
+                    <ReviewCard key={review.id} review={review} />
+                  ))}
+                </View>
+              )}
+            </>
+          ) : null}
 
         </ScrollView>
       </Animated.View>
@@ -525,6 +613,25 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     fontSize: 13,
     marginTop: 2,
+  },
+  smartSearchBar: {
+    alignItems: 'center',
+    backgroundColor: Colors.backgroundWhite,
+    borderRadius: 14,
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  smartSearchInput: {
+    color: Colors.navy,
+    flex: 1,
+    fontSize: 14,
+  },
+  communityList: {
+    marginTop: 12,
+    paddingHorizontal: 20,
   },
   contentWrap: {
     flex: 1,

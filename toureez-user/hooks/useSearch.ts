@@ -7,6 +7,7 @@ import type {
 } from '@tanstack/react-query';
 
 import { apiClient } from '../lib/api/client';
+import { smartSearchPackages } from '../lib/api/packages';
 import type { PackageListItem, PaginatedResponse } from '../types';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -179,6 +180,47 @@ export function useInfiniteSearch(
       if (!lastPage.has_more) return undefined;
       return lastPage.page + 1;
     },
+    staleTime: SEARCH_STALE_TIME_MS,
+    gcTime: 5 * 60 * 1000,
+  });
+}
+
+// ── Smart (natural-language) search ──────────────────────────────────────────
+
+export const smartSearchQueryKeys = {
+  all: ['packages', 'smart-search'] as const,
+  list: (query: string) => [...smartSearchQueryKeys.all, query] as const,
+} as const;
+
+export type SmartSearchInfiniteData = InfiniteData<PaginatedResponse<PackageListItem>>;
+
+export function useSmartSearch(
+  query: string
+): UseInfiniteQueryResult<SmartSearchInfiniteData, Error> {
+  return useInfiniteQuery<
+    PaginatedResponse<PackageListItem>,
+    Error,
+    SmartSearchInfiniteData,
+    ReturnType<typeof smartSearchQueryKeys.list>,
+    number
+  >({
+    queryKey: smartSearchQueryKeys.list(query),
+    queryFn: async ({ pageParam }) => {
+      const response = await smartSearchPackages(query, pageParam, PAGE_SIZE);
+
+      if (response.error) {
+        throw new Error(response.error);
+      }
+
+      if (!response.data) {
+        return { items: [], total: 0, page: pageParam, limit: PAGE_SIZE, has_more: false };
+      }
+
+      return response.data;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => (lastPage.has_more ? lastPage.page + 1 : undefined),
+    enabled: query.trim().length > 0,
     staleTime: SEARCH_STALE_TIME_MS,
     gcTime: 5 * 60 * 1000,
   });

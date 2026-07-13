@@ -5,6 +5,7 @@ import { categoriesRouter } from './categories';
 import { chatRouter } from './chat';
 import { enquiriesRouter } from './enquiries';
 import { healthRouter } from './health';
+import { homeRouter } from './home';
 import { locationsRouter } from './locations';
 import { notificationsRouter } from './notifications';
 import { packagesRouter } from './packages';
@@ -18,6 +19,7 @@ import { wishlistRouter } from './wishlist';
 export const apiV1Router = Router();
 
 apiV1Router.use('/health', healthRouter);
+apiV1Router.use('/home', homeRouter);
 apiV1Router.use('/packages', packagesRouter);
 apiV1Router.use('/wishlist', wishlistRouter);
 apiV1Router.use('/users', usersRouter);

@@ -3,6 +3,22 @@
 import { apiClient } from './client';
 import type { BackendApiResponse, Category, Location, PackageListItem } from '../../types';
 
+export interface HomeFeedSection {
+  key: 'for_you' | 'trending' | 'popular';
+  title: string;
+  packages: PackageListItem[];
+}
+
+export interface HomeFeed {
+  sections: HomeFeedSection[];
+  personalized: boolean;
+}
+
+
+export async function getHomeFeed(): Promise<BackendApiResponse<HomeFeed>> {
+  return apiClient.get<HomeFeed>('/home/feed', undefined, true);
+}
+
 
 export async function getLocations(
   popular?: boolean

@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { computeBadges } from '../services/badgeService';
+import { parseSearchQuery } from '../services/chatService';
 import {
   attachBadgesToPackages,
   getFeaturedPackages,
@@ -22,6 +23,7 @@ import {
   ImageParamsSchema,
   PackageImageSaveSchema,
   SearchFiltersSchema,
+  SmartSearchSchema,
   UuidParamSchema,
 } from '../utils/validation';
 import { AppError, ERROR_MESSAGES } from '../constants/errors';
@@ -37,6 +39,28 @@ packagesRouter.get('/', async (req, res, next) => {
     const filters: SearchFilters = SearchFiltersSchema.parse(req.query);
     const packages = await searchPackages(filters);
     return success(res, packages);
+  } catch (caughtError) {
+    return next(caughtError);
+  }
+});
+
+packagesRouter.post('/search/smart', strictLimiter, async (req, res, next) => {
+  try {
+    const { query, page, limit } = SmartSearchSchema.parse(req.body);
+    const parsedFilters = await parseSearchQuery(query);
+
+    const filters: SearchFilters = SearchFiltersSchema.parse({
+      ...parsedFilters,
+      page,
+      limit,
+    });
+
+    const hasAnyFilter = Object.keys(parsedFilters).length > 0;
+    const results = hasAnyFilter
+      ? await searchPackages(filters)
+      : await searchPackages(SearchFiltersSchema.parse({ destination: query, page, limit }));
+
+    return success(res, { ...results, parsed_filters: parsedFilters });
   } catch (caughtError) {
     return next(caughtError);
   }

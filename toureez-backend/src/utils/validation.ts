@@ -213,6 +213,19 @@ export const EnquiryMessageSchema = z
   .strict();
 
 
+export const SmartSearchSchema = z
+  .object({
+    query: z.string().trim().min(1, 'Query cannot be empty').max(300),
+    page: z
+      .preprocess((value) => (value === undefined || value === '' ? 1 : value), z.coerce.number().int().min(1))
+      .default(1),
+    limit: z
+      .preprocess((value) => (value === undefined || value === '' ? 10 : value), z.coerce.number().int().min(1).max(50))
+      .default(10),
+  })
+  .strict();
+
+
 export const ChatRequestSchema = z
   .object({
     message: z.string().trim().min(1, 'Message cannot be empty').max(2000),

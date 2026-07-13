@@ -172,6 +172,7 @@ function AppLayout(): React.ReactElement {
         <Stack.Screen name="chat" />
         <Stack.Screen name="category/[slug]" />
         <Stack.Screen name="account" />
+        <Stack.Screen name="community" />
       </Stack>
     </>
   );

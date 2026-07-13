@@ -3,14 +3,17 @@
 import { useQuery } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';
 
-import { getLocations, getCategories, getFeaturedPackagesFromBackend } from '../lib/api/home';
+import { getLocations, getCategories, getFeaturedPackagesFromBackend, getHomeFeed } from '../lib/api/home';
+import { useAuthStore } from '../store/authStore';
 import { Config } from '../constants/config';
 import type { Category, Location, PackageListItem } from '../types';
+import type { HomeFeed } from '../lib/api/home';
 
 export const homeQueryKeys = {
   locations: (popular?: boolean) => ['locations', { popular }] as const,
   categories: ['categories'] as const,
   featuredPackages: (tripType?: 'domestic' | 'international') => ['packages', 'featured', tripType] as const,
+  feed: (userId?: string) => ['home', 'feed', userId] as const,
 } as const;
 
 function assertData<T>(data: T | null, error: string | null): T {
@@ -59,6 +62,20 @@ export function useFeaturedPackages(tripType?: 'domestic' | 'international'): Us
     queryKey: homeQueryKeys.featuredPackages(tripType),
     queryFn: async () => {
       const response = await getFeaturedPackagesFromBackend(tripType);
+      return assertData(response.data, response.error);
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: Config.queryCacheTimeMs,
+  });
+}
+
+export function useHomeFeed(): UseQueryResult<HomeFeed, Error> {
+  const userId = useAuthStore((state) => state.user?.id);
+
+  return useQuery({
+    queryKey: homeQueryKeys.feed(userId),
+    queryFn: async () => {
+      const response = await getHomeFeed();
       return assertData(response.data, response.error);
     },
     staleTime: 5 * 60 * 1000,

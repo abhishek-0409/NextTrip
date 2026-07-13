@@ -30,6 +30,7 @@ import {
   flattenSearchPages,
   getSearchTotal,
   useInfiniteSearch,
+  useSmartSearch,
 } from '../../hooks/useSearch';
 import { useAuthStore } from '../../store/authStore';
 import { Colors } from '../../constants/colors';
@@ -82,7 +83,9 @@ export default function SearchScreen(): React.ReactElement {
   const user = useAuthStore((s) => s.user);
 
   const [filters, setFilters] = useState<SearchScreenFilters>(() => paramsToFilters(params));
-  const [destinationInput, setDestinationInput] = useState(filters.destination ?? '');
+  const [smartQuery, setSmartQuery] = useState(params.q ?? '');
+  const [destinationInput, setDestinationInput] = useState(filters.destination ?? params.q ?? '');
+  const isSmartMode = smartQuery.trim().length > 0;
   const [sort, setSort] = useState<SortOption>(filters.sort ?? 'best_match');
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
@@ -121,10 +124,21 @@ export default function SearchScreen(): React.ReactElement {
     refetch,
   } = useInfiniteSearch(activeFilters);
 
-  const items = useMemo(() => flattenSearchPages(data), [data]);
-  const total = useMemo(() => getSearchTotal(data), [data]);
+  const smartSearch = useSmartSearch(smartQuery);
+
+  const filteredItems = useMemo(() => flattenSearchPages(data), [data]);
+  const smartItems = useMemo(() => flattenSearchPages(smartSearch.data), [smartSearch.data]);
+  const items = isSmartMode ? smartItems : filteredItems;
+  const total = isSmartMode ? getSearchTotal(smartSearch.data) : getSearchTotal(data);
   const activeChips = useMemo(() => buildActiveFilterChips(activeFilters), [activeFilters]);
   const activeFilterCount = useMemo(() => countActiveFilters(activeFilters), [activeFilters]);
+
+  const effectiveIsLoading = isSmartMode ? smartSearch.isLoading : isLoading;
+  const effectiveIsError = isSmartMode ? smartSearch.isError : isError;
+  const effectiveIsFetchingNextPage = isSmartMode ? smartSearch.isFetchingNextPage : isFetchingNextPage;
+  const effectiveHasNextPage = isSmartMode ? (smartSearch.hasNextPage ?? false) : (hasNextPage ?? false);
+  const effectiveFetchNextPage = isSmartMode ? smartSearch.fetchNextPage : fetchNextPage;
+  const effectiveRefetch = isSmartMode ? smartSearch.refetch : refetch;
 
   useEffect(() => {
     return () => {
@@ -134,6 +148,7 @@ export default function SearchScreen(): React.ReactElement {
 
   const commitDestination = useCallback((text: string) => {
     const trimmed = text.trim();
+    setSmartQuery('');
     setFilters((prev) => ({
       ...prev,
       destination: trimmed || undefined,
@@ -160,11 +175,11 @@ export default function SearchScreen(): React.ReactElement {
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
     try {
-      await refetch();
+      await effectiveRefetch();
     } finally {
       setIsRefreshing(false);
     }
-  }, [refetch]);
+  }, [effectiveRefetch]);
 
   const handleFilterApply = useCallback((newFilters: SearchScreenFilters) => {
     const { sort: newSort, ...rest } = newFilters;
@@ -193,6 +208,7 @@ export default function SearchScreen(): React.ReactElement {
 
   const handleClearAllFilters = useCallback(() => {
     setFilters({});
+    setSmartQuery('');
     setDestinationInput('');
     setSort('best_match');
   }, []);
@@ -245,7 +261,7 @@ export default function SearchScreen(): React.ReactElement {
 
         <ResultsHeader
           total={total}
-          isLoading={isLoading}
+          isLoading={effectiveIsLoading}
           selectedSort={sort}
           onSortPress={() => setSortModalOpen(true)}
         />
@@ -258,11 +274,11 @@ export default function SearchScreen(): React.ReactElement {
     ),
     [
       activeChips,
+      effectiveIsLoading,
       handleClearAllFilters,
       handleRecentPress,
       handleRemoveFilter,
       handleRemoveRecent,
-      isLoading,
       recentSearches,
       sort,
       total,
@@ -289,15 +305,15 @@ export default function SearchScreen(): React.ReactElement {
 
         <PackageList
           items={items}
-          isLoading={isLoading && !isRefreshing}
-          isError={isError}
-          isFetchingNextPage={isFetchingNextPage}
-          hasNextPage={hasNextPage ?? false}
-          hasFilters={activeFilterCount > 0}
-          onEndReached={() => void fetchNextPage()}
+          isLoading={effectiveIsLoading && !isRefreshing}
+          isError={effectiveIsError}
+          isFetchingNextPage={effectiveIsFetchingNextPage}
+          hasNextPage={effectiveHasNextPage}
+          hasFilters={activeFilterCount > 0 || isSmartMode}
+          onEndReached={() => void effectiveFetchNextPage()}
           onRefresh={() => void handleRefresh()}
           isRefreshing={isRefreshing}
-          onRetry={() => void refetch()}
+          onRetry={() => void effectiveRefetch()}
           onClearFilters={handleClearAllFilters}
           ListHeaderComponent={listHeader}
         />

@@ -252,6 +252,21 @@ export async function getFeaturedPackages(tripType?: 'domestic' | 'international
     error: null,
   };
 }
+export async function smartSearchPackages(
+  query: string,
+  page: number = 1,
+  limit: number = 10
+): Promise<ApiResponse<PaginatedResponse<PackageListItem> & { parsed_filters: Record<string, unknown> }>> {
+  const response = await apiClient.post<
+    PaginatedResponse<PackageListItem> & { parsed_filters: Record<string, unknown> }
+  >('/packages/search/smart', { query, page, limit }, false);
+
+  if (response.error || !response.data) {
+    return { data: null, error: response.error ?? 'Failed to search packages.' };
+  }
+
+  return { data: response.data, error: null };
+}
 export async function getPackagesByCategory(
   category: PackageCategory,
   limit: number = 10

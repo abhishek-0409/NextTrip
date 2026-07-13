@@ -8,6 +8,7 @@ import {
   createReview,
   getPackageReviews,
   getReviewEligibility,
+  getReviewFeed,
 } from '../services/reviewService';
 import { success, validationError } from '../utils/response';
 import { UuidParamSchema } from '../utils/validation';
@@ -110,6 +111,23 @@ reviewsRouter.post('/', requireAuth, async (req, res, next) => {
     });
 
     return success(res, review, 201);
+  } catch (caughtError) {
+    return next(caughtError);
+  }
+});
+
+
+reviewsRouter.get('/feed', async (req, res, next) => {
+  try {
+    const queryParsed = PackageReviewsQuerySchema.safeParse(req.query);
+    if (!queryParsed.success) {
+      return validationError(res, queryParsed.error.flatten().fieldErrors);
+    }
+
+    const { page, limit } = queryParsed.data;
+    const result = await getReviewFeed(page, limit);
+
+    return success(res, result);
   } catch (caughtError) {
     return next(caughtError);
   }
